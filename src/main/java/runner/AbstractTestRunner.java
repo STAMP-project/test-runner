@@ -17,7 +17,6 @@ public abstract class AbstractTestRunner implements TestRunner {
 
     private URLClassLoader classLoader;
 
-
     public AbstractTestRunner(String classpath) {
         this(classpath.split(System.getProperty("path.separator")));
     }
@@ -43,6 +42,7 @@ public abstract class AbstractTestRunner implements TestRunner {
         }
     }
 
+    @Deprecated
     protected Class<?>[] loadClasses(List<String> fullQualifiedNames) {
         return (Class<?>[]) (fullQualifiedNames.stream()
                 .map(this::loadClass)

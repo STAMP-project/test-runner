@@ -6,7 +6,9 @@ import org.junit.runner.Request;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.notification.RunNotifier;
+import org.mockito.runners.MockitoJUnitRunner;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -74,12 +76,16 @@ public class DefaultTestRunner extends AbstractTestRunner {
 
     @Override
     public TestListener run(String fullQualifiedName) {
-        TestListener listener = new TestListener();
-        Request request = Request.classes(this.loadClass(fullQualifiedName));
-        Runner runner = request.getRunner();
-        RunNotifier runNotifier = new RunNotifier();
-        runNotifier.addFirstListener(listener);
-        runner.run(runNotifier);
-        return listener;
+        try {
+            TestListener listener = new TestListener();
+            MockitoJUnitRunner runner = null;
+            runner = new MockitoJUnitRunner(this.loadClass(fullQualifiedName));
+            RunNotifier runNotifier = new RunNotifier();
+            runNotifier.addFirstListener(listener);
+            runner.run(runNotifier);
+            return listener;
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -96,4 +96,32 @@ public class DefaultTestRunnerTest {
         assertEquals(0, results.getAssumptionFailingTests().size());
         assertEquals(0, results.getIgnoredTests().size());
     }
+
+    @Test
+    public void testParameterizedTest() throws Exception {
+
+        /*
+            test the runner on parametized test:
+                - Injection of parameters with constructors
+                - Injection of parameters with fields
+         */
+
+        TestRunner runner = new DefaultTestRunner(
+                new String[]{
+                        "src/test/resources/parametized-0.0.1-SNAPSHOT.jar",
+                        "src/test/resources/parametized-0.0.1-SNAPSHOT-tests.jar",
+                });
+        TestListener results = runner.run("example.ConstructorParameterizedTest");
+        assertEquals(5, results.getRunningTests().size());
+        assertEquals(0, results.getFailingTests().size());
+        assertEquals(5, results.getPassingTests().size());
+        assertEquals(0, results.getAssumptionFailingTests().size());
+        assertEquals(0, results.getIgnoredTests().size());
+        results = runner.run("example.ParameterizedTest");
+        assertEquals(5, results.getRunningTests().size());
+        assertEquals(0, results.getFailingTests().size());
+        assertEquals(5, results.getPassingTests().size());
+        assertEquals(0, results.getAssumptionFailingTests().size());
+        assertEquals(0, results.getIgnoredTests().size());
+    }
 }
