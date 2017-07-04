@@ -56,13 +56,4 @@ public abstract class AbstractTestRunner implements TestRunner {
                 .map(this::run)
                 .reduce(new TestListener(), TestListener::aggregate);
     }
-
-    @Deprecated
-    protected Class<?>[] loadClasses(List<String> fullQualifiedNames) {
-        return (Class<?>[]) (fullQualifiedNames.stream()
-                .map(this::loadClass)
-                .toArray()
-        );
-    }
-
 }

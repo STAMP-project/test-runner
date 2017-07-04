@@ -15,6 +15,10 @@ import java.util.Collection;
  */
 public class DefaultTestRunner extends AbstractTestRunner {
 
+	public DefaultTestRunner(String classpath) {
+		super(classpath);
+	}
+
 	public DefaultTestRunner(String[] classpath) {
 		super(classpath);
 	}

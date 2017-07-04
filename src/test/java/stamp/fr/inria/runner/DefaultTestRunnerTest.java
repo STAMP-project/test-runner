@@ -17,10 +17,9 @@ public class DefaultTestRunnerTest {
     @Test
     public void testRunTestClass() throws Exception {
         TestRunner runner = new DefaultTestRunner(
-                new String[]{
-                        "src/test/resources/example-0.0.1-SNAPSHOT.jar",
-                        "src/test/resources/example-0.0.1-SNAPSHOT-tests.jar",
-                });
+                        "src/test/resources/example-0.0.1-SNAPSHOT.jar"
+                                + System.getProperty("path.separator") +
+                        "src/test/resources/example-0.0.1-SNAPSHOT-tests.jar");
         TestListener results = runner.run("example.TestSuiteExample");
         assertEquals(8, results.getRunningTests().size());
         assertEquals(1, results.getFailingTests().size());

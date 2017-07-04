@@ -17,10 +17,9 @@ public class MockitoTestRunnerTest {
     @Test
     public void testRunTestClass() throws Exception {
         TestRunner runner = new MockitoTestRunner(
-                new String[]{
-                        "src/test/resources/MockitoDemo-1.0-SNAPSHOT.jar",
-                        "src/test/resources/MockitoDemo-1.0-SNAPSHOT-tests.jar",
-                });
+                        "src/test/resources/MockitoDemo-1.0-SNAPSHOT.jar"
+                                + System.getProperty("path.separator") +
+                        "src/test/resources/MockitoDemo-1.0-SNAPSHOT-tests.jar");
         TestListener results = runner.run("info.sanaulla.dal.BookDALTest");
         assertEquals(5, results.getRunningTests().size());
         assertEquals(1, results.getFailingTests().size());
