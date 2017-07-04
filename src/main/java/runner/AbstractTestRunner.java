@@ -1,12 +1,15 @@
 package runner;
 
+import listener.TestListener;
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 
 import java.io.File;
 import java.net.*;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Benjamin DANGLOT
@@ -40,6 +43,20 @@ public abstract class AbstractTestRunner implements TestRunner {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public TestListener run(Map<String, Collection<String>> testMethodNamesForClasses) {
+        return testMethodNamesForClasses.keySet().stream()
+                .map(fullQualifiedName -> this.run(fullQualifiedName, testMethodNamesForClasses.get(fullQualifiedName)))
+                .reduce(new TestListener(), TestListener::aggregate);
+    }
+
+    @Override
+    public TestListener run(Collection<String> fullQualifiedNames) {
+        return fullQualifiedNames.stream()
+                .map(this::run)
+                .reduce(new TestListener(), TestListener::aggregate);
     }
 
     @Deprecated
