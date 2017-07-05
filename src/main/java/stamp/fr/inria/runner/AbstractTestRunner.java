@@ -42,18 +42,4 @@ public abstract class AbstractTestRunner implements TestRunner {
             throw new RuntimeException(e);
         }
     }
-
-    @Override
-    public TestListener run(Map<String, Collection<String>> testMethodNamesForClasses) {
-        return testMethodNamesForClasses.keySet().stream()
-                .map(fullQualifiedName -> this.run(fullQualifiedName, testMethodNamesForClasses.get(fullQualifiedName)))
-                .reduce(new TestListener(), TestListener::aggregate);
-    }
-
-    @Override
-    public TestListener run(Collection<String> fullQualifiedNames) {
-        return fullQualifiedNames.stream()
-                .map(this::run)
-                .reduce(new TestListener(), TestListener::aggregate);
-    }
 }

@@ -12,10 +12,6 @@ import java.util.Map;
  */
 public interface TestRunner {
 
-    TestListener run(Map<String, Collection<String>> testMethodNamesForClasses);
-
-    TestListener run(Collection<String> fullQualifiedNames);
-
     TestListener run(String fullQualifiedName, Collection<String> testMethodNames);
 
     TestListener run(String fullQualifiedName, String testMethodName);
