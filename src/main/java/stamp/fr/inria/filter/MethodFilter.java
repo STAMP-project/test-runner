@@ -4,6 +4,7 @@ import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 
 import java.util.Collection;
+import java.util.regex.Pattern;
 
 /**
  * Created by Benjamin DANGLOT
@@ -21,10 +22,9 @@ public class MethodFilter extends Filter {
 	@Override
 	public boolean shouldRun(Description description) {
 		return (description.isTest() &&
-					(description.getMethodName().contains("[") &&
-						testMethodNames.stream()
-								.anyMatch(testMethodName -> description.getMethodName().startsWith(testMethodName))
-					) || testMethodNames.contains(description.getMethodName())
+				testMethodNames.stream().anyMatch(testMethodName ->
+						Pattern.compile(testMethodName + "\\[\\d:(.*?)\\]").matcher(description.getMethodName()).find()
+				) || testMethodNames.contains(description.getMethodName())
 				) ||
 				description.getChildren().stream()
 						.map(this::shouldRun)
