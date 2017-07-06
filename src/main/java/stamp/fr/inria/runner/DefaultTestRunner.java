@@ -35,8 +35,6 @@ public class DefaultTestRunner extends AbstractTestRunner {
 		return listener;
 	}
 
-
-
 	@Override
 	public TestListener run(String fullQualifiedName) {
 		TestListener listener = new TestListener();
