@@ -21,11 +21,16 @@ public class MethodFilter extends Filter {
 	@Override
 	public boolean shouldRun(Description description) {
 		return (description.isTest() &&
-				testMethodNames.contains(description.getMethodName())) ||
+					(description.getMethodName().contains("[") &&
+						testMethodNames.stream()
+								.anyMatch(testMethodName -> description.getMethodName().startsWith(testMethodName))
+					) || testMethodNames.contains(description.getMethodName())
+				) ||
 				description.getChildren().stream()
 						.map(this::shouldRun)
 						.reduce(Boolean.FALSE, Boolean::logicalOr);
 	}
+
 	@Override
 	public String describe() {
 		return "stamp.fr.inria.filter with name of test method";
