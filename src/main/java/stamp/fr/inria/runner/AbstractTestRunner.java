@@ -4,10 +4,7 @@ import stamp.fr.inria.listener.TestListener;
 
 import java.io.File;
 import java.net.*;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Benjamin DANGLOT
@@ -41,5 +38,10 @@ public abstract class AbstractTestRunner implements TestRunner {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public TestListener run(String fullQualifiedName, String testMethodName) {
+        return this.run(fullQualifiedName, Collections.singletonList(testMethodName));
     }
 }

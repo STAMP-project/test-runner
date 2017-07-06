@@ -7,7 +7,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * Created by Benjamin DANGLOT
@@ -30,22 +29,6 @@ public class MockitoTestRunner extends  AbstractTestRunner {
             TestListener listener = new TestListener();
             MockitoJUnitRunner runner = new MockitoJUnitRunner(this.loadClass(fullQualifiedName));
             runner.filter(new MethodFilter(testMethodNames));
-            RunNotifier runNotifier = new RunNotifier();
-            runNotifier.addFirstListener(listener);
-            runner.run(runNotifier);
-            return listener;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    @Override
-    public TestListener run(String fullQualifiedName, String testMethodName) {
-        try {
-            TestListener listener = new TestListener();
-            MockitoJUnitRunner runner = new MockitoJUnitRunner(this.loadClass(fullQualifiedName));
-            runner.filter(new MethodFilter(Collections.singletonList(testMethodName)));
             RunNotifier runNotifier = new RunNotifier();
             runNotifier.addFirstListener(listener);
             runner.run(runNotifier);
