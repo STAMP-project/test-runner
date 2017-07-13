@@ -18,4 +18,10 @@ public interface TestRunner {
 
     TestListener run(String fullQualifiedName);
 
+    TestListener run(Class<?> testClass, Collection<String> testMethodNames);
+
+    TestListener run(Class<?> testClass, String testMethodName);
+
+    TestListener run(Class<?> testClass);
+
 }

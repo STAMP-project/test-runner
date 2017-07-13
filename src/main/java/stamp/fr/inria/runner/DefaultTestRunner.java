@@ -7,6 +7,7 @@ import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Created by Benjamin DANGLOT
@@ -24,9 +25,9 @@ public class DefaultTestRunner extends AbstractTestRunner {
 	}
 
 	@Override
-	public TestListener run(String fullQualifiedName, Collection<String> testMethodNames) {
+	public TestListener run(Class<?> testClass, Collection<String> testMethodNames) {
 		TestListener listener = new TestListener();
-		Request request = Request.aClass(this.loadClass(fullQualifiedName));
+		Request request = Request.aClass(testClass);
 		request = request.filterWith(new MethodFilter(testMethodNames));
 		Runner runner = request.getRunner();
 		RunNotifier runNotifier = new RunNotifier();
@@ -36,9 +37,9 @@ public class DefaultTestRunner extends AbstractTestRunner {
 	}
 
 	@Override
-	public TestListener run(String fullQualifiedName) {
+	public TestListener run(Class<?> testClass) {
 		TestListener listener = new TestListener();
-		Request request = Request.classes(this.loadClass(fullQualifiedName));
+		Request request = Request.classes(testClass);
 		Runner runner = request.getRunner();
 		RunNotifier runNotifier = new RunNotifier();
 		runNotifier.addFirstListener(listener);
