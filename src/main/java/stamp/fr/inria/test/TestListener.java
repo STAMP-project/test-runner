@@ -31,6 +31,14 @@ public class TestListener extends RunListener implements Serializable {
             this.testCaseName = testCaseName;
             this.fullQualifiedNameOfException = fullQualifiedNameOfException;
         }
+
+        @Override
+        public String toString() {
+            return "Failure{" +
+                    "testCaseName='" + testCaseName + '\'' +
+                    ", fullQualifiedNameOfException='" + fullQualifiedNameOfException + '\'' +
+                    '}';
+        }
     }
 
     private List<String> runningTests = new ArrayList<>();
