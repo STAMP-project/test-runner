@@ -41,14 +41,12 @@ public class JacocoRunnerTest extends AbstractTest {
 
     private final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar:" +
             MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar:" +
-            MAVEN_HOME + "junit/junit/4.11/junit-4.11.jar:" +
-            MAVEN_HOME + "org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:" +
-            MAVEN_HOME + "commons-io/commons-io/1.4/commons-io-1.4.jar";
-    private final String compiledClasses = "src/test/resources/test-projects/target/classes:src/test/resources/test-projects/target/test-classes";
-    private final String classpathOfTestRunnerClasses = "src/main/resources/";
+            MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar:" +
+            JUNIT_CP;
+
     private final String commandLine = "java -cp " +
-            classpath + ":" + compiledClasses + ":" + classpathOfTestRunnerClasses +
+            classpath + ":" + TEST_PROJECT_CLASSES + ":" + PATH_TO_RUNNER_CLASSES +
             " stamp.fr.inria.coverage.JacocoRunner " +
-            "src/test/resources/test-projects/target/classes:src/test/resources/test-projects/target/test-classes " +
-            "example.TestSuiteExample";
+            TEST_PROJECT_CLASSES +
+            " example.TestSuiteExample";
 }

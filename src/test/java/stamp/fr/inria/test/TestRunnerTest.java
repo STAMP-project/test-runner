@@ -27,8 +27,6 @@ public class TestRunnerTest extends AbstractTest {
                     - the listener is loaded using the static method load()
          */
 
-        System.out.println(commandLine);
-
         Process p = null;
         try {
             p = Runtime.getRuntime().exec(commandLine);
@@ -80,10 +78,7 @@ public class TestRunnerTest extends AbstractTest {
     }
 
 
-    private final String classpath = MAVEN_HOME + "junit/junit/4.11/junit-4.11.jar:" + MAVEN_HOME + "org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar";
-    private final String compiledClasses = "src/test/resources/test-projects/target/classes:src/test/resources/test-projects/target/test-classes";
-    private final String classpathOfTestRunnerClasses = "src/main/resources/";
     private final String commandLine = "java -cp " +
-            classpath + ":" + compiledClasses + ":" + classpathOfTestRunnerClasses +
+            JUNIT_CP + ":" + TEST_PROJECT_CLASSES + ":" + PATH_TO_RUNNER_CLASSES +
             " stamp.fr.inria.test.TestRunner example.TestSuiteExample";
 }
