@@ -5,7 +5,7 @@
 This project provides a framework to run JUnit test in a new JVM. It allows to retrieve results using serialization / deserialization.
 
 
-# Supported Features:
+# Supported Features:
 
 
 * test: run JUnit test, the whole test class or specific test cases methods.
