@@ -42,12 +42,6 @@ public class AbstractTest {
                 " -cp src/test/resources/test-projects/target/classes/:" + JUNIT_CP +
                 " src/test/resources/test-projects/src/test/java/example/TestSuiteExample.java");
         exec.waitFor();
-        try (BufferedReader input =
-                     new BufferedReader(new InputStreamReader(exec.getErrorStream()))) {
-            System.out.println(input.lines().collect(Collectors.joining(System.getProperty("line.separator"))));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @AfterClass
