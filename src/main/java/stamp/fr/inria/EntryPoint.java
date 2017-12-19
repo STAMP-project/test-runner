@@ -2,7 +2,7 @@ package stamp.fr.inria;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import stamp.fr.inria.coverage.CoverageResult;
+import stamp.fr.inria.coverage.CoverageListener;
 import stamp.fr.inria.test.TestListener;
 
 import java.io.BufferedReader;
@@ -42,9 +42,9 @@ public class EntryPoint {
         return load;
     }
 
-    public static CoverageResult runCoverage(String classpath,
-                                             String targetProjectClasses,
-                                             String fullQualifiedNameOfTestClass) {
+    public static CoverageListener runCoverage(String classpath,
+                                               String targetProjectClasses,
+                                               String fullQualifiedNameOfTestClass) {
         final String commandLine = Arrays.stream(new String[]{
                 JAVA_COMMAND,
                 classpath + PATH_SEPARATOR + PATH_TO_RUNNER_CLASSES,
@@ -53,7 +53,7 @@ public class EntryPoint {
                 fullQualifiedNameOfTestClass
         }).collect(Collectors.joining(WHITE_SPACE));
         runGivenCommandLine(commandLine);
-        final CoverageResult load = CoverageResult.load();
+        final CoverageListener load = CoverageListener.load();
         LOGGER.info("Coverage has been computed {}", load.toString());
         return load;
     }

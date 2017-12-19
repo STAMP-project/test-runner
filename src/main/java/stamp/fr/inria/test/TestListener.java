@@ -5,7 +5,6 @@ import org.junit.runner.notification.RunListener;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -23,23 +22,6 @@ import java.util.stream.Collectors;
  * on 30/06/17
  */
 public class TestListener extends RunListener implements Serializable {
-
-    public class Failure implements Serializable {
-        public final String testCaseName;
-        public final String fullQualifiedNameOfException;
-        public Failure(String testCaseName, String fullQualifiedNameOfException) {
-            this.testCaseName = testCaseName;
-            this.fullQualifiedNameOfException = fullQualifiedNameOfException;
-        }
-
-        @Override
-        public String toString() {
-            return "Failure{" +
-                    "testCaseName='" + testCaseName + '\'' +
-                    ", fullQualifiedNameOfException='" + fullQualifiedNameOfException + '\'' +
-                    '}';
-        }
-    }
 
     private List<String> runningTests = new ArrayList<>();
     private List<Failure> failingTests = new ArrayList<>();
@@ -105,6 +87,10 @@ public class TestListener extends RunListener implements Serializable {
         return ignoredTests;
     }
 
+    protected String getSerializeName() {
+        return "TestListener";
+    }
+
     public void save() {
         if (!new File("target/dspot").exists()) {
             try {
@@ -113,7 +99,7 @@ public class TestListener extends RunListener implements Serializable {
                 // it is not a big deal if there is an exeception
             }
         }
-        try (FileOutputStream fout = new FileOutputStream("target/dspot/TestListener.ser")) {
+        try (FileOutputStream fout = new FileOutputStream("target/dspot/" + this.getSerializeName() + ".ser")) {
             try (ObjectOutputStream oos = new ObjectOutputStream(fout)) {
                 oos.writeObject(this);
             } catch (Exception e) {
@@ -125,14 +111,32 @@ public class TestListener extends RunListener implements Serializable {
     }
 
     public static TestListener load() {
-        try (FileInputStream fin = new FileInputStream("target/dspot/TestListener.ser");) {
-            try (ObjectInputStream ois = new ObjectInputStream(fin);) {
+        try (FileInputStream fin = new FileInputStream("target/dspot/" + "TestListener" + ".ser");) {
+            try (ObjectInputStream ois = new ObjectInputStream(fin)) {
                 return (TestListener) ois.readObject();
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
         } catch (Exception ex) {
             throw new RuntimeException(ex);
+        }
+    }
+
+    public class Failure implements Serializable {
+        public final String testCaseName;
+        public final String fullQualifiedNameOfException;
+
+        public Failure(String testCaseName, String fullQualifiedNameOfException) {
+            this.testCaseName = testCaseName;
+            this.fullQualifiedNameOfException = fullQualifiedNameOfException;
+        }
+
+        @Override
+        public String toString() {
+            return "Failure{" +
+                    "testCaseName='" + testCaseName + '\'' +
+                    ", fullQualifiedNameOfException='" + fullQualifiedNameOfException + '\'' +
+                    '}';
         }
     }
 

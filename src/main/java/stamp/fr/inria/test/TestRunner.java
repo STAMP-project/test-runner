@@ -8,6 +8,7 @@ import org.junit.runner.notification.RunNotifier;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -19,46 +20,29 @@ import java.util.regex.Pattern;
 public class TestRunner {
 
     public static void main(String[] args) throws ClassNotFoundException {
-        final ClassLoader classLoader = TestRunner.class.getClassLoader();
         final TestListener testListener = new TestListener();
         TestRunner.run(args[0],
-                args.length > 1 ? Arrays.asList(args[1].split(":")) : null,
+                args.length > 1 ? Arrays.asList(args[1].split(":")) : Collections.emptyList(),
                 testListener
         );
         testListener.save();
-        System.out.println(testListener.getPassingTests());
     }
 
     public static void run(String testClassName, List<String> testMethodNames, TestListener listener) {
-        final ClassLoader classLoader = TestRunner.class.getClassLoader();
-        Request request = null;
-        try {
-            request = Request.aClass(classLoader.loadClass(testClassName));
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        if (testMethodNames != null) {
-            request = request.filterWith(new MethodFilter(testMethodNames));
-        }
-        final Runner runner = request.getRunner();
-        final RunNotifier runNotifier = new RunNotifier();
-        runNotifier.addFirstListener(listener);
-        runner.run(runNotifier);
+        TestRunner.run(testClassName, testMethodNames, listener, TestRunner.class.getClassLoader());
     }
 
     public static void run(String testClassName,
                            List<String> testMethodNames,
                            TestListener listener,
                            ClassLoader customClassLoader) {
-        Request request = null;
+        Request request;
         try {
             request = Request.aClass(customClassLoader.loadClass(testClassName));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        if (testMethodNames != null) {
-            request = request.filterWith(new MethodFilter(testMethodNames));
-        }
+        request = request.filterWith(new MethodFilter(testMethodNames));
         final Runner runner = request.getRunner();
         final RunNotifier runNotifier = new RunNotifier();
         runNotifier.addFirstListener(listener);
@@ -78,7 +62,7 @@ public class TestRunner {
             return (description.isTest() &&
                     testMethodNames.stream().anyMatch(testMethodName ->
                             Pattern.compile(testMethodName + "\\[\\d:(.*?)\\]").matcher(description.getMethodName()).find()
-                    ) || testMethodNames.contains(description.getMethodName())
+                    ) || testMethodNames.contains(description.getMethodName()) || testMethodNames.isEmpty()
             ) ||
                     description.getChildren().stream()
                             .map(this::shouldRun)
