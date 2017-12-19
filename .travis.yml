@@ -10,6 +10,7 @@ cache:
     - $HOME/.m2
 install:
   - export MAVEN_HOME=/usr/local/maven-3.5.0
+  - ./src/compile-and-clean-test-projects.sh
 
 script:
   - mvn clean install
