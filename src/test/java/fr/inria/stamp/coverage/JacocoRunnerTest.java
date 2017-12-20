@@ -1,12 +1,7 @@
-package stamp.fr.inria.coverage;
+package fr.inria.stamp.coverage;
 
+import fr.inria.stamp.AbstractTest;
 import org.junit.Test;
-import stamp.fr.inria.AbstractTest;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -130,7 +125,7 @@ public class JacocoRunnerTest extends AbstractTest {
 
     private final String commandLine = "java -cp " +
             classpath + ":" + TEST_PROJECT_CLASSES + ":" + PATH_TO_RUNNER_CLASSES +
-            " stamp.fr.inria.coverage.JacocoRunner " +
+            " fr.inria.stamp.coverage.JacocoRunner " +
             TEST_PROJECT_CLASSES +
             " example.TestSuiteExample";
 }

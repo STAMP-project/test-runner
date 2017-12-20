@@ -1,9 +1,9 @@
-package stamp.fr.inria;
+package fr.inria.stamp;
 
+import fr.inria.stamp.test.TestListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import stamp.fr.inria.coverage.CoverageListener;
-import stamp.fr.inria.test.TestListener;
+import fr.inria.stamp.coverage.CoverageListener;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -88,9 +88,9 @@ public class EntryPoint {
 
     public static final String JAVA_COMMAND = "java -cp";
 
-    public static final String TEST_RUNNER_QUALIFIED_NAME = "stamp.fr.inria.test.TestRunner";
+    public static final String TEST_RUNNER_QUALIFIED_NAME = "fr.inria.stamp.test.TestRunner";
 
-    public static final String JACOCO_RUNNER_QUALIFIED_NAME = "stamp.fr.inria.coverage.JacocoRunner";
+    public static final String JACOCO_RUNNER_QUALIFIED_NAME = "fr.inria.stamp.coverage.JacocoRunner";
 
     public static final String PATH_SEPARATOR = System.getProperty("path.separator");
 

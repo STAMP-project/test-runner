@@ -27,11 +27,11 @@ target/
 hs_err_pid*
 
 # Compiled class resources
-!/src/main/resources/stamp/fr/inria/coverage/JacocoRunner$MemoryClassLoader.class
-!/src/main/resources/stamp/fr/inria/coverage/JacocoRunner.class
-!/src/main/resources/stamp/fr/inria/test/TestListener.class
-!/src/main/resources/stamp/fr/inria/test/TestListener$Failure.class
-!/src/main/resources/stamp/fr/inria/test/TestRunner$MethodFilter.class
-!/src/main/resources/stamp/fr/inria/test/TestRunner.class
-!/src/main/resources/stamp/fr/inria/coverage/CoverageListener$Coverage.class
-!/src/main/resources/stamp/fr/inria/coverage/CoverageListener.class
+!/fr/inria/stamp/coverage/JacocoRunner$MemoryClassLoader.class
+!/fr/inria/stamp/coverage/JacocoRunner.class
+!/fr/inria/stamp/test/TestListener.class
+!/fr/inria/stamp/test/TestListener$Failure.class
+!/fr/inria/stamp/test/TestRunner$MethodFilter.class
+!/fr/inria/stamp/test/TestRunner.class
+!/fr/inria/stamp/coverage/CoverageListener$Coverage.class
+!/fr/inria/stamp/coverage/CoverageListener.class

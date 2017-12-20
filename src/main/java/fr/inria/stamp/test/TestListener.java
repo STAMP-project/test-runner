@@ -1,4 +1,4 @@
-package stamp.fr.inria.test;
+package fr.inria.stamp.test;
 
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunListener;

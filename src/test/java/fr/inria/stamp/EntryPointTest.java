@@ -1,8 +1,8 @@
-package stamp.fr.inria;
+package fr.inria.stamp;
 
 import org.junit.Test;
-import stamp.fr.inria.coverage.CoverageListener;
-import stamp.fr.inria.test.TestListener;
+import fr.inria.stamp.coverage.CoverageListener;
+import fr.inria.stamp.test.TestListener;
 
 import java.util.Arrays;
 import java.util.Collections;

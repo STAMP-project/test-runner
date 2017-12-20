@@ -1,7 +1,7 @@
-package stamp.fr.inria.test;
+package fr.inria.stamp.test;
 
+import fr.inria.stamp.AbstractTest;
 import org.junit.Test;
-import stamp.fr.inria.AbstractTest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -58,5 +58,5 @@ public class TestRunnerTest extends AbstractTest {
 
     private final String commandLine = "java -cp " +
             JUNIT_CP + ":" + TEST_PROJECT_CLASSES + ":" + PATH_TO_RUNNER_CLASSES +
-            " stamp.fr.inria.test.TestRunner example.TestSuiteExample";
+            " fr.inria.stamp.test.TestRunner example.TestSuiteExample";
 }

@@ -1,4 +1,4 @@
-package stamp.fr.inria;
+package fr.inria.stamp;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;

@@ -1,13 +1,13 @@
-package stamp.fr.inria.coverage;
+package fr.inria.stamp.coverage;
 
+import fr.inria.stamp.test.TestListener;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.jacoco.core.instr.Instrumenter;
 import org.jacoco.core.runtime.IRuntime;
 import org.jacoco.core.runtime.LoggerRuntime;
 import org.jacoco.core.runtime.RuntimeData;
-import stamp.fr.inria.test.TestListener;
-import stamp.fr.inria.test.TestRunner;
+import fr.inria.stamp.test.TestRunner;
 
 import java.io.File;
 import java.io.IOException;
