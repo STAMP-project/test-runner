@@ -1,14 +1,16 @@
 package fr.inria.stamp;
 
-import fr.inria.stamp.test.TestListener;
+import fr.inria.stamp.runner.test.TestListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import fr.inria.stamp.coverage.CoverageListener;
+import fr.inria.stamp.runner.coverage.CoverageListener;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,7 +28,7 @@ public class EntryPoint {
                                        List<String> simpleNameOfTestMethods) {
         final String commandLine = Arrays.stream(new String[]{
                         JAVA_COMMAND,
-                        classpath + PATH_SEPARATOR + PATH_TO_RUNNER_CLASSES,
+                        classpath + PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES,
                         TEST_RUNNER_QUALIFIED_NAME,
                         fullQualifiedNameOfTestClass,
                         simpleNameOfTestMethods.stream()
@@ -47,7 +49,9 @@ public class EntryPoint {
                                                String fullQualifiedNameOfTestClass) {
         final String commandLine = Arrays.stream(new String[]{
                 JAVA_COMMAND,
-                classpath + PATH_SEPARATOR + PATH_TO_RUNNER_CLASSES,
+                classpath +
+                        PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES +
+                        PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES,
                 JACOCO_RUNNER_QUALIFIED_NAME,
                 targetProjectClasses,
                 fullQualifiedNameOfTestClass
@@ -88,14 +92,35 @@ public class EntryPoint {
 
     public static final String JAVA_COMMAND = "java -cp";
 
-    public static final String TEST_RUNNER_QUALIFIED_NAME = "fr.inria.stamp.test.TestRunner";
+    public static final String TEST_RUNNER_QUALIFIED_NAME = "fr.inria.stamp.runner.test.TestRunner";
 
-    public static final String JACOCO_RUNNER_QUALIFIED_NAME = "fr.inria.stamp.coverage.JacocoRunner";
+    public static final String JACOCO_RUNNER_QUALIFIED_NAME = "fr.inria.stamp.runner.coverage.JacocoRunner";
 
     public static final String PATH_SEPARATOR = System.getProperty("path.separator");
 
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    public static final String PATH_TO_RUNNER_CLASSES = "src/test/resources/";
+    public static final String ABSOLUTE_PATH_TO_RUNNER_CLASSES = initAbsolutePathToRunnerClasses();
+
+    private static final List<String> JACOCO_DEPENDENCIES = Arrays.asList(
+            "org/jacoco/org.jacoco.core/",
+            "org/ow2/asm/asm-debug-all/",
+            "commons-io/commons-io/"
+    );
+
+    public static final String ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES = Arrays.stream(((URLClassLoader)ClassLoader.getSystemClassLoader())
+            .getURLs())
+            .filter(url -> JACOCO_DEPENDENCIES.stream().anyMatch(s -> url.getPath().contains(s)))
+            .map(URL::getPath)
+            .collect(Collectors.joining(PATH_SEPARATOR));
+
+    private static String initAbsolutePathToRunnerClasses() {
+        final String path = ClassLoader.getSystemClassLoader().getResource("runner-classes/").getPath();
+        if (path.contains("!") && path.startsWith("file:")) {
+            return path.substring("file:".length()).split("!")[0];
+        } else {
+            return path;
+        }
+    }
 
 }
