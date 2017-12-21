@@ -1,4 +1,4 @@
-package fr.inria.stamp.test;
+package fr.inria.stamp.runner.test;
 
 import fr.inria.stamp.AbstractTest;
 import org.junit.Test;
@@ -58,5 +58,5 @@ public class TestRunnerTest extends AbstractTest {
 
     private final String commandLine = "java -cp " +
             JUNIT_CP + ":" + TEST_PROJECT_CLASSES + ":" + PATH_TO_RUNNER_CLASSES +
-            " fr.inria.stamp.test.TestRunner example.TestSuiteExample";
+            " fr.inria.stamp.runner.test.TestRunner example.TestSuiteExample";
 }

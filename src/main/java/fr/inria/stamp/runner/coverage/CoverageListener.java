@@ -1,6 +1,6 @@
-package fr.inria.stamp.coverage;
+package fr.inria.stamp.runner.coverage;
 
-import fr.inria.stamp.test.TestListener;
+import fr.inria.stamp.runner.test.TestListener;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.data.ExecutionDataStore;

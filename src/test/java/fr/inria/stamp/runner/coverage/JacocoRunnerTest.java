@@ -1,4 +1,4 @@
-package fr.inria.stamp.coverage;
+package fr.inria.stamp.runner.coverage;
 
 import fr.inria.stamp.AbstractTest;
 import org.junit.Test;
@@ -125,7 +125,7 @@ public class JacocoRunnerTest extends AbstractTest {
 
     private final String commandLine = "java -cp " +
             classpath + ":" + TEST_PROJECT_CLASSES + ":" + PATH_TO_RUNNER_CLASSES +
-            " fr.inria.stamp.coverage.JacocoRunner " +
+            " fr.inria.stamp.runner.coverage.JacocoRunner " +
             TEST_PROJECT_CLASSES +
             " example.TestSuiteExample";
 }
