@@ -1,8 +1,8 @@
 package fr.inria.stamp;
 
 import org.junit.Test;
-import fr.inria.stamp.coverage.CoverageListener;
-import fr.inria.stamp.test.TestListener;
+import fr.inria.stamp.runner.coverage.CoverageListener;
+import fr.inria.stamp.runner.test.TestListener;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,9 +24,8 @@ public class EntryPointTest extends AbstractTest {
                 It should return the TestListener with the result of the execution of the test class.
          */
 
-        final TestListener testListener = EntryPoint.runTest(JUNIT_CP + ":"
-                        + TEST_PROJECT_CLASSES + ":"
-                        + PATH_TO_RUNNER_CLASSES,
+        final TestListener testListener = EntryPoint.runTest(
+                JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "example.TestSuiteExample",
                 Collections.emptyList()
         );
@@ -42,11 +41,10 @@ public class EntryPointTest extends AbstractTest {
                 It should return the TestListener with the result of the execution of the test class.
          */
 
-        final TestListener testListener = EntryPoint.runTest(JUNIT_CP + ":"
-                        + TEST_PROJECT_CLASSES + ":"
-                        + PATH_TO_RUNNER_CLASSES,
+        final TestListener testListener = EntryPoint.runTest(
+                JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "example.TestSuiteExample",
-                Arrays.asList(new String[]{"test4", "test9"})
+                Arrays.asList("test4", "test9")
         );
         assertEquals(2, testListener.getPassingTests().size());
         assertEquals(0, testListener.getFailingTests().size());
@@ -64,9 +62,8 @@ public class EntryPointTest extends AbstractTest {
                 MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar:" +
                 JUNIT_CP;
 
-        final CoverageListener coverageListener = EntryPoint.runCoverage(classpath + ":"
-                        + TEST_PROJECT_CLASSES + ":"
-                        + PATH_TO_RUNNER_CLASSES,
+        final CoverageListener coverageListener = EntryPoint.runCoverage(
+                classpath + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 TEST_PROJECT_CLASSES,
                 "example.TestSuiteExample"
         );
