@@ -21,15 +21,48 @@ public class TestRunner {
 
     public static void main(String[] args) throws ClassNotFoundException {
         final TestListener testListener = new TestListener();
-        TestRunner.run(args[0],
-                args.length > 1 ? Arrays.asList(args[1].split(":")) : Collections.emptyList(),
-                testListener
-        );
+        if (args[0].contains(":")) {
+            TestRunner.run(Arrays.asList(args[0].split(":")), testListener);
+        } else {
+            TestRunner.run(args[0],
+                    args.length > 1 ? Arrays.asList(args[1].split(":")) : Collections.emptyList(),
+                    testListener
+            );
+        }
         testListener.save();
+    }
+
+    public static void run(List<String> testClassNames, TestListener listener) {
+        TestRunner.run(testClassNames, listener, TestRunner.class.getClassLoader());
+    }
+
+    public static void run(List<String> testClassNames, TestListener listener, ClassLoader customClassLoader) {
+        Request request;
+        request = Request.classes(testClassNames.stream().map(testClassName -> {
+            try {
+                return customClassLoader.loadClass(testClassName);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }).toArray(Class[]::new));
+        final Runner runner = request.getRunner();
+        final RunNotifier runNotifier = new RunNotifier();
+        runNotifier.addFirstListener(listener);
+        runner.run(runNotifier);
+    }
+
+    public static void run(String testClassName, TestListener listener) {
+        TestRunner.run(testClassName, Collections.emptyList(), listener, TestRunner.class.getClassLoader());
     }
 
     public static void run(String testClassName, List<String> testMethodNames, TestListener listener) {
         TestRunner.run(testClassName, testMethodNames, listener, TestRunner.class.getClassLoader());
+    }
+
+    public static void run(String testClassName,
+                           TestListener listener,
+                           ClassLoader customClassLoader) {
+        TestRunner.run(testClassName, Collections.emptyList(), listener, customClassLoader);
     }
 
     public static void run(String testClassName,
@@ -47,32 +80,6 @@ public class TestRunner {
         final RunNotifier runNotifier = new RunNotifier();
         runNotifier.addFirstListener(listener);
         runner.run(runNotifier);
-    }
-
-    private static class MethodFilter extends Filter {
-
-        private Collection<String> testMethodNames;
-
-        public MethodFilter(Collection<String> testMethodNames) {
-            this.testMethodNames = testMethodNames;
-        }
-
-        @Override
-        public boolean shouldRun(Description description) {
-            return (description.isTest() &&
-                    testMethodNames.stream().anyMatch(testMethodName ->
-                            Pattern.compile(testMethodName + "\\[\\d:(.*?)\\]").matcher(description.getMethodName()).find()
-                    ) || testMethodNames.contains(description.getMethodName()) || testMethodNames.isEmpty()
-            ) ||
-                    description.getChildren().stream()
-                            .map(this::shouldRun)
-                            .reduce(Boolean.FALSE, Boolean::logicalOr);
-        }
-
-        @Override
-        public String describe() {
-            return "stamp.fr.inria.filter with name of test method";
-        }
     }
 
 }

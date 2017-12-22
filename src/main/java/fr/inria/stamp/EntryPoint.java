@@ -1,9 +1,9 @@
 package fr.inria.stamp;
 
+import fr.inria.stamp.runner.coverage.Coverage;
 import fr.inria.stamp.runner.test.TestListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import fr.inria.stamp.runner.coverage.CoverageListener;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -12,7 +12,11 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,42 +27,84 @@ import java.util.stream.Stream;
  */
 public class EntryPoint {
 
-    public static TestListener runTest(String classpath,
-                                       String fullQualifiedNameOfTestClass,
-                                       List<String> simpleNameOfTestMethods) {
-        final String commandLine = Arrays.stream(new String[]{
+    public static TestListener runTestClasses(String classpath,
+                                              String... fullQualifiedNameOfTestClasses) {
+        return runTests(Arrays.stream(new String[]{
+                        JAVA_COMMAND,
+                        classpath + PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES,
+                        TEST_RUNNER_QUALIFIED_NAME,
+                        Arrays.stream(fullQualifiedNameOfTestClasses)
+                                .collect(Collectors.joining(":"))
+                }).collect(Collectors.joining(WHITE_SPACE))
+        );
+    }
+
+    public static TestListener runTests(String classpath,
+                                        String fullQualifiedNameOfTestClass,
+                                        String... testMethods) {
+        return runTests(Arrays.stream(new String[]{
                         JAVA_COMMAND,
                         classpath + PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES,
                         TEST_RUNNER_QUALIFIED_NAME,
                         fullQualifiedNameOfTestClass,
-                        simpleNameOfTestMethods.stream()
-                                .collect(Collectors.joining(PATH_SEPARATOR))
-                }
-        ).collect(Collectors.joining(WHITE_SPACE));
+                        Arrays.stream(testMethods)
+                                .collect(Collectors.joining(":"))
+                }).collect(Collectors.joining(WHITE_SPACE))
+        );
+    }
+
+    private static TestListener runTests(String commandLine) {
         runGivenCommandLine(commandLine);
         final TestListener load = TestListener.load();
-        LOGGER.info("Test has been run: {}",
-                Stream.concat(load.getPassingTests().stream().map(Object::toString),
-                        load.getFailingTests().stream().map(Object::toString)
-                ).collect(Collectors.joining(",")));
+        if (EntryPoint.verbose) {
+            LOGGER.info("Test has been run: {}",
+                    Stream.concat(load.getPassingTests().stream().map(Object::toString),
+                            load.getFailingTests().stream().map(Object::toString)
+                    ).collect(Collectors.joining(",")));
+        }
         return load;
     }
 
-    public static CoverageListener runCoverage(String classpath,
-                                               String targetProjectClasses,
-                                               String fullQualifiedNameOfTestClass) {
-        final String commandLine = Arrays.stream(new String[]{
-                JAVA_COMMAND,
-                classpath +
-                        PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES +
-                        PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES,
-                JACOCO_RUNNER_QUALIFIED_NAME,
-                targetProjectClasses,
-                fullQualifiedNameOfTestClass
-        }).collect(Collectors.joining(WHITE_SPACE));
+    public static Coverage runCoverageOnTestClasses(String classpath,
+                                       String targetProjectClasses,
+                                       String... fullQualifiedNameOfTestClasses) {
+        return EntryPoint.runCoverage(Arrays.stream(new String[]{
+                        JAVA_COMMAND,
+                        classpath +
+                                PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES +
+                                PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES,
+                        JACOCO_RUNNER_QUALIFIED_NAME,
+                        targetProjectClasses,
+                        Arrays.stream(fullQualifiedNameOfTestClasses)
+                                .collect(Collectors.joining(":"))
+                }).collect(Collectors.joining(WHITE_SPACE))
+        );
+    }
+
+    public static Coverage runCoverageOnTests(String classpath,
+                                       String targetProjectClasses,
+                                       String fullQualifiedNameOfTestClass,
+                                       String... methodNames) {
+        return EntryPoint.runCoverage(Arrays.stream(new String[]{
+                        JAVA_COMMAND,
+                        classpath +
+                                PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES +
+                                PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES,
+                        JACOCO_RUNNER_QUALIFIED_NAME,
+                        targetProjectClasses,
+                        fullQualifiedNameOfTestClass,
+                        Arrays.stream(methodNames)
+                                .collect(Collectors.joining(":"))
+                }).collect(Collectors.joining(WHITE_SPACE))
+        );
+    }
+
+    private static Coverage runCoverage(String commandLine) {
         runGivenCommandLine(commandLine);
-        final CoverageListener load = CoverageListener.load();
-        LOGGER.info("Coverage has been computed {}", load.toString());
+        final Coverage load = Coverage.load();
+        if (EntryPoint.verbose) {
+            LOGGER.info("Global Coverage has been computed {}", load.toString());
+        }
         return load;
     }
 
@@ -74,13 +120,17 @@ public class EntryPoint {
         }
     }
 
-    private static void runGivenCommandLine(String commandLine) {
-        LOGGER.info("Run: {}", commandLine);
+    public static void runGivenCommandLine(String commandLine) {
+        if (EntryPoint.verbose) {
+            LOGGER.info("Run: {}", commandLine);
+        }
         try {
             Process p = Runtime.getRuntime().exec(commandLine);
             p.waitFor();
-            printStream(p.getInputStream(), System.out);
-            printStream(p.getErrorStream(), System.err);
+            if (EntryPoint.verbose) {
+                printStream(p.getInputStream(), System.out);
+                printStream(p.getErrorStream(), System.err);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -96,11 +146,22 @@ public class EntryPoint {
 
     public static final String JACOCO_RUNNER_QUALIFIED_NAME = "fr.inria.stamp.runner.coverage.JacocoRunner";
 
+    public static final String CLOVER_RUNNER_QUALIFIED_NAME = "fr.inria.stamp.runner.clover.CloverRunner";
+
     public static final String PATH_SEPARATOR = System.getProperty("path.separator");
 
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     public static final String ABSOLUTE_PATH_TO_RUNNER_CLASSES = initAbsolutePathToRunnerClasses();
+
+    public static boolean verbose = false;
+
+    private static final Function<List<String>, String> LIST_OF_DEPENDENCIES_TO_ABS_PATH = list ->
+            Arrays.stream(((URLClassLoader) ClassLoader.getSystemClassLoader())
+                    .getURLs())
+                    .filter(url -> list.stream().anyMatch(s -> url.getPath().contains(s)))
+                    .map(URL::getPath)
+                    .collect(Collectors.joining(PATH_SEPARATOR));
 
     private static final List<String> JACOCO_DEPENDENCIES = Arrays.asList(
             "org/jacoco/org.jacoco.core/",
@@ -108,11 +169,7 @@ public class EntryPoint {
             "commons-io/commons-io/"
     );
 
-    public static final String ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES = Arrays.stream(((URLClassLoader)ClassLoader.getSystemClassLoader())
-            .getURLs())
-            .filter(url -> JACOCO_DEPENDENCIES.stream().anyMatch(s -> url.getPath().contains(s)))
-            .map(URL::getPath)
-            .collect(Collectors.joining(PATH_SEPARATOR));
+    public static final String ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES = LIST_OF_DEPENDENCIES_TO_ABS_PATH.apply(JACOCO_DEPENDENCIES);
 
     private static String initAbsolutePathToRunnerClasses() {
         final String path = ClassLoader.getSystemClassLoader().getResource("runner-classes/").getPath();

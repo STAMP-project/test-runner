@@ -1,8 +1,10 @@
 package fr.inria.stamp.runner.coverage;
 
-import fr.inria.stamp.runner.test.TestListener;
+import fr.inria.stamp.runner.test.Failure;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.jacoco.core.data.ExecutionDataStore;
+import org.jacoco.core.data.SessionInfoStore;
 import org.jacoco.core.instr.Instrumenter;
 import org.jacoco.core.runtime.IRuntime;
 import org.jacoco.core.runtime.LoggerRuntime;
@@ -16,10 +18,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.ResourceBundle.clearCache;
@@ -36,12 +36,18 @@ public class JacocoRunner {
         final String classesDirectory = args[0].split(":")[0];
         final String testClassesDirectory = args[0].split(":")[1];
         final JacocoRunner jacocoRunner = new JacocoRunner(classesDirectory, testClassesDirectory);
-        final CoverageListener coverageListener = jacocoRunner.run(classesDirectory,
-                testClassesDirectory,
-                args[1],
-                args.length > 2 ? Arrays.asList(args[2].split(":")) : Collections.emptyList()
-        );
-        coverageListener.save();
+        if (args[1].contains(":")) {
+            jacocoRunner.run(classesDirectory,
+                    testClassesDirectory,
+                    args[1].split(":")
+            ).save();
+        } else {
+            jacocoRunner.run(classesDirectory,
+                    testClassesDirectory,
+                    args[1],
+                    args.length > 2 ? args[2].split(":") : new String[]{}
+            ).save();
+        }
     }
 
     private MemoryClassLoader instrumentedClassLoader;
@@ -67,11 +73,13 @@ public class JacocoRunner {
         instrumentAll(classesDirectory);
     }
 
-    private CoverageListener run(String classesDirectory,
-                                 String testClassesDirectory,
-                                 String fullQualifiedNameOfTestClass,
-                                 List<String> testMethodNames) {
+    private Coverage run(String classesDirectory,
+                         String testClassesDirectory,
+                         String fullQualifiedNameOfTestClass,
+                         String... testMethodNames) {
         final RuntimeData data = new RuntimeData();
+        final ExecutionDataStore executionData = new ExecutionDataStore();
+        final SessionInfoStore sessionInfos = new SessionInfoStore();
         URLClassLoader classLoader;
         try {
             classLoader = new URLClassLoader(new URL[]
@@ -86,23 +94,71 @@ public class JacocoRunner {
                     IOUtils.toByteArray(classLoader.getResourceAsStream(resource))
             );
             runtime.startup(data);
-            final CoverageListener coverageListener = new CoverageListener(data, classesDirectory);
-            TestRunner.run(fullQualifiedNameOfTestClass, testMethodNames, coverageListener, this.instrumentedClassLoader);
-            if (!coverageListener.getFailingTests().isEmpty()) {
+            final Coverage listener = new Coverage();
+            TestRunner.run(fullQualifiedNameOfTestClass, Arrays.asList(testMethodNames), listener, this.instrumentedClassLoader);
+            if (!listener.getFailingTests().isEmpty()) {
                 System.err.println("Some test(s) failed during computation of coverage:\n" +
-                        coverageListener.getFailingTests()
+                        listener.getFailingTests()
                                 .stream()
-                                .map(TestListener.Failure::toString)
+                                .map(Failure::toString)
                                 .collect(Collectors.joining("\n"))
                 );
             }
+            data.collect(executionData, sessionInfos, false);
             runtime.shutdown();
             clearCache(this.instrumentedClassLoader);
-            return coverageListener;
+            listener.collectData(executionData, classesDirectory);
+            return listener;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
+    private Coverage run(String classesDirectory,
+                         String testClassesDirectory,
+                         String... fullQualifiedNameOfTestClasses) {
+        final RuntimeData data = new RuntimeData();
+        final ExecutionDataStore executionData = new ExecutionDataStore();
+        final SessionInfoStore sessionInfos = new SessionInfoStore();
+        URLClassLoader classLoader;
+        try {
+            classLoader = new URLClassLoader(new URL[]
+                    {new File(testClassesDirectory).toURI().toURL()}, this.instrumentedClassLoader);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        Arrays.stream(fullQualifiedNameOfTestClasses).forEach(fullQualifiedNameOfTestClass -> {
+            final String resource = fullQualifiedNameOfTestClass.replace('.', '/') + ".class";
+            try {
+                this.instrumentedClassLoader.addDefinition(
+                        fullQualifiedNameOfTestClass,
+                        IOUtils.toByteArray(classLoader.getResourceAsStream(resource)));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        try {
+            runtime.startup(data);
+            final Coverage listener = new Coverage();
+            TestRunner.run(Arrays.asList(fullQualifiedNameOfTestClasses), listener, this.instrumentedClassLoader);
+            if (!listener.getFailingTests().isEmpty()) {
+                System.err.println("Some test(s) failed during computation of coverage:\n" +
+                        listener.getFailingTests()
+                                .stream()
+                                .map(Failure::toString)
+                                .collect(Collectors.joining("\n"))
+                );
+            }
+            data.collect(executionData, sessionInfos, false);
+            runtime.shutdown();
+            clearCache(this.instrumentedClassLoader);
+            listener.collectData(executionData, classesDirectory);
+            return listener;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     private void instrumentAll(String classesDirectory) {
         final Iterator<File> iterator = FileUtils.iterateFiles(new File(classesDirectory), new String[]{"class"}, true);
@@ -120,38 +176,5 @@ public class JacocoRunner {
         clearCache(instrumentedClassLoader);
     }
 
-    private class MemoryClassLoader extends URLClassLoader {
-
-        private final Map<String, byte[]> definitions = new HashMap<>();
-
-        public MemoryClassLoader(URL[] urls) {
-            super(urls, ClassLoader.getSystemClassLoader());
-        }
-
-        /**
-         * Add a in-memory representation of a class.
-         *
-         * @param name  name of the class
-         * @param bytes class definition
-         */
-        public void addDefinition(final String name, final byte[] bytes) {
-            definitions.put(name, bytes);
-        }
-
-        @Override
-        public Class<?> loadClass(final String name)
-                throws ClassNotFoundException {
-            final byte[] bytes = definitions.get(name);
-            try {
-                if (bytes != null) {
-                    return defineClass(name, bytes, 0, bytes.length);
-                }
-            } catch (java.lang.LinkageError error) {
-                return super.loadClass(name, false);
-            }
-            return super.loadClass(name, false);
-        }
-
-    }
 
 }

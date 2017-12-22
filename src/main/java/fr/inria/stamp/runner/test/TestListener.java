@@ -111,33 +111,8 @@ public class TestListener extends RunListener implements Serializable {
     }
 
     public static TestListener load() {
-        try (FileInputStream fin = new FileInputStream("target/dspot/" + "TestListener" + ".ser");) {
-            try (ObjectInputStream ois = new ObjectInputStream(fin)) {
-                return (TestListener) ois.readObject();
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            }
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
+        return new Loader<TestListener>().load(new TestListener().getSerializeName());
     }
 
-    public class Failure implements Serializable {
-        public final String testCaseName;
-        public final String fullQualifiedNameOfException;
-
-        public Failure(String testCaseName, String fullQualifiedNameOfException) {
-            this.testCaseName = testCaseName;
-            this.fullQualifiedNameOfException = fullQualifiedNameOfException;
-        }
-
-        @Override
-        public String toString() {
-            return "Failure{" +
-                    "testCaseName='" + testCaseName + '\'' +
-                    ", fullQualifiedNameOfException='" + fullQualifiedNameOfException + '\'' +
-                    '}';
-        }
-    }
 
 }
