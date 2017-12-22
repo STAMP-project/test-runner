@@ -37,11 +37,11 @@ public class AbstractTest {
         final File testClasses = new File("src/test/resources/test-projects/target/test-classes");
         testClasses.mkdir();
         // compiling
-        Runtime.getRuntime().exec("javac -d src/test/resources/test-projects/target/classes src/test/resources/test-projects/src/main/java/example/Example.java").waitFor();
-        final Process exec = Runtime.getRuntime().exec("javac -d src/test/resources/test-projects/target/test-classes" +
+        Runtime.getRuntime().exec("javac -d src/test/resources/test-projects/target/classes " +
+                "src/test/resources/test-projects/src/main/java/example/Example.java").waitFor();
+        Runtime.getRuntime().exec("javac -d src/test/resources/test-projects/target/test-classes" +
                 " -cp src/test/resources/test-projects/target/classes/:" + JUNIT_CP +
-                " src/test/resources/test-projects/src/test/java/example/TestSuiteExample.java");
-        exec.waitFor();
+                " src/test/resources/test-projects/src/test/java/example/TestSuiteExample.java" + " src/test/resources/test-projects/src/test/java/example/TestSuiteExample2.java").waitFor();
     }
 
     @AfterClass

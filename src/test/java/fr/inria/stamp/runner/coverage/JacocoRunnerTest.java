@@ -23,17 +23,9 @@ public class JacocoRunnerTest extends AbstractTest {
                         TEST_PROJECT_CLASSES, "example.TestSuiteExample"
                 }
         );
-        final CoverageListener load = CoverageListener.load();
-        assertEquals(141, load.getInstructionsCoveragePerLinePerTestCasesName().keySet()
-                .stream()
-                .flatMap(methodName -> load.getInstructionsCoveragePerLinePerTestCasesName().get(methodName).stream())
-                .map(coverage -> coverage.instructionCovered)
-                .reduce(0, (integer, instructionCovered) -> integer + instructionCovered).intValue());
-        assertEquals(204, load.getInstructionsCoveragePerLinePerTestCasesName().keySet()
-                .stream()
-                .flatMap(methodName -> load.getInstructionsCoveragePerLinePerTestCasesName().get(methodName).stream())
-                .map(coverage -> coverage.instructionTotal)
-                .reduce(0, (integer, instructionTotal) -> integer + instructionTotal).intValue());
+        final Coverage load = Coverage.load();
+        assertEquals(33, load.getInstructionsCovered());
+        assertEquals(37, load.getInstructionsTotal());
     }
 
     @Test
@@ -49,17 +41,9 @@ public class JacocoRunnerTest extends AbstractTest {
                         "test8:test2"
                 }
         );
-        final CoverageListener load = CoverageListener.load();
-        assertEquals(46, load.getInstructionsCoveragePerLinePerTestCasesName().keySet()
-                .stream()
-                .flatMap(methodName -> load.getInstructionsCoveragePerLinePerTestCasesName().get(methodName).stream())
-                .map(coverage -> coverage.instructionCovered)
-                .reduce(0, (integer, instructionCovered) -> integer + instructionCovered).intValue());
-        assertEquals(68, load.getInstructionsCoveragePerLinePerTestCasesName().keySet()
-                .stream()
-                .flatMap(methodName -> load.getInstructionsCoveragePerLinePerTestCasesName().get(methodName).stream())
-                .map(coverage -> coverage.instructionTotal)
-                .reduce(0, (integer, instructionTotal) -> integer + instructionTotal).intValue());
+        final Coverage load = Coverage.load();
+        assertEquals(26, load.getInstructionsCovered());
+        assertEquals(37, load.getInstructionsTotal());
     }
 
     @Test
@@ -77,17 +61,9 @@ public class JacocoRunnerTest extends AbstractTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        final CoverageListener load = CoverageListener.load();
-        assertEquals(141, load.getInstructionsCoveragePerLinePerTestCasesName().keySet()
-                .stream()
-                .flatMap(methodName -> load.getInstructionsCoveragePerLinePerTestCasesName().get(methodName).stream())
-                .map(coverage -> coverage.instructionCovered)
-                .reduce(0, (integer, instructionCovered) -> integer + instructionCovered).intValue());
-        assertEquals(204, load.getInstructionsCoveragePerLinePerTestCasesName().keySet()
-                .stream()
-                .flatMap(methodName -> load.getInstructionsCoveragePerLinePerTestCasesName().get(methodName).stream())
-                .map(coverage -> coverage.instructionTotal)
-                .reduce(0, (integer, instructionTotal) -> integer + instructionTotal).intValue());
+        final Coverage load = Coverage.load();
+        assertEquals(33, load.getInstructionsCovered());
+        assertEquals(37, load.getInstructionsTotal());
     }
 
     @Test
@@ -105,17 +81,10 @@ public class JacocoRunnerTest extends AbstractTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        final CoverageListener load = CoverageListener.load();
-        assertEquals(46, load.getInstructionsCoveragePerLinePerTestCasesName().keySet()
-                .stream()
-                .flatMap(methodName -> load.getInstructionsCoveragePerLinePerTestCasesName().get(methodName).stream())
-                .map(coverage -> coverage.instructionCovered)
-                .reduce(0, (integer, instructionCovered) -> integer + instructionCovered).intValue());
-        assertEquals(68, load.getInstructionsCoveragePerLinePerTestCasesName().keySet()
-                .stream()
-                .flatMap(methodName -> load.getInstructionsCoveragePerLinePerTestCasesName().get(methodName).stream())
-                .map(coverage -> coverage.instructionTotal)
-                .reduce(0, (integer, instructionTotal) -> integer + instructionTotal).intValue());
+
+        final Coverage load = Coverage.load();
+        assertEquals(26, load.getInstructionsCovered());
+        assertEquals(37, load.getInstructionsTotal());
     }
 
     private final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar:" +
