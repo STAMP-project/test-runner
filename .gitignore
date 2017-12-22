@@ -27,11 +27,14 @@ target/
 hs_err_pid*
 
 # Compiled class resources
-!/fr/inria/stamp/coverage/JacocoRunner$MemoryClassLoader.class
-!/fr/inria/stamp/coverage/JacocoRunner.class
-!/fr/inria/stamp/test/TestListener.class
-!/fr/inria/stamp/test/TestListener$Failure.class
-!/fr/inria/stamp/test/TestRunner$MethodFilter.class
-!/fr/inria/stamp/test/TestRunner.class
-!/fr/inria/stamp/coverage/CoverageListener$Coverage.class
-!/fr/inria/stamp/coverage/CoverageListener.class
+!/src/main/resources/runner-classes/fr/inria/stamp/runner/
+!/src/main/resources/runner-classes/fr/inria/stamp/runner/test/
+!/src/main/resources/runner-classes/fr/inria/stamp/runner/test/TestRunner.class
+!/src/main/resources/runner-classes/fr/inria/stamp/runner/test/MethodFilter.class
+!/src/main/resources/runner-classes/fr/inria/stamp/runner/coverage/MemoryClassLoader.class
+!/src/main/resources/runner-classes/fr/inria/stamp/runner/coverage/Coverage.class
+!/src/main/resources/runner-classes/fr/inria/stamp/runner/coverage/
+!/src/main/resources/runner-classes/fr/inria/stamp/runner/test/TestListener.class
+!/src/main/resources/runner-classes/fr/inria/stamp/runner/test/Loader.class
+!/src/main/resources/runner-classes/fr/inria/stamp/runner/coverage/JacocoRunner.class
+!/src/main/resources/runner-classes/fr/inria/stamp/runner/test/Failure.class
