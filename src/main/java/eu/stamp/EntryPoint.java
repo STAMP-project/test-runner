@@ -1,7 +1,10 @@
-package fr.inria.stamp;
+package eu.stamp;
 
-import fr.inria.stamp.runner.coverage.Coverage;
-import fr.inria.stamp.runner.test.TestListener;
+import eu.stamp.runner.coverage.Coverage;
+import eu.stamp.runner.test.TestListener;
+import org.apache.commons.io.FileUtils;
+import org.jacoco.core.runtime.IRuntime;
+import org.objectweb.asm.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,10 +15,7 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -66,8 +66,8 @@ public class EntryPoint {
     }
 
     public static Coverage runCoverageOnTestClasses(String classpath,
-                                       String targetProjectClasses,
-                                       String... fullQualifiedNameOfTestClasses) {
+                                                    String targetProjectClasses,
+                                                    String... fullQualifiedNameOfTestClasses) {
         return EntryPoint.runCoverage(Arrays.stream(new String[]{
                         JAVA_COMMAND,
                         classpath +
@@ -82,9 +82,9 @@ public class EntryPoint {
     }
 
     public static Coverage runCoverageOnTests(String classpath,
-                                       String targetProjectClasses,
-                                       String fullQualifiedNameOfTestClass,
-                                       String... methodNames) {
+                                              String targetProjectClasses,
+                                              String fullQualifiedNameOfTestClass,
+                                              String... methodNames) {
         return EntryPoint.runCoverage(Arrays.stream(new String[]{
                         JAVA_COMMAND,
                         classpath +
@@ -142,11 +142,11 @@ public class EntryPoint {
 
     public static final String JAVA_COMMAND = "java -cp";
 
-    public static final String TEST_RUNNER_QUALIFIED_NAME = "fr.inria.stamp.runner.test.TestRunner";
+    public static final String TEST_RUNNER_QUALIFIED_NAME = "eu.stamp.runner.test.TestRunner";
 
-    public static final String JACOCO_RUNNER_QUALIFIED_NAME = "fr.inria.stamp.runner.coverage.JacocoRunner";
+    public static final String JACOCO_RUNNER_QUALIFIED_NAME = "eu.stamp.runner.coverage.JacocoRunner";
 
-    public static final String CLOVER_RUNNER_QUALIFIED_NAME = "fr.inria.stamp.runner.clover.CloverRunner";
+    public static final String CLOVER_RUNNER_QUALIFIED_NAME = "eu.stamp.runner.clover.CloverRunner";
 
     public static final String PATH_SEPARATOR = System.getProperty("path.separator");
 
@@ -163,13 +163,21 @@ public class EntryPoint {
                     .map(URL::getPath)
                     .collect(Collectors.joining(PATH_SEPARATOR));
 
-    private static final List<String> JACOCO_DEPENDENCIES = Arrays.asList(
-            "org/jacoco/org.jacoco.core/",
-            "org/ow2/asm/asm-debug-all/",
-            "commons-io/commons-io/"
+    private static final Function<List<Class<?>>, String> CLASSES_TO_PATH_OF_DEPENDENCIES = classes ->
+            classes.stream()
+                    .map(clazz -> clazz.getResource("/" + clazz.getName().replaceAll("\\.", "/") + ".class"))
+                    .map(URL::getPath)
+                    .map(path -> path.substring("file:".length()))
+                    .map(path -> path.split("!")[0])
+                    .collect(Collectors.joining(PATH_SEPARATOR));
+
+    private static final List<Class<?>> JACOCO_DEPENDENCIES = Arrays.asList(
+            IRuntime.class,
+            Type.class,
+            FileUtils.class
     );
 
-    public static final String ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES = LIST_OF_DEPENDENCIES_TO_ABS_PATH.apply(JACOCO_DEPENDENCIES);
+    public static final String ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES = CLASSES_TO_PATH_OF_DEPENDENCIES.apply(JACOCO_DEPENDENCIES);
 
     private static String initAbsolutePathToRunnerClasses() {
         final String path = ClassLoader.getSystemClassLoader().getResource("runner-classes/").getPath();

@@ -1,6 +1,6 @@
-package fr.inria.stamp.runner.coverage;
+package eu.stamp.runner.coverage;
 
-import fr.inria.stamp.runner.test.Failure;
+import eu.stamp.runner.test.Failure;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.jacoco.core.data.ExecutionDataStore;
@@ -9,7 +9,7 @@ import org.jacoco.core.instr.Instrumenter;
 import org.jacoco.core.runtime.IRuntime;
 import org.jacoco.core.runtime.LoggerRuntime;
 import org.jacoco.core.runtime.RuntimeData;
-import fr.inria.stamp.runner.test.TestRunner;
+import eu.stamp.runner.test.TestRunner;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,9 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.ResourceBundle.clearCache;

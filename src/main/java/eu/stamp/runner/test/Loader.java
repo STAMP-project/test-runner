@@ -1,4 +1,4 @@
-package fr.inria.stamp.runner.test;
+package eu.stamp.runner.test;
 
 import org.apache.commons.io.FileUtils;
 

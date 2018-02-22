@@ -1,4 +1,4 @@
-package fr.inria.stamp.runner.test;
+package eu.stamp.runner.test;
 
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;

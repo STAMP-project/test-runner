@@ -1,13 +1,8 @@
-package fr.inria.stamp;
+package eu.stamp;
 
-import fr.inria.stamp.runner.coverage.Coverage;
+import eu.stamp.runner.coverage.Coverage;
+import eu.stamp.runner.test.TestListener;
 import org.junit.Test;
-import fr.inria.stamp.runner.test.TestListener;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 

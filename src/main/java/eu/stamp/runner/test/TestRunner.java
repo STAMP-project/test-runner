@@ -1,16 +1,12 @@
-package fr.inria.stamp.runner.test;
+package eu.stamp.runner.test;
 
-import org.junit.runner.Description;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
-import org.junit.runner.manipulation.Filter;
 import org.junit.runner.notification.RunNotifier;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Created by Benjamin DANGLOT
