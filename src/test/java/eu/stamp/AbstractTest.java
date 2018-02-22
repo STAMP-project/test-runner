@@ -1,4 +1,4 @@
-package fr.inria.stamp;
+package eu.stamp;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;

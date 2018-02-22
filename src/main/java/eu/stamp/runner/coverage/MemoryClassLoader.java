@@ -1,4 +1,4 @@
-package fr.inria.stamp.runner.coverage;
+package eu.stamp.runner.coverage;
 
 import java.net.URL;
 import java.net.URLClassLoader;
