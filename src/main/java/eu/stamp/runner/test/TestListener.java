@@ -34,13 +34,13 @@ public class TestListener extends RunListener implements Serializable {
     @Override
     public void testFailure(org.junit.runner.notification.Failure failure) throws Exception {
         this.failingTests.add(new Failure(failure.getDescription().getMethodName(),
-                failure.getException().getClass().getName()));
+                failure.getException().getClass().getName(), failure.getMessage()));
     }
 
     @Override
     public void testAssumptionFailure(org.junit.runner.notification.Failure failure) {
         this.assumptionFailingTests.add(new Failure(failure.getDescription().getMethodName(),
-                failure.getException().getClass().getName()));
+                failure.getException().getClass().getName(), failure.getMessage()));
     }
 
     @Override
