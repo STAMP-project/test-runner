@@ -4,9 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>eu.stamp</groupId>
+    <groupId>eu.stamp-project</groupId>
     <artifactId>test-runner</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>A runner for JUnit test.</description>
+    <url>http://github.com/STAMP-project/testrunner.git</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -16,6 +20,20 @@
         <github.global.server>github</github.global.server>
     </properties>
 
+    <licenses>
+        <license>
+            <name>GNU General Public License v3.0</name>
+            <url>https://www.gnu.org/licenses/gpl.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Benjamin Danglot</name>
+            <email>benjamin.danglot@inria.fr</email>
+        </developer>
+    </developers>
+
     <distributionManagement>
         <repository>
             <id>internal.repo</id>
@@ -23,6 +41,12 @@
             <url>file://${project.build.directory}/mvn-repo</url>
         </repository>
     </distributionManagement>
+
+    <scm>
+        <connection>scm:git:git://github.com/STAMP-project/testrunner.git</connection>
+        <developerConnection>scm:git:ssh://github.com:STAMP-project/testrunner.git</developerConnection>
+        <url>http://github.com/STAMP-project/testrunner/tree/master</url>
+    </scm>
 
     <dependencies>
 
