@@ -27,6 +27,19 @@ import java.util.stream.Stream;
  */
 public class EntryPoint {
 
+    public static boolean verbose = false;
+
+    /**
+     * Execution of various test classes.
+     * <p>
+     * Run all the test classes given as a full qualified name. For instance, my.package.MyClassTest.
+     * This methods will run all the test methods within the given test classes.
+     * </p>
+     *
+     * @param classpath                      the classpath required to run the given test classes.
+     * @param fullQualifiedNameOfTestClasses test classes to be run.
+     * @return an instance of TestListener {@link eu.stamp.project.testrunner.runner.test.TestListener} containing result of the exeuction of test methods.
+     */
     public static TestListener runTestClasses(String classpath,
                                               String... fullQualifiedNameOfTestClasses) {
         return runTests(Arrays.stream(new String[]{
@@ -39,6 +52,19 @@ public class EntryPoint {
         );
     }
 
+    /**
+     * Execution of various test methods inside a given test class.
+     * <p>
+     * Run all the test methods given inside the given test class. The test class must be given as a full qualified name.
+     * For instance, my.package.MyClassTest.
+     * This methods will run all the test methods given.
+     * </p>
+     *
+     * @param classpath                    the classpath required to run the given test.
+     * @param fullQualifiedNameOfTestClass test class to be run.
+     * @param testMethods                  test methods to be run.
+     * @return an instance of TestListener {@link eu.stamp.project.testrunner.runner.test.TestListener} containing result of the exeuction of test methods.
+     */
     public static TestListener runTests(String classpath,
                                         String fullQualifiedNameOfTestClass,
                                         String... testMethods) {
@@ -65,6 +91,18 @@ public class EntryPoint {
         return load;
     }
 
+    /**
+     * Compute of the instruction coverage using <a href=http://www.eclemma.org/jacoco/>JaCoCo</a> for various test classes.
+     * <p>
+     * This method compute the instruction coverage, using <a href=http://www.eclemma.org/jacoco/>JaCoCo</a> obtained by executing the given test classes.
+     * This method require the path to the binaries, i.e. .class, of the source code on which the instruction must be computed.
+     * </p>
+     *
+     * @param classpath                      the classpath required to run the given tests classes.
+     * @param targetProjectClasses           path to the folder that contains binaries, i.e. .class, on which Jacoco computes the coverage.
+     * @param fullQualifiedNameOfTestClasses test classes to be run.
+     * @return an instance of Coverage {@link eu.stamp.project.testrunner.runner.coverage.Coverage} containing result of the exeuction of test classes.
+     */
     public static Coverage runCoverageOnTestClasses(String classpath,
                                                     String targetProjectClasses,
                                                     String... fullQualifiedNameOfTestClasses) {
@@ -81,6 +119,19 @@ public class EntryPoint {
         );
     }
 
+    /**
+     * Compute of the instruction coverage using <a href=http://www.eclemma.org/jacoco/>JaCoCo</a> for various test methods inside the given test class.
+     * <p>
+     * This method compute the instruction coverage, using <a href=http://www.eclemma.org/jacoco/>JaCoCo</a> obtained by executing the given test methods inside the given test classes.
+     * This method require the path to the binaries, i.e. .class, of the source code on which the instruction must be computed.
+     * </p>
+     *
+     * @param classpath                    the classpath required to run the given tests classes.
+     * @param targetProjectClasses         path to the folder that contains binaries, i.e. .class, on which Jacoco computes the coverage.
+     * @param fullQualifiedNameOfTestClass test classes to be run.
+     * @param testMethods                  test methods to be run.
+     * @return an instance of Coverage {@link eu.stamp.project.testrunner.runner.coverage.Coverage} containing result of the exeuction of test classes.
+     */
     public static Coverage runCoverageOnTests(String classpath,
                                               String targetProjectClasses,
                                               String fullQualifiedNameOfTestClass,
@@ -138,23 +189,21 @@ public class EntryPoint {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EntryPoint.class);
 
-    public static final String WHITE_SPACE = " ";
+    static final String WHITE_SPACE = " ";
 
-    public static final String JAVA_COMMAND = "java -cp";
+    static final String JAVA_COMMAND = "java -cp";
 
-    public static final String TEST_RUNNER_QUALIFIED_NAME = "eu.stamp.project.testrunner.runner.test.TestRunner";
+    static final String TEST_RUNNER_QUALIFIED_NAME = "eu.stamp.project.testrunner.runner.test.TestRunner";
 
-    public static final String JACOCO_RUNNER_QUALIFIED_NAME = "eu.stamp.project.testrunner.runner.coverage.JacocoRunner";
+    static final String JACOCO_RUNNER_QUALIFIED_NAME = "eu.stamp.project.testrunner.runner.coverage.JacocoRunner";
 
-    public static final String CLOVER_RUNNER_QUALIFIED_NAME = "eu.stamp.project.testrunner.runner.clover.CloverRunner";
+    static final String CLOVER_RUNNER_QUALIFIED_NAME = "eu.stamp.project.testrunner.runner.clover.CloverRunner";
 
-    public static final String PATH_SEPARATOR = System.getProperty("path.separator");
+    static final String PATH_SEPARATOR = System.getProperty("path.separator");
 
-    public static final String LINE_SEPARATOR = System.getProperty("line.separator");
+    static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    public static final String ABSOLUTE_PATH_TO_RUNNER_CLASSES = initAbsolutePathToRunnerClasses();
-
-    public static boolean verbose = false;
+    static final String ABSOLUTE_PATH_TO_RUNNER_CLASSES = initAbsolutePathToRunnerClasses();
 
     private static final Function<List<String>, String> LIST_OF_DEPENDENCIES_TO_ABS_PATH = list ->
             Arrays.stream(((URLClassLoader) ClassLoader.getSystemClassLoader())
@@ -177,7 +226,7 @@ public class EntryPoint {
             FileUtils.class
     );
 
-    public static final String ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES = CLASSES_TO_PATH_OF_DEPENDENCIES.apply(JACOCO_DEPENDENCIES);
+    private static final String ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES = CLASSES_TO_PATH_OF_DEPENDENCIES.apply(JACOCO_DEPENDENCIES);
 
     private static String initAbsolutePathToRunnerClasses() {
         final String path = ClassLoader.getSystemClassLoader().getResource("runner-classes/").getPath();

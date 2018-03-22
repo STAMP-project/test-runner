@@ -15,6 +15,10 @@ import java.util.List;
  */
 public class TestRunner {
 
+    /**
+     * The entry method to execute junit tests.
+     * This method is not meant to be used directly, but rather using {@link eu.stamp.project.testrunner.EntryPoint}
+     */
     public static void main(String[] args) throws ClassNotFoundException {
         final TestListener testListener = new TestListener();
         if (args[0].contains(":")) {

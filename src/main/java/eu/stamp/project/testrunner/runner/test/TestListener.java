@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
  * Created by Benjamin DANGLOT
  * benjamin.danglot@inria.fr
  * on 30/06/17
+ *
+ * This object is the output of the execution of the tests.
  */
 public class TestListener extends RunListener implements Serializable {
 

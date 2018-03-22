@@ -10,6 +10,9 @@ import org.jacoco.core.data.ExecutionDataStore;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * This class represents the instruction coverage of source.
+ */
 public class Coverage extends TestListener {
 
     private int instructionsCovered;
@@ -29,7 +32,7 @@ public class Coverage extends TestListener {
         return "globalCoverageResult";
     }
 
-    public void collectData(ExecutionDataStore executionData, String classesDirectory) {
+    void collectData(ExecutionDataStore executionData, String classesDirectory) {
         final CoverageBuilder coverageBuilder = new CoverageBuilder();
         final Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
         try {
@@ -53,6 +56,10 @@ public class Coverage extends TestListener {
         return this.instructionsCovered + " / " + this.instructionsTotal;
     }
 
+    /**
+     * Load from serialized object
+     * @return an Instance of Coverage loaded from a serialized file. The name of the file is returned by {@link #getSerializeName()}
+     */
     public static Coverage load() {
         return new Loader<Coverage>().load(new Coverage().getSerializeName());
     }
