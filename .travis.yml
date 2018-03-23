@@ -13,7 +13,7 @@ install:
   - ./src/compile-and-clean-test-projects.sh
 
 script:
-  - mvn clean install
+  - mvn clean test
 
 after_success:
   - mvn clean test jacoco:report coveralls:report
