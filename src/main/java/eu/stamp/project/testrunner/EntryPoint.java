@@ -129,7 +129,7 @@ public class EntryPoint {
      * @param classpath                    the classpath required to run the given tests classes.
      * @param targetProjectClasses         path to the folder that contains binaries, i.e. .class, on which Jacoco computes the coverage.
      * @param fullQualifiedNameOfTestClass test classes to be run.
-     * @param testMethods                  test methods to be run.
+     * @param methodNames                  test methods to be run.
      * @return an instance of Coverage {@link eu.stamp.project.testrunner.runner.coverage.Coverage} containing result of the exeuction of test classes.
      */
     public static Coverage runCoverageOnTests(String classpath,

@@ -32,8 +32,10 @@ public class JacocoRunner {
     /**
      * The entry method to compute the instruction coverage.
      * This method is not meant to be used directly, but rather using {@link eu.stamp.project.testrunner.EntryPoint}
+     * @param args this array should be build by {@link eu.stamp.project.testrunner.EntryPoint}
+     * @throws ClassNotFoundException in case of the supplied classpath is wrong
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ClassNotFoundException {
         // inputs: classes:test-classes, fullqualifiednameoftest, method1:method2....
         final String classesDirectory = args[0].split(":")[0];
         final String testClassesDirectory = args[0].split(":")[1];

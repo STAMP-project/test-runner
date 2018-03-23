@@ -18,6 +18,8 @@ public class TestRunner {
     /**
      * The entry method to execute junit tests.
      * This method is not meant to be used directly, but rather using {@link eu.stamp.project.testrunner.EntryPoint}
+     * @param args this array should be build by {@link eu.stamp.project.testrunner.EntryPoint}
+     * @throws ClassNotFoundException in case of the supplied classpath is wrong
      */
     public static void main(String[] args) throws ClassNotFoundException {
         final TestListener testListener = new TestListener();

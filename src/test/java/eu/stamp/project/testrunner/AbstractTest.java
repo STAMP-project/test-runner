@@ -26,6 +26,7 @@ public class AbstractTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
+        EntryPoint.verbose = true;
         // create folders
         final File target = new File("src/test/resources/test-projects/target");
         if (target.exists()) {
