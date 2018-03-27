@@ -5,6 +5,8 @@ import eu.stamp.project.testrunner.runner.test.TestListener;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Created by Benjamin DANGLOT
@@ -12,6 +14,21 @@ import static org.junit.Assert.assertEquals;
  * on 19/12/17
  */
 public class EntryPointTest extends AbstractTest {
+
+    @Test
+    public void testTimeOut() {
+        EntryPoint.defaultTimeoutInMs = 1;
+        try {
+            EntryPoint.runTestClasses(
+                    JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                    "example.TestSuiteExample", "example.TestSuiteExample2"
+            );
+            fail("Should have thrown a Time out Exception");
+        } catch (Exception e) {
+            assertTrue(true); // success!
+        }
+        EntryPoint.defaultTimeoutInMs = 10000;
+    }
 
     @Test
     public void testRunTestClasses() throws Exception {
