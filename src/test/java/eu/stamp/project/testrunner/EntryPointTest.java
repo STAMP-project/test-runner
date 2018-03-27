@@ -62,13 +62,15 @@ public class EntryPointTest extends AbstractTest {
         assertEquals(0, testListener.getFailingTests().size());
     }
 
-    @Test
+    @Test //FLAKY
     public void testRunTestTestMethods() throws Exception {
 
         /*
             Test the method runTest() of EntryPoint.
                 It should return the TestListener with the result of the execution of the test class.
          */
+
+        EntryPoint.verbose = true;
 
         final TestListener testListener = EntryPoint.runTests(
                 JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
@@ -77,6 +79,8 @@ public class EntryPointTest extends AbstractTest {
         );
         assertEquals(2, testListener.getPassingTests().size());
         assertEquals(0, testListener.getFailingTests().size());
+
+        EntryPoint.verbose = false;
     }
 
     @Test
