@@ -33,6 +33,9 @@ public class JacocoRunner {
      * The entry method to compute the instruction coverage.
      * This method is not meant to be used directly, but rather using {@link eu.stamp.project.testrunner.EntryPoint}
      * @param args this array should be build by {@link eu.stamp.project.testrunner.EntryPoint}
+     *             the first argument is the path to classes and test classes separated by ":". <i>e.g. target/classes:target/test-classes</i> for a typical maven project.
+     *             the second argument is the full qualified name of the test class
+     *             the third argument is optionally the list of the test method name separated by ":".
      * @throws ClassNotFoundException in case of the supplied classpath is wrong
      */
     public static void main(String[] args) throws ClassNotFoundException {

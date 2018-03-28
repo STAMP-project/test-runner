@@ -8,14 +8,17 @@ import org.objectweb.asm.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -24,10 +27,44 @@ import java.util.stream.Stream;
  * Created by Benjamin DANGLOT
  * benjamin.danglot@inria.fr
  * on 19/12/17
+ *
+ * This class is the EntryPoint of the project. This is the only class that the user should use.
+ * <p>
+ *     Main methods are:
+ *     <ul>
+ *      <li>{@link eu.stamp.project.testrunner.EntryPoint#runTestClasses(String, String...)} to run all the given test classes.</li>
+ *      <li>{@link eu.stamp.project.testrunner.EntryPoint#runTests(String, String, String...)} to run all the test methods of the given test class</li>
+ *      <li>{@link eu.stamp.project.testrunner.EntryPoint#runCoverageOnTestClasses(String, String, String...)} to compute the coverage of the given test classes</li>
+ *      <li>{@link eu.stamp.project.testrunner.EntryPoint#runTests(String, String, String...)} to compute the coverage of the test methods of the given test classes</li>
+ *     </ul>
+ * </p>
+ *
+ * <p>
+ *     This class relies on {@link eu.stamp.project.testrunner.runner.test.TestRunner} and {@link eu.stamp.project.testrunner.runner.coverage.JacocoRunner}
+ *     to respectively execute tests and compute the coverage.
+ *     This class creates a new JVM by calling the command "java" with proper arguments.
+ * </p>
+ *
+ * <p>
+ *     This class has two options accessible from the outside:
+ *     <ul>
+ *         <li>verbose: boolean to enable traces to track the progress</li>
+ *         <li>defaultTimeoutInMs: integer timeout time in milliseconds for the whole requested process.</li>
+ *     </ul>
+ * </p>
+ *
  */
 public class EntryPoint {
 
+    /**
+     * enable traces to track the progress
+     */
     public static boolean verbose = false;
+
+    /**
+     *  timeout time in milliseconds for the whole requested process
+     */
+    public static int defaultTimeoutInMs = 10000;
 
     /**
      * Execution of various test classes.
@@ -39,9 +76,10 @@ public class EntryPoint {
      * @param classpath                      the classpath required to run the given test classes.
      * @param fullQualifiedNameOfTestClasses test classes to be run.
      * @return an instance of TestListener {@link eu.stamp.project.testrunner.runner.test.TestListener} containing result of the exeuction of test methods.
+     * @throws TimeoutException when the execution takes longer than defaultTimeoutInMs
      */
     public static TestListener runTestClasses(String classpath,
-                                              String... fullQualifiedNameOfTestClasses) {
+                                              String... fullQualifiedNameOfTestClasses) throws TimeoutException {
         return runTests(Arrays.stream(new String[]{
                         JAVA_COMMAND,
                         classpath + PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES,
@@ -63,11 +101,12 @@ public class EntryPoint {
      * @param classpath                    the classpath required to run the given test.
      * @param fullQualifiedNameOfTestClass test class to be run.
      * @param testMethods                  test methods to be run.
-     * @return an instance of TestListener {@link eu.stamp.project.testrunner.runner.test.TestListener} containing result of the exeuction of test methods.
+     * @return an instance of TestListener {@link eu.stamp.project.testrunner.runner.test.TestListener} containing result of the execution of test methods.
+     * @throws TimeoutException when the execution takes longer than defaultTimeoutInMs
      */
     public static TestListener runTests(String classpath,
                                         String fullQualifiedNameOfTestClass,
-                                        String... testMethods) {
+                                        String... testMethods) throws TimeoutException {
         return runTests(Arrays.stream(new String[]{
                         JAVA_COMMAND,
                         classpath + PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES,
@@ -79,8 +118,13 @@ public class EntryPoint {
         );
     }
 
-    private static TestListener runTests(String commandLine) {
-        runGivenCommandLine(commandLine);
+    private static TestListener runTests(String commandLine) throws TimeoutException {
+        try {
+            runGivenCommandLine(commandLine);
+        } catch (TimeoutException e) {
+            LOGGER.warn("Timeout when running {}", commandLine);
+            throw e;
+        }
         final TestListener load = TestListener.load();
         if (EntryPoint.verbose) {
             LOGGER.info("Test has been run: {}",
@@ -101,11 +145,12 @@ public class EntryPoint {
      * @param classpath                      the classpath required to run the given tests classes.
      * @param targetProjectClasses           path to the folder that contains binaries, i.e. .class, on which Jacoco computes the coverage.
      * @param fullQualifiedNameOfTestClasses test classes to be run.
-     * @return an instance of Coverage {@link eu.stamp.project.testrunner.runner.coverage.Coverage} containing result of the exeuction of test classes.
+     * @return an instance of Coverage {@link eu.stamp.project.testrunner.runner.coverage.Coverage} containing result of the execution of test classes.
+     * @throws TimeoutException when the execution takes longer than defaultTimeoutInMs
      */
     public static Coverage runCoverageOnTestClasses(String classpath,
                                                     String targetProjectClasses,
-                                                    String... fullQualifiedNameOfTestClasses) {
+                                                    String... fullQualifiedNameOfTestClasses) throws TimeoutException {
         return EntryPoint.runCoverage(Arrays.stream(new String[]{
                         JAVA_COMMAND,
                         classpath +
@@ -131,11 +176,12 @@ public class EntryPoint {
      * @param fullQualifiedNameOfTestClass test classes to be run.
      * @param methodNames                  test methods to be run.
      * @return an instance of Coverage {@link eu.stamp.project.testrunner.runner.coverage.Coverage} containing result of the exeuction of test classes.
+     * @throws TimeoutException when the execution takes longer than defaultTimeoutInMs
      */
     public static Coverage runCoverageOnTests(String classpath,
                                               String targetProjectClasses,
                                               String fullQualifiedNameOfTestClass,
-                                              String... methodNames) {
+                                              String... methodNames) throws TimeoutException {
         return EntryPoint.runCoverage(Arrays.stream(new String[]{
                         JAVA_COMMAND,
                         classpath +
@@ -150,8 +196,13 @@ public class EntryPoint {
         );
     }
 
-    private static Coverage runCoverage(String commandLine) {
-        runGivenCommandLine(commandLine);
+    private static Coverage runCoverage(String commandLine) throws TimeoutException {
+        try {
+            runGivenCommandLine(commandLine);
+        } catch (TimeoutException e) {
+            LOGGER.warn("Timeout when running {}", commandLine);
+            throw e;
+        }
         final Coverage load = Coverage.load();
         if (EntryPoint.verbose) {
             LOGGER.info("Global Coverage has been computed {}", load.toString());
@@ -159,31 +210,57 @@ public class EntryPoint {
         return load;
     }
 
-    private static void printStream(InputStream stream, PrintStream print) {
-        try (BufferedReader input =
-                     new BufferedReader(new InputStreamReader(stream))) {
-            final String toBePrinted = input.lines().collect(Collectors.joining(System.getProperty("line.separator")));
-            if (!toBePrinted.isEmpty()) {
-                print.println(toBePrinted);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static void runGivenCommandLine(String commandLine) {
+    private static void runGivenCommandLine(String commandLine) throws TimeoutException {
         if (EntryPoint.verbose) {
             LOGGER.info("Run: {}", commandLine);
         }
-        try {
-            Process p = Runtime.getRuntime().exec(commandLine);
-            p.waitFor();
-            if (EntryPoint.verbose) {
-                printStream(p.getInputStream(), System.out);
-                printStream(p.getErrorStream(), System.err);
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        final Future<?> submit = executor.submit(() -> {
+            try {
+                Process p = Runtime.getRuntime().exec(commandLine);
+                p.waitFor();
+                if (EntryPoint.verbose) {
+                    new ThreadToReadInputStream(System.out, p.getInputStream()).start();
+                    new ThreadToReadInputStream(System.err, p.getErrorStream()).start();
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
+        });
+        try {
+            submit.get(defaultTimeoutInMs, TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
+        } finally {
+            submit.cancel(true);
+            executor.shutdownNow();
+        }
+    }
+
+    private static class ThreadToReadInputStream extends Thread {
+
+        private final PrintStream output;
+        private final InputStream input;
+
+        ThreadToReadInputStream(PrintStream output, InputStream input) {
+            this.output = output;
+            this.input = input;
+        }
+
+        @Override
+        public synchronized void start() {
+            int read;
+            try {
+                while ((read = this.input.read()) != -1) {
+                    this.output.print((char) read);
+                }
+            } catch (Exception ignored) {
+                //ignored
+            } finally {
+                this.interrupt();
+            }
         }
     }
 
