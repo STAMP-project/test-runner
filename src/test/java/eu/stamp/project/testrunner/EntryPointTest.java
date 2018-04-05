@@ -16,6 +16,23 @@ import static org.junit.Assert.fail;
 public class EntryPointTest extends AbstractTest {
 
     @Test
+    public void testOnEasyMockTests() throws Exception {
+
+        /*
+            Test to run test class that use easymock framework
+         */
+
+        final TestListener testListener = EntryPoint.runTestClasses(
+                JUNIT_CP + EntryPoint.PATH_SEPARATOR + EASYMOCK_CP +
+                        EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                "easymock.LoginControllerIntegrationTest"
+        );
+        assertEquals(7, testListener.getRunningTests().size());
+        assertEquals(7, testListener.getPassingTests().size());
+        assertEquals(0, testListener.getFailingTests().size());
+    }
+
+    @Test
     public void testTimeOut() {
         EntryPoint.defaultTimeoutInMs = 1;
         try {
