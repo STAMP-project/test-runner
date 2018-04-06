@@ -1,6 +1,7 @@
 package eu.stamp.project.testrunner;
 
 import eu.stamp.project.testrunner.runner.coverage.Coverage;
+import eu.stamp.project.testrunner.runner.coverage.CoveragePerTestMethod;
 import eu.stamp.project.testrunner.runner.test.Failure;
 import eu.stamp.project.testrunner.runner.test.TestListener;
 import org.junit.Test;
@@ -177,5 +178,30 @@ public class EntryPointTest extends AbstractTest {
 
         assertEquals(33, globalCoverage.getInstructionsCovered());
         assertEquals(118, globalCoverage.getInstructionsTotal());
+    }
+
+    @Test
+    public void testRunCoveragePerTestMethods() throws Exception {
+
+        /*
+            Test the runCoveragePerTestMethods() of EntryPoint.
+                It should return the CoverageResult with the instruction coverage computed by Jacoco.
+         */
+        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar:" +
+                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar:" +
+                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar:" +
+                JUNIT_CP;
+
+        final CoveragePerTestMethod coveragePerTestMethod = EntryPoint.runCoveragePerTestMethods(
+                classpath + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                TEST_PROJECT_CLASSES,
+                "example.TestSuiteExample",
+                "test8", "test3"
+        );
+
+        assertEquals(26, coveragePerTestMethod.getCoverageOf("test3").getInstructionsCovered());
+        assertEquals(118, coveragePerTestMethod.getCoverageOf("test3").getInstructionsTotal());
+        assertEquals(23, coveragePerTestMethod.getCoverageOf("test8").getInstructionsCovered());
+        assertEquals(118, coveragePerTestMethod.getCoverageOf("test8").getInstructionsTotal());
     }
 }
