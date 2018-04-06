@@ -1,6 +1,7 @@
 # Config files
 .idea/
 test-runner.iml
+*.iml
 
 # Compiled class file
 *.class

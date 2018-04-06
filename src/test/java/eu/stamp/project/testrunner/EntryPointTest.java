@@ -33,6 +33,30 @@ public class EntryPointTest extends AbstractTest {
     }
 
     @Test
+    public void testOnFailingTest() throws Exception {
+        /*
+            EntryPoint should return a proper TestListener.
+            This TestListener contains:
+                - three running test
+                - one failing test
+                - one passing test
+                - one assumption failing test
+                - one ignored test
+         */
+
+        final TestListener testListener = EntryPoint.runTestClasses(
+                JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                "failing.FailingTestClass"
+        );
+
+        assertEquals(3, testListener.getRunningTests().size());
+        assertEquals(1, testListener.getPassingTests().size());
+        assertEquals(1, testListener.getFailingTests().size());
+        assertEquals(1, testListener.getAssumptionFailingTests().size());
+        assertEquals(1, testListener.getIgnoredTests().size());
+    }
+
+    @Test
     public void testTimeOut() {
         EntryPoint.defaultTimeoutInMs = 1;
         try {

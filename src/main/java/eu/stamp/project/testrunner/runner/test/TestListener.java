@@ -63,7 +63,7 @@ public class TestListener extends RunListener implements Serializable {
                 .collect(Collectors.toList());
         return this.runningTests.stream()
                 .filter(description -> !assumptionFailing.contains(description))
-                .filter(description -> !assumptionFailingTests.contains(description))
+                .filter(description -> !failing.contains(description))
                 .collect(Collectors.toList());
     }
 
@@ -114,5 +114,13 @@ public class TestListener extends RunListener implements Serializable {
         return new Loader<TestListener>().load(new TestListener().getSerializeName());
     }
 
-
+    @Override
+    public String toString() {
+        return "TestListener{" +
+                "runningTests=" + runningTests +
+                ", failingTests=" + failingTests +
+                ", assumptionFailingTests=" + assumptionFailingTests +
+                ", ignoredTests=" + ignoredTests +
+                '}';
+    }
 }
