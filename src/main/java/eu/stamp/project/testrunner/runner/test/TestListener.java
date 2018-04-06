@@ -38,6 +38,7 @@ public class TestListener extends RunListener implements Serializable {
         this.failingTests.add(
                 new Failure(
                         failure.getDescription().getMethodName(),
+                        failure.getDescription().getClassName(),
                         failure.getException()
                 )
         );
@@ -48,6 +49,7 @@ public class TestListener extends RunListener implements Serializable {
         this.assumptionFailingTests.add(
                 new Failure(
                         failure.getDescription().getMethodName(),
+                        failure.getDescription().getClassName(),
                         failure.getException()
                 )
         );

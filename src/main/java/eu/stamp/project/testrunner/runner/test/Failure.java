@@ -14,14 +14,16 @@ import java.io.StringWriter;
 public class Failure implements Serializable {
 
     public final String testCaseName;
+    public final String testClassName;
     public final String fullQualifiedNameOfException;
     public final String messageOfFailure;
     public final String stackTrace;
 
-    public Failure(String testCaseName, Throwable exception) {
+    public Failure(String testCaseName, String testClassName, Throwable exception) {
         this.testCaseName = testCaseName;
         this.fullQualifiedNameOfException = exception.getClass().getName();
         this.messageOfFailure = exception.getMessage();
+        this.testClassName = testClassName;
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         exception.printStackTrace(pw);
@@ -30,12 +32,7 @@ public class Failure implements Serializable {
 
     @Override
     public String toString() {
-        return "Failure{" +
-                "testCaseName='" + testCaseName + '\'' +
-                ", fullQualifiedNameOfException='" + fullQualifiedNameOfException + '\'' +
-                ", messageOfFailure='" + messageOfFailure + '\'' +
-                ", stackTrace=" + stackTrace +
-                '}';
+        return this.testCaseName + "(" + this.testClassName + "): " + this.messageOfFailure;
     }
 
     @Override
@@ -49,9 +46,7 @@ public class Failure implements Serializable {
             return false;
         if (fullQualifiedNameOfException != null ? !fullQualifiedNameOfException.equals(failure.fullQualifiedNameOfException) : failure.fullQualifiedNameOfException != null)
             return false;
-        if (messageOfFailure != null ? !messageOfFailure.equals(failure.messageOfFailure) : failure.messageOfFailure != null)
-            return false;
-        return stackTrace != null ? stackTrace.equals(failure.stackTrace) : failure.stackTrace == null;
+        return messageOfFailure != null ? messageOfFailure.equals(failure.messageOfFailure) : failure.messageOfFailure == null;
     }
 
     @Override
@@ -59,7 +54,6 @@ public class Failure implements Serializable {
         int result = testCaseName != null ? testCaseName.hashCode() : 0;
         result = 31 * result + (fullQualifiedNameOfException != null ? fullQualifiedNameOfException.hashCode() : 0);
         result = 31 * result + (messageOfFailure != null ? messageOfFailure.hashCode() : 0);
-        result = 31 * result + (stackTrace != null ? stackTrace.hashCode() : 0);
         return result;
     }
 }
