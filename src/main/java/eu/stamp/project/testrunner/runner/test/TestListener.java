@@ -87,6 +87,13 @@ public class TestListener extends RunListener implements Serializable {
         return ignoredTests;
     }
 
+    public Failure getFailureOf(String testMethodName) {
+        return this.getFailingTests().stream()
+                .filter(failure -> failure.testCaseName.equals(testMethodName))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Could not find %s in failing test", testMethodName)));
+    }
+
     protected String getSerializeName() {
         return "TestListener";
     }

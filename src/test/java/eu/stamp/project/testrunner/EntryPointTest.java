@@ -1,6 +1,7 @@
 package eu.stamp.project.testrunner;
 
 import eu.stamp.project.testrunner.runner.coverage.Coverage;
+import eu.stamp.project.testrunner.runner.test.Failure;
 import eu.stamp.project.testrunner.runner.test.TestListener;
 import org.junit.Test;
 
@@ -54,6 +55,16 @@ public class EntryPointTest extends AbstractTest {
         assertEquals(1, testListener.getFailingTests().size());
         assertEquals(1, testListener.getAssumptionFailingTests().size());
         assertEquals(1, testListener.getIgnoredTests().size());
+
+        final Failure testFailing = testListener.getFailureOf("testFailing");
+        assertEquals("testFailing", testFailing.testCaseName);
+
+        try {
+            testListener.getFailureOf("testPassing");
+            fail("Should have throw IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            assertTrue(true); // expected
+        }
     }
 
     @Test
