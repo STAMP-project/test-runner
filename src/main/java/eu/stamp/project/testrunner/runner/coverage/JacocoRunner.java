@@ -57,11 +57,11 @@ public class JacocoRunner {
         }
     }
 
-    private MemoryClassLoader instrumentedClassLoader;
+    protected MemoryClassLoader instrumentedClassLoader;
 
-    private Instrumenter instrumenter;
+    protected Instrumenter instrumenter;
 
-    private IRuntime runtime;
+    protected IRuntime runtime;
 
     public JacocoRunner(String classesDirectory, String testClassesDirectory) {
         try {

@@ -27,6 +27,11 @@ public class Coverage extends TestListener {
         return instructionsTotal;
     }
 
+    /*public Coverage(int instructionsCovered, int instructionsTotal) {
+        this.instructionsCovered = instructionsCovered;
+        this.instructionsTotal = instructionsTotal;
+    }*/
+
     @Override
     protected String getSerializeName() {
         return "globalCoverageResult";
