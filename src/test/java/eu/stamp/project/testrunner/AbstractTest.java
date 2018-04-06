@@ -51,6 +51,7 @@ public class AbstractTest {
         command = "javac -d src/test/resources/test-projects/target/test-classes" +
                 " -cp src/test/resources/test-projects/target/classes/" + EntryPoint.PATH_SEPARATOR + JUNIT_CP + EntryPoint.PATH_SEPARATOR + EASYMOCK_CP +
                 " src/test/resources/test-projects/src/test/java/example/TestSuiteExample.java" +
+                " src/test/resources/test-projects/src/test/java/failing/FailingTestClass.java" +
                 " src/test/resources/test-projects/src/test/java/example/TestSuiteExample2.java" +
                 " src/test/resources/test-projects/src/test/java/easymock/LoginControllerIntegrationTest.java";
         System.out.println(command);
