@@ -25,7 +25,7 @@ public class JacocoRunnerTest extends AbstractTest {
         );
         final Coverage load = Coverage.load();
         assertEquals(33, load.getInstructionsCovered());
-        assertEquals(37, load.getInstructionsTotal());
+        assertEquals(118, load.getInstructionsTotal());
     }
 
     @Test
@@ -43,7 +43,7 @@ public class JacocoRunnerTest extends AbstractTest {
         );
         final Coverage load = Coverage.load();
         assertEquals(26, load.getInstructionsCovered());
-        assertEquals(37, load.getInstructionsTotal());
+        assertEquals(118, load.getInstructionsTotal());
     }
 
     @Test
@@ -63,7 +63,7 @@ public class JacocoRunnerTest extends AbstractTest {
         }
         final Coverage load = Coverage.load();
         assertEquals(33, load.getInstructionsCovered());
-        assertEquals(37, load.getInstructionsTotal());
+        assertEquals(118, load.getInstructionsTotal());
     }
 
     @Test
@@ -84,7 +84,7 @@ public class JacocoRunnerTest extends AbstractTest {
 
         final Coverage load = Coverage.load();
         assertEquals(26, load.getInstructionsCovered());
-        assertEquals(37, load.getInstructionsTotal());
+        assertEquals(118, load.getInstructionsTotal());
     }
 
     private final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar:" +

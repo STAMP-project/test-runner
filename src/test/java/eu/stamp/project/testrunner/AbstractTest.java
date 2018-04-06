@@ -38,11 +38,25 @@ public class AbstractTest {
         final File testClasses = new File("src/test/resources/test-projects/target/test-classes");
         testClasses.mkdir();
         // compiling
-        Runtime.getRuntime().exec("javac -d src/test/resources/test-projects/target/classes " +
-                "src/test/resources/test-projects/src/main/java/example/Example.java").waitFor();
-        Runtime.getRuntime().exec("javac -d src/test/resources/test-projects/target/test-classes" +
-                " -cp src/test/resources/test-projects/target/classes/:" + JUNIT_CP +
-                " src/test/resources/test-projects/src/test/java/example/TestSuiteExample.java" + " src/test/resources/test-projects/src/test/java/example/TestSuiteExample2.java").waitFor();
+        String command = "javac -d src/test/resources/test-projects/target/classes " +
+                "src/test/resources/test-projects/src/main/java/example/Example.java" +
+                " src/test/resources/test-projects/src/main/java/tobemocked/LoginController.java" +
+                " src/test/resources/test-projects/src/main/java/tobemocked/LoginDao.java" +
+                " src/test/resources/test-projects/src/main/java/tobemocked/LoginService.java" +
+                " src/test/resources/test-projects/src/main/java/tobemocked/UserForm.java";
+        System.out.println(command);
+        if (Runtime.getRuntime().exec(command).waitFor() != 0) {
+            throw new RuntimeException("Problem when compiling sources.");
+        }
+        command = "javac -d src/test/resources/test-projects/target/test-classes" +
+                " -cp src/test/resources/test-projects/target/classes/" + EntryPoint.PATH_SEPARATOR + JUNIT_CP + EntryPoint.PATH_SEPARATOR + EASYMOCK_CP +
+                " src/test/resources/test-projects/src/test/java/example/TestSuiteExample.java" +
+                " src/test/resources/test-projects/src/test/java/example/TestSuiteExample2.java" +
+                " src/test/resources/test-projects/src/test/java/easymock/LoginControllerIntegrationTest.java";
+        System.out.println(command);
+        if (Runtime.getRuntime().exec(command).waitFor() != 0) {
+            throw new RuntimeException("Problem when compiling test sources.");
+        }
     }
 
     @AfterClass
@@ -60,13 +74,18 @@ public class AbstractTest {
             .map(s -> s.substring(0, s.indexOf("/.m2/repository/") + "/.m2/repository/".length()))
             .get();
 
-    public static final String TEST_PROJECT_CLASSES = "src/test/resources/test-projects/target/classes:" +
+    public static final String TEST_PROJECT_CLASSES = "src/test/resources/test-projects/target/classes" + EntryPoint.PATH_SEPARATOR +
             "src/test/resources/test-projects/target/test-classes";
 
-    public static final String JUNIT_CP = MAVEN_HOME + "junit/junit/4.11/junit-4.11.jar:" + MAVEN_HOME + "org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar";
+    public static final String JUNIT_CP = MAVEN_HOME + "junit/junit/4.12/junit-4.12.jar" + EntryPoint.PATH_SEPARATOR
+            + MAVEN_HOME + "org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar";
+
+    public static final String EASYMOCK_CP = MAVEN_HOME + "org/easymock/easymock/3.4/easymock-3.4.jar" + EntryPoint.PATH_SEPARATOR
+            + MAVEN_HOME + "org/objenesis/objenesis/2.2/objenesis-2.2.jar";
 
     public static final String PATH_TO_RUNNER_CLASSES = "src/main/resources/runner-classes/";
 
     public static final String nl = System.getProperty("line.separator");
+
 
 }
