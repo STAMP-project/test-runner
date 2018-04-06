@@ -119,7 +119,7 @@ public class EntryPointTest extends AbstractTest {
                 "test8", "test3"
         );
         assertEquals(26, coverage.getInstructionsCovered());
-        assertEquals(37, coverage.getInstructionsTotal());
+        assertEquals(118, coverage.getInstructionsTotal());
     }
 
     @Test
@@ -141,6 +141,6 @@ public class EntryPointTest extends AbstractTest {
         );
 
         assertEquals(33, globalCoverage.getInstructionsCovered());
-        assertEquals(37, globalCoverage.getInstructionsTotal());
+        assertEquals(118, globalCoverage.getInstructionsTotal());
     }
 }
