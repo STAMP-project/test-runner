@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * Created by Benjamin DANGLOT
  * benjamin.danglot@inria.fr
  * on 30/06/17
- *
+ * <p>
  * This object is the output of the execution of the tests.
  */
 public class TestListener extends RunListener implements Serializable {
@@ -35,14 +35,24 @@ public class TestListener extends RunListener implements Serializable {
 
     @Override
     public void testFailure(org.junit.runner.notification.Failure failure) throws Exception {
-        this.failingTests.add(new Failure(failure.getDescription().getMethodName(),
-                failure.getException().getClass().getName(), failure.getMessage()));
+        this.failingTests.add(
+                new Failure(
+                        failure.getDescription().getMethodName(),
+                        failure.getDescription().getClassName(),
+                        failure.getException()
+                )
+        );
     }
 
     @Override
     public void testAssumptionFailure(org.junit.runner.notification.Failure failure) {
-        this.assumptionFailingTests.add(new Failure(failure.getDescription().getMethodName(),
-                failure.getException().getClass().getName(), failure.getMessage()));
+        this.assumptionFailingTests.add(
+                new Failure(
+                        failure.getDescription().getMethodName(),
+                        failure.getDescription().getClassName(),
+                        failure.getException()
+                )
+        );
     }
 
     @Override
