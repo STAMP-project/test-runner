@@ -5,10 +5,15 @@ import eu.stamp.project.testrunner.runner.test.TestListener;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IClassCoverage;
+import org.jacoco.core.analysis.ICounter;
+import org.jacoco.core.analysis.ILine;
 import org.jacoco.core.data.ExecutionDataStore;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * This class represents the instruction coverage of source.
@@ -19,6 +24,8 @@ public class Coverage extends TestListener {
 
     private int instructionsTotal;
 
+    private String executionPath;
+
     public int getInstructionsCovered() {
         return instructionsCovered;
     }
@@ -27,10 +34,31 @@ public class Coverage extends TestListener {
         return instructionsTotal;
     }
 
-    /*public Coverage(int instructionsCovered, int instructionsTotal) {
-        this.instructionsCovered = instructionsCovered;
-        this.instructionsTotal = instructionsTotal;
-    }*/
+    private static final transient Function<CoverageBuilder, String> computePathExecuted = coverageBuilder ->
+            coverageBuilder.getClasses()
+                    .stream()
+                    .map(iClassCoverage ->
+                            iClassCoverage.getName().replaceAll("/", ".") + ":" +
+                                    IntStream.range(iClassCoverage.getFirstLine(), iClassCoverage.getLastLine())
+                                            .mapToObj(iClassCoverage::getLine)
+                                            .map(ILine::getInstructionCounter)
+                                            .map(ICounter::getCoveredCount)
+                                            .map(Object::toString)
+                                            .collect(Collectors.joining(","))
+                    ).collect(Collectors.joining(";"));
+
+    public String getExecutionPath() {
+        return executionPath;
+    }
+
+    public boolean isBetterThan(Coverage that) {
+        if (that == null) {
+            return true;
+        }
+        double percCoverageThis = ((double) this.instructionsCovered / (double) this.instructionsTotal);
+        double percCoverageThat = ((double) that.instructionsCovered / (double) that.instructionsTotal);
+        return (!this.executionPath.equals(that.executionPath)) && percCoverageThis >= percCoverageThat;
+    }
 
     @Override
     protected String getSerializeName() {
@@ -52,6 +80,8 @@ public class Coverage extends TestListener {
                     counter[0] += iCounter.getCoveredCount();
                     counter[1] += iCounter.getTotalCount();
                 });
+
+        this.executionPath = Coverage.computePathExecuted.apply(coverageBuilder);
         this.instructionsCovered = counter[0];
         this.instructionsTotal = counter[1];
     }
