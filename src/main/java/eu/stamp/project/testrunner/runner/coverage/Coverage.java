@@ -51,6 +51,15 @@ public class Coverage extends TestListener {
         return executionPath;
     }
 
+    public boolean isBetterThan(Coverage that) {
+        if (that == null) {
+            return true;
+        }
+        double percCoverageThis = ((double) this.instructionsCovered / (double) this.instructionsTotal);
+        double percCoverageThat = ((double) that.instructionsCovered / (double) that.instructionsTotal);
+        return (!this.executionPath.equals(that.executionPath)) && percCoverageThis >= percCoverageThat;
+    }
+
     @Override
     protected String getSerializeName() {
         return "globalCoverageResult";
