@@ -366,7 +366,7 @@ public class EntryPoint {
             // we will extends this support other cases, but for now, we implement the way for maven plugin.
             try {
                 final Class<? extends ClassLoader> aClass = EntryPoint.class.getClassLoader().getClass();
-                final Method findResources = aClass.getMethod("findResources", String.class);
+                final Method findResources = aClass.getMethod("findResource", String.class);
                 resource = (URL) findResources.invoke(EntryPoint.class.getClassLoader(), "runner-classes/");
             } catch (Exception e) {
                 throw new RuntimeException(e);
