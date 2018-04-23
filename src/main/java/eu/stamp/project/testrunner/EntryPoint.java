@@ -11,11 +11,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -355,7 +355,24 @@ public class EntryPoint {
     private static final String ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES = CLASSES_TO_PATH_OF_DEPENDENCIES.apply(JACOCO_DEPENDENCIES);
 
     private static String initAbsolutePathToRunnerClasses() {
-        final String path = ClassLoader.getSystemClassLoader().getResource("runner-classes/").getPath();
+        URL resource = ClassLoader.getSystemClassLoader().getResource("runner-classes/");
+        // if the resource is null, this is because of the usage of a custom class loader.
+        // For example, if we use the test-runner within a maven plugin, the resource must be find using
+        // ClassRealm#findResource(String)
+        // to not add every dependencies to each case, we use here reflection
+        if (resource == null) {
+            // for now, we use specifically ClassRealm.
+            // If we encounter new problems of the same type, i.e. class loading problem
+            // we will extends this support other cases, but for now, we implement the way for maven plugin.
+            try {
+                final Class<? extends ClassLoader> aClass = EntryPoint.class.getClassLoader().getClass();
+                final Method findResources = aClass.getMethod("findResources", String.class);
+                resource = (URL) findResources.invoke(EntryPoint.class.getClassLoader(), "runner-classes/");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        final String path = resource.getPath();
         if (path.contains("!") && path.startsWith("file:")) {
             return path.substring("file:".length()).split("!")[0];
         } else {
