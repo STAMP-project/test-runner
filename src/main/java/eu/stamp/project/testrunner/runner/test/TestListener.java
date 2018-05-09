@@ -27,6 +27,8 @@ public class TestListener extends RunListener implements Serializable {
     private List<Failure> failingTests = new ArrayList<>();
     private List<Failure> assumptionFailingTests = new ArrayList<>();
     private List<String> ignoredTests = new ArrayList<>();
+    public static final String OUTPUT_DIR = "target/dspot/";
+    public static final String EXTENSION = ".ser";
 
     @Override
     public void testFinished(Description description) throws Exception {
@@ -109,14 +111,17 @@ public class TestListener extends RunListener implements Serializable {
     }
 
     public void save() {
-        if (!new File("target/dspot").exists()) {
+        File outputDir = new File(OUTPUT_DIR);
+        if (!outputDir.exists()) {
             try {
-                Files.createDirectory(Paths.get("target/dspot/"));
-            } catch (IOException ignored) {
-                // it is not a big deal if there is an exeception
+                Files.createDirectory(outputDir.toPath());
+            } catch (IOException e) {
+                System.err.println("Error while creating output dir");
+                e.printStackTrace();
             }
         }
-        try (FileOutputStream fout = new FileOutputStream("target/dspot/" + this.getSerializeName() + ".ser")) {
+        File f = new File(outputDir, this.getSerializeName() + EXTENSION);
+        try (FileOutputStream fout = new FileOutputStream(f)) {
             try (ObjectOutputStream oos = new ObjectOutputStream(fout)) {
                 oos.writeObject(this);
             } catch (Exception e) {
@@ -125,6 +130,7 @@ public class TestListener extends RunListener implements Serializable {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        System.out.println("File saved to the following path: "+f.getAbsolutePath());
     }
 
     public static TestListener load() {

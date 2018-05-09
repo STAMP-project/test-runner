@@ -2,6 +2,7 @@ package eu.stamp.project.testrunner.runner.test;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.ObjectInputStream;
 
 /**
@@ -13,7 +14,12 @@ public class Loader<T> {
 
     public T load(String name) {
         T object;
-        try (FileInputStream fin = new FileInputStream("target/dspot/" + name + ".ser");) {
+
+        File f = new File(TestListener.OUTPUT_DIR + name + TestListener.EXTENSION);
+        if (!f.exists()) {
+            throw new RuntimeException(new FileNotFoundException(f.getAbsolutePath() + " does not exist."));
+        }
+        try (FileInputStream fin = new FileInputStream(f);) {
             try (ObjectInputStream ois = new ObjectInputStream(fin)) {
                 object = (T) ois.readObject();
             } catch (Exception ex) {
@@ -22,7 +28,7 @@ public class Loader<T> {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
-        new File("target/dspot/" + name + ".ser").delete();
+        f.delete();
         return object;
     }
 
