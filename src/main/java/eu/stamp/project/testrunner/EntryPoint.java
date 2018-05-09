@@ -267,11 +267,11 @@ public class EntryPoint {
         final Future<?> submit = executor.submit(() -> {
             try {
                 Process p = Runtime.getRuntime().exec(commandLine);
-                p.waitFor();
                 if (EntryPoint.verbose) {
                     new ThreadToReadInputStream(System.out, p.getInputStream()).start();
                     new ThreadToReadInputStream(System.err, p.getErrorStream()).start();
                 }
+                p.waitFor();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
