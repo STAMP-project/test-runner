@@ -113,11 +113,8 @@ public class TestListener extends RunListener implements Serializable {
     public void save() {
         File outputDir = new File(OUTPUT_DIR);
         if (!outputDir.exists()) {
-            try {
-                Files.createDirectory(outputDir.toPath());
-            } catch (IOException e) {
+            if (!outputDir.mkdirs()) {
                 System.err.println("Error while creating output dir");
-                e.printStackTrace();
             }
         }
         File f = new File(outputDir, this.getSerializeName() + EXTENSION);
@@ -128,6 +125,7 @@ public class TestListener extends RunListener implements Serializable {
                 throw new RuntimeException(e);
             }
         } catch (Exception e) {
+            System.err.println("Error while writing serialized file.");
             throw new RuntimeException(e);
         }
         System.out.println("File saved to the following path: "+f.getAbsolutePath());
