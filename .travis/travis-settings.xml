@@ -1,0 +1,9 @@
+<settings>
+    <servers>
+        <server>
+            <id>ossrh-test-runner-snapshots</id>
+            <username>${env.OSS_TESTRUNNER_USERNAME}</username>
+            <password>${env.OSS_TESTRUNNER_PASSWORD}</password>
+        </server>
+    </servers>
+</settings>
