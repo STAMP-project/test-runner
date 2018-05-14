@@ -17,3 +17,8 @@ script:
 
 after_success:
   - mvn clean test jacoco:report coveralls:report
+  - ./.travis/travis-deploy.sh
+
+branch:
+  only:
+    - master
