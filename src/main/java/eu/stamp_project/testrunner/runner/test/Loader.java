@@ -1,5 +1,7 @@
 package eu.stamp_project.testrunner.runner.test;
 
+import eu.stamp_project.testrunner.EntryPoint;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -14,8 +16,9 @@ public class Loader<T> {
 
     public T load(String name) {
         T object;
-
-        File f = new File(TestListener.OUTPUT_DIR + name + TestListener.EXTENSION);
+        String outputDirectoryPath = EntryPoint.workingDirectory != null ?
+                EntryPoint.workingDirectory.getAbsolutePath() + "/" : "";
+        File f = new File(outputDirectoryPath + TestListener.OUTPUT_DIR + name + TestListener.EXTENSION);
         if (!f.exists()) {
             throw new RuntimeException(new FileNotFoundException(f.getAbsolutePath() + " does not exist."));
         }
