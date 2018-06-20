@@ -76,6 +76,15 @@ public class EntryPoint {
     public static File workingDirectory = null;
 
     /**
+     * {@link EntryPoint} use the command "java". This field allows users to specify Java Virtual Machine(JVM) arguments, <i>e.g.</i> -Xms4G.
+     * If this value is <code>null</code>, {@link EntryPoint} won't pass any JVMArgs.
+     * The value of this field should be properly formatted for command line usage, <i>e.g.</i> -Xms4G -Xmx8G -XX:-UseGCOverheadLimit.
+     * The args should be separated with white spaces.
+     * The JVMArgs are reset after a run, in order to clean the state.
+     */
+    public static String JVMArgs = null;
+
+    /**
      * Execution of various test classes.
      * <p>
      * Run all the test classes given as a full qualified name. For instance, my.package.MyClassTest.
@@ -90,7 +99,7 @@ public class EntryPoint {
     public static TestListener runTestClasses(String classpath,
                                               String... fullQualifiedNameOfTestClasses) throws TimeoutException {
         return runTests(Arrays.stream(new String[]{
-                        JAVA_COMMAND,
+                        getJavaCommand(),
                         classpath + PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES,
                         TEST_RUNNER_QUALIFIED_NAME,
                         Arrays.stream(fullQualifiedNameOfTestClasses)
@@ -117,7 +126,7 @@ public class EntryPoint {
                                         String fullQualifiedNameOfTestClass,
                                         String... testMethods) throws TimeoutException {
         return runTests(Arrays.stream(new String[]{
-                        JAVA_COMMAND,
+                        getJavaCommand(),
                         classpath + PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES,
                         TEST_RUNNER_QUALIFIED_NAME,
                         fullQualifiedNameOfTestClass,
@@ -163,7 +172,7 @@ public class EntryPoint {
                                                     String targetProjectClasses,
                                                     String... fullQualifiedNameOfTestClasses) throws TimeoutException {
         return EntryPoint.runCoverage(Arrays.stream(new String[]{
-                        JAVA_COMMAND,
+                        getJavaCommand(),
                         classpath +
                                 PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES +
                                 PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES,
@@ -196,7 +205,7 @@ public class EntryPoint {
                                               String fullQualifiedNameOfTestClass,
                                               String... methodNames) throws TimeoutException {
         return EntryPoint.runCoverage(Arrays.stream(new String[]{
-                        JAVA_COMMAND,
+                        getJavaCommand(),
                         classpath +
                                 PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES +
                                 PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES,
@@ -230,7 +239,7 @@ public class EntryPoint {
                                                                   String fullQualifiedNameOfTestClass,
                                                                   String... methodNames) throws TimeoutException {
         final String commandLine = Arrays.stream(new String[]{
-                JAVA_COMMAND,
+                getJavaCommand(),
                 classpath +
                         PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES +
                         PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES,
@@ -334,7 +343,9 @@ public class EntryPoint {
 
     static final String WHITE_SPACE = " ";
 
-    static final String JAVA_COMMAND = "java -cp";
+    static final String JAVA_COMMAND = "java";
+
+    static final String CLASSPATH_OPT = "-classpath";
 
     static final String TEST_RUNNER_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.test.TestRunner";
 
@@ -347,6 +358,16 @@ public class EntryPoint {
     static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     static final String ABSOLUTE_PATH_TO_RUNNER_CLASSES = initAbsolutePathToRunnerClasses();
+
+    static String getJavaCommand() {
+        if (EntryPoint.JVMArgs != null) {
+            final String tmpJVArgs = EntryPoint.JVMArgs;
+            EntryPoint.JVMArgs = null;
+            return JAVA_COMMAND + WHITE_SPACE + tmpJVArgs + WHITE_SPACE + CLASSPATH_OPT;
+        } else {
+            return JAVA_COMMAND + WHITE_SPACE + CLASSPATH_OPT;
+        }
+    }
 
     private static final Function<List<Class<?>>, String> CLASSES_TO_PATH_OF_DEPENDENCIES = classes ->
             classes.stream()
