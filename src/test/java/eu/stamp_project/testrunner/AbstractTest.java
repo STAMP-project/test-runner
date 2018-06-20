@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 public class AbstractTest {
 
     @BeforeClass
-    public static void setUp() throws Exception {
+    public static void beforeClass() throws Exception {
         EntryPoint.verbose = true;
         // create folders
         final File target = new File("src/test/resources/test-projects/target");
@@ -55,7 +55,7 @@ public class AbstractTest {
     }
 
     @AfterClass
-    public static void tearDown() throws Exception {
+    public static void afterClass() throws Exception {
         final File target = new File("src/test/resources/test-projects/target");
         if (target.exists()) {
             FileUtils.forceDelete(target);

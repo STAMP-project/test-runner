@@ -4,9 +4,16 @@ import eu.stamp_project.testrunner.runner.coverage.Coverage;
 import eu.stamp_project.testrunner.runner.coverage.CoveragePerTestMethod;
 import eu.stamp_project.testrunner.runner.test.Failure;
 import eu.stamp_project.testrunner.runner.test.TestListener;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -16,6 +23,49 @@ import static org.junit.Assert.fail;
  * on 19/12/17
  */
 public class EntryPointTest extends AbstractTest {
+
+    private PrintStream standardOutput;
+
+    @Before
+    public void setUp() throws Exception {
+        standardOutput = System.out;
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        System.setOut(standardOutput);
+    }
+
+    @Test
+    public void testJVMArgs() throws Exception {
+
+        /*
+            Test the method runTest() of EntryPoint using JVMArgs.
+                This test verifies the non-persistence of the JVMArgs.
+                This test verifies the usage of JVMArgs.
+                Here, we use "-XX:+PrintGCDetails" and observe the stdout to see the output of the JVMargs
+                WARNING: This test redirect the stdout, it might cause problem...git
+         */
+
+        final ByteArrayOutputStream redirectedSTDOutput = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(redirectedSTDOutput));
+
+        EntryPoint.JVMArgs = "-XX:+PrintGCDetails";
+        assertNotNull(EntryPoint.JVMArgs);
+
+        final TestListener testListener = EntryPoint.runTestClasses(
+                JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                "example.TestSuiteExample"
+        );
+
+        System.setOut(standardOutput);
+        final String actual = redirectedSTDOutput.toString();
+        System.out.println(actual);
+        assertTrue(actual.contains("Heap"));
+        assertNull(EntryPoint.JVMArgs);
+        assertEquals(6, testListener.getPassingTests().size());
+        assertEquals(0, testListener.getFailingTests().size());
+    }
 
     @Test
     public void testOnEasyMockTests() throws Exception {
