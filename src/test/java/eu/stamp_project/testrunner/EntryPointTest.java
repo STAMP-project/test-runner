@@ -29,6 +29,7 @@ public class EntryPointTest extends AbstractTest {
     @Before
     public void setUp() throws Exception {
 //        standardOutput = System.out;
+        EntryPoint.persistence = true;
     }
 
     @After
@@ -50,6 +51,41 @@ public class EntryPointTest extends AbstractTest {
         assertNotNull(EntryPoint.JVMArgs);
 
         final TestListener testListener = EntryPoint.runTestClasses(
+                JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                "example.TestSuiteExample"
+        );
+
+        assertNotNull(EntryPoint.JVMArgs);
+        assertEquals(6, testListener.getPassingTests().size());
+        assertEquals(0, testListener.getFailingTests().size());
+    }
+
+    @Test
+    public void testPersistence() throws Exception {
+
+        /*
+            test the persistence boolean.
+            First run, (default behavior), the persistence is enabled
+            Second run, the persistence is set to false
+         */
+
+        EntryPoint.JVMArgs = "-XX:+PrintGCDetails";
+        assertNotNull(EntryPoint.JVMArgs);
+
+        TestListener testListener = EntryPoint.runTestClasses(
+                JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                "example.TestSuiteExample"
+        );
+
+        assertNotNull(EntryPoint.JVMArgs);
+        assertEquals(6, testListener.getPassingTests().size());
+        assertEquals(0, testListener.getFailingTests().size());
+
+        EntryPoint.persistence = false;
+        EntryPoint.JVMArgs = "-XX:+PrintGCDetails";
+        assertNotNull(EntryPoint.JVMArgs);
+
+        testListener = EntryPoint.runTestClasses(
                 JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "example.TestSuiteExample"
         );
