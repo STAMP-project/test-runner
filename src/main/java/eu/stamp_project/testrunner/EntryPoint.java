@@ -85,6 +85,12 @@ public class EntryPoint {
     public static String JVMArgs = null;
 
     /**
+     *  Enable this boolean to keep the values of <code>JVMArgs</code> and <code>workingDirectory</code>
+     *  after each run.
+     */
+    public static boolean persistence = true;
+
+    /**
      * Execution of various test classes.
      * <p>
      * Run all the test classes given as a full qualified name. For instance, my.package.MyClassTest.
@@ -362,7 +368,9 @@ public class EntryPoint {
     static String getJavaCommand() {
         if (EntryPoint.JVMArgs != null) {
             final String tmpJVArgs = EntryPoint.JVMArgs;
-            EntryPoint.JVMArgs = null;
+            if (!persistence) {
+                EntryPoint.JVMArgs = null;
+            }
             return JAVA_COMMAND + WHITE_SPACE + tmpJVArgs + WHITE_SPACE + CLASSPATH_OPT;
         } else {
             return JAVA_COMMAND + WHITE_SPACE + CLASSPATH_OPT;
