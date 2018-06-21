@@ -53,7 +53,7 @@ import java.util.stream.Stream;
  * This class has two options accessible from the outside:
  * <ul>
  * <li>verbose: boolean to enable traces to track the progress</li>
- * <li>defaultTimeoutInMs: integer timeout time in milliseconds for the whole requested process.</li>
+ * <li>timeoutInMs: integer timeout time in milliseconds for the whole requested process.</li>
  * </ul>
  * </p>
  */
@@ -67,7 +67,7 @@ public class EntryPoint {
     /**
      * timeout time in milliseconds for the whole requested process
      */
-    public static int defaultTimeoutInMs = 10000;
+    public static int timeoutInMs = 10000;
 
     /**
      *  working directory of the java sub-process.
@@ -85,10 +85,27 @@ public class EntryPoint {
     public static String JVMArgs = null;
 
     /**
-     *  Enable this boolean to keep the values of <code>JVMArgs</code> and <code>workingDirectory</code>
-     *  after each run.
+     *  Enable this boolean to keep the values after each run.
+     *  The list of concerned values are:
+     *      JVMArgs,
+     *      outPrintStream,
+     *      errPrintStream,
+     *      workingDirectory,
+     *      timeoutInMs,
      */
     public static boolean persistence = true;
+
+    /**
+     * Allows to pass a customized PrintStream on which the java process called will printout.
+     * If this field is equal to null, {@link EntryPoint} with use the stdout.
+     */
+    public static PrintStream outPrintStream = null;
+
+    /**
+     * Allows to pass a customized PrintStream on which the java process called will printerr.
+     * If this field is equal to null, {@link EntryPoint} with use the stderr.
+     */
+    public static PrintStream errPrintStream = null;
 
     /**
      * Execution of various test classes.
@@ -100,7 +117,7 @@ public class EntryPoint {
      * @param classpath                      the classpath required to run the given test classes.
      * @param fullQualifiedNameOfTestClasses test classes to be run.
      * @return an instance of TestListener {@link TestListener} containing result of the exeuction of test methods.
-     * @throws TimeoutException when the execution takes longer than defaultTimeoutInMs
+     * @throws TimeoutException when the execution takes longer than timeoutInMs
      */
     public static TestListener runTestClasses(String classpath,
                                               String... fullQualifiedNameOfTestClasses) throws TimeoutException {
@@ -126,7 +143,7 @@ public class EntryPoint {
      * @param fullQualifiedNameOfTestClass test class to be run.
      * @param testMethods                  test methods to be run.
      * @return an instance of TestListener {@link TestListener} containing result of the execution of test methods.
-     * @throws TimeoutException when the execution takes longer than defaultTimeoutInMs
+     * @throws TimeoutException when the execution takes longer than timeoutInMs
      */
     public static TestListener runTests(String classpath,
                                         String fullQualifiedNameOfTestClass,
@@ -172,7 +189,7 @@ public class EntryPoint {
      * @param targetProjectClasses           path to the folder that contains binaries, i.e. .class, on which Jacoco computes the coverage.
      * @param fullQualifiedNameOfTestClasses test classes to be run.
      * @return an instance of Coverage {@link Coverage } containing result of the execution of test classes.
-     * @throws TimeoutException when the execution takes longer than defaultTimeoutInMs
+     * @throws TimeoutException when the execution takes longer than timeoutInMs
      */
     public static Coverage runCoverageOnTestClasses(String classpath,
                                                     String targetProjectClasses,
@@ -204,7 +221,7 @@ public class EntryPoint {
      * @param fullQualifiedNameOfTestClass test classes to be run.
      * @param methodNames                  test methods to be run.
      * @return an instance of Coverage {@link Coverage } containing result of the exeuction of test classes.
-     * @throws TimeoutException when the execution takes longer than defaultTimeoutInMs
+     * @throws TimeoutException when the execution takes longer than timeoutInMs
      */
     public static Coverage runCoverageOnTests(String classpath,
                                               String targetProjectClasses,
@@ -238,7 +255,7 @@ public class EntryPoint {
      * @param fullQualifiedNameOfTestClass test classes to be run.
      * @param methodNames                  test methods to be run.
      * @return a Map that associate each test method name to its instruction coverage, as an instance of Coverage {@link Coverage} of test classes.
-     * @throws TimeoutException when the execution takes longer than defaultTimeoutInMs
+     * @throws TimeoutException when the execution takes longer than timeoutInMs
      */
     public static CoveragePerTestMethod runCoveragePerTestMethods(String classpath,
                                                                   String targetProjectClasses,
@@ -300,8 +317,13 @@ public class EntryPoint {
             try {
                 Process p = Runtime.getRuntime().exec(commandLine, null, workingDirectory);
                 if (EntryPoint.verbose) {
-                    new ThreadToReadInputStream(System.out, p.getInputStream()).start();
-                    new ThreadToReadInputStream(System.err, p.getErrorStream()).start();
+                    new ThreadToReadInputStream(
+                            EntryPoint.outPrintStream != null ? EntryPoint.outPrintStream : System.out,
+                            p.getInputStream()
+                    ).start();
+                    new ThreadToReadInputStream(EntryPoint.errPrintStream != null ? EntryPoint.errPrintStream : System.err
+                            , p.getErrorStream()
+                    ).start();
                 }
                 p.waitFor();
             } catch (Exception e) {
@@ -309,7 +331,7 @@ public class EntryPoint {
             }
         });
         try {
-            submit.get(defaultTimeoutInMs, TimeUnit.MILLISECONDS);
+            submit.get(timeoutInMs, TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
             throw e;
         } catch (Exception e) {
@@ -317,7 +339,18 @@ public class EntryPoint {
         } finally {
             submit.cancel(true);
             executor.shutdownNow();
+            if (!persistence) {
+                reset();
+            }
         }
+    }
+
+    private static void reset() {
+        EntryPoint.JVMArgs = null;
+        EntryPoint.workingDirectory = null;
+        EntryPoint.timeoutInMs = EntryPoint.DEFAULT_TIMEOUT;
+        EntryPoint.outPrintStream = null;
+        EntryPoint.errPrintStream = null;
     }
 
     private static class ThreadToReadInputStream extends Thread {
@@ -365,13 +398,11 @@ public class EntryPoint {
 
     static final String ABSOLUTE_PATH_TO_RUNNER_CLASSES = initAbsolutePathToRunnerClasses();
 
+    static final int DEFAULT_TIMEOUT = 10000;
+
     static String getJavaCommand() {
         if (EntryPoint.JVMArgs != null) {
-            final String tmpJVArgs = EntryPoint.JVMArgs;
-            if (!persistence) {
-                EntryPoint.JVMArgs = null;
-            }
-            return JAVA_COMMAND + WHITE_SPACE + tmpJVArgs + WHITE_SPACE + CLASSPATH_OPT;
+            return JAVA_COMMAND + WHITE_SPACE + EntryPoint.JVMArgs + WHITE_SPACE + CLASSPATH_OPT;
         } else {
             return JAVA_COMMAND + WHITE_SPACE + CLASSPATH_OPT;
         }
