@@ -24,28 +24,33 @@ import static org.junit.Assert.fail;
  */
 public class EntryPointTest extends AbstractTest {
 
-    private PrintStream standardOutput;
-
     @Before
     public void setUp() throws Exception {
-//        standardOutput = System.out;
         EntryPoint.persistence = true;
-    }
-
-    @After
-    public void tearDown() throws Exception {
-//        System.setOut(standardOutput);
+        EntryPoint.outPrintStream = null;
+        EntryPoint.errPrintStream = null;
     }
 
     @Test
-    public void testJVMArgs() throws Exception {
+    public void testJVMArgsAndCustomPrintStream() throws Exception {
 
         /*
             Test the method runTest() of EntryPoint using JVMArgs.
                 This test verifies the non-persistence of the JVMArgs.
                 This test verifies the usage of JVMArgs.
-                TODO: test the output to see if the JVMArgs is used.
          */
+
+        /* setup the out stream */
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        PrintStream outPrint = new PrintStream(outStream);
+        EntryPoint.outPrintStream = outPrint;
+        /* setup the err stream */
+        ByteArrayOutputStream errStream = new ByteArrayOutputStream();
+        PrintStream errPrint = new PrintStream(errStream);
+        EntryPoint.errPrintStream = errPrint;
+
+        /* persistence disabled, in order to clean after the execution */
+        EntryPoint.persistence = false;
 
         EntryPoint.JVMArgs = "-XX:+PrintGCDetails";
         assertNotNull(EntryPoint.JVMArgs);
@@ -55,7 +60,11 @@ public class EntryPointTest extends AbstractTest {
                 "example.TestSuiteExample"
         );
 
-        assertNotNull(EntryPoint.JVMArgs);
+        final String GCdetail = outStream.toString();
+        System.out.println(GCdetail);
+        assertTrue(GCdetail.contains("Heap")); // it print the GC Details
+        assertTrue(errStream.toString().isEmpty()); // no error occurs
+
         assertEquals(6, testListener.getPassingTests().size());
         assertEquals(0, testListener.getFailingTests().size());
     }
@@ -148,7 +157,7 @@ public class EntryPointTest extends AbstractTest {
 
     @Test
     public void testTimeOut() {
-        EntryPoint.defaultTimeoutInMs = 1;
+        EntryPoint.timeoutInMs = 1;
         try {
             EntryPoint.runTestClasses(
                     JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
@@ -158,7 +167,7 @@ public class EntryPointTest extends AbstractTest {
         } catch (Exception e) {
             assertTrue(true); // success!
         }
-        EntryPoint.defaultTimeoutInMs = 10000;
+        EntryPoint.timeoutInMs = 10000;
     }
 
     @Test
