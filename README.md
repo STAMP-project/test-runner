@@ -5,12 +5,16 @@
 
 This project provides a framework to run JUnit test in a new JVM. It allows to retrieve results using serialization / deserialization.
 
-
 # Supported Features:
 
 
 * test: run JUnit test, the whole test class or specific test cases methods.
-* coverage: run JaCoCo to compute the instruction coverage of the given test suite.
+* coverage: run JaCoCo to compute the instruction coverage of the given test suite or by test methods.
+* JVMArgs: can specify Java Virtual Machine Arguments
+* workingDirectory: can specify where to launch the java process
+* outputStream and errStream: can customize the output stream and the error stream of the java process.
+* timeout: can specify a custom time out in milli second.
+* blacklist: can discard test methods by their name among test classes.
 
 ### Licence
 
