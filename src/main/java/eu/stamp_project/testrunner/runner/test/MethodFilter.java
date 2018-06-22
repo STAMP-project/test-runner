@@ -5,6 +5,7 @@ import org.junit.runner.manipulation.Filter;
 
 import java.util.Collection;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 class MethodFilter extends Filter {
 
@@ -28,6 +29,6 @@ class MethodFilter extends Filter {
 
     @Override
     public String describe() {
-        return "stamp.fr.inria.filter with name of test method";
+        return "Filter test methods according their simple name: " + this.testMethodNames.toString();
     }
 }
