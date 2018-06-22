@@ -18,6 +18,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 
@@ -148,7 +149,7 @@ public class JacocoRunner {
         try {
             runtime.startup(data);
             final Coverage listener = new Coverage();
-            TestRunner.run(Arrays.asList(fullQualifiedNameOfTestClasses), listener, this.instrumentedClassLoader);
+            TestRunner.run(Arrays.asList(fullQualifiedNameOfTestClasses), Collections.emptyList(), listener, this.instrumentedClassLoader); // TODO!
             if (!listener.getFailingTests().isEmpty()) {
                 System.err.println("Some test(s) failed during computation of coverage:\n" +
                         listener.getFailingTests()

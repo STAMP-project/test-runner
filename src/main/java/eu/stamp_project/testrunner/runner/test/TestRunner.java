@@ -16,9 +16,12 @@ import java.util.List;
  */
 public class TestRunner {
 
+    public static final String BLACK_LIST_OPTION = "--blacklist";
+
     /**
      * The entry method to execute junit tests.
      * This method is not meant to be used directly, but rather using {@link EntryPoint}
+     *
      * @param args this array should be build by {@link EntryPoint}.
      *             the first argument is the full qualified name of the test class
      *             the second argument is optionally the list of the test method name separated by ":".
@@ -27,21 +30,39 @@ public class TestRunner {
     public static void main(String[] args) throws ClassNotFoundException {
         final TestListener testListener = new TestListener();
         if (args[0].contains(":")) {
-            TestRunner.run(Arrays.asList(args[0].split(":")), testListener);
+            TestRunner.run(Arrays.asList(args[0].split(":")), Collections.emptyList(), testListener);
         } else {
-            TestRunner.run(args[0],
-                    args.length > 1 ? Arrays.asList(args[1].split(":")) : Collections.emptyList(),
-                    testListener
-            );
+            if (args.length > 1) {
+                if (args[1].startsWith(BLACK_LIST_OPTION)) {
+                    TestRunner.run(Collections.singletonList(args[0]), Arrays.asList(args[2].split(":")), testListener);
+                } else {
+                    TestRunner.run(args[0], Arrays.asList(args[1].split(":")), testListener);
+                }
+            } else {
+                TestRunner.run(Collections.singletonList(args[0]), Collections.emptyList(), testListener);
+            }
         }
         testListener.save();
     }
 
-    public static void run(List<String> testClassNames, TestListener listener) {
-        TestRunner.run(testClassNames, listener, TestRunner.class.getClassLoader());
+    /**
+     * Run all methods of testClassNames
+     *
+     * @param testClassNames
+     * @param listener
+     */
+    public static void run(List<String> testClassNames, List<String> blackList, TestListener listener) {
+        TestRunner.run(testClassNames, blackList, listener, TestRunner.class.getClassLoader());
     }
 
-    public static void run(List<String> testClassNames, TestListener listener, ClassLoader customClassLoader) {
+    /**
+     * Run all test methods of testClassNames using custom class loader
+     *
+     * @param testClassNames
+     * @param listener
+     * @param customClassLoader
+     */
+    public static void run(List<String> testClassNames, List<String> blackList, TestListener listener, ClassLoader customClassLoader) {
         Request request;
         request = Request.classes(testClassNames.stream().map(testClassName -> {
             try {
@@ -50,6 +71,8 @@ public class TestRunner {
                 throw new RuntimeException(e);
             }
         }).toArray(Class[]::new));
+        final MethodFilter filter = new MethodFilter(Collections.emptyList(), blackList);
+        request = request.filterWith(filter);
         final Runner runner = request.getRunner();
         final RunNotifier runNotifier = new RunNotifier();
         runNotifier.addFirstListener(listener);
@@ -80,7 +103,8 @@ public class TestRunner {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        request = request.filterWith(new MethodFilter(testMethodNames));
+        final MethodFilter filter = new MethodFilter(testMethodNames);
+        request = request.filterWith(filter);
         final Runner runner = request.getRunner();
         final RunNotifier runNotifier = new RunNotifier();
         runNotifier.addFirstListener(listener);
