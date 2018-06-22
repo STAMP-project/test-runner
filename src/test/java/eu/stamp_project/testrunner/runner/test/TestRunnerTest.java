@@ -16,6 +16,31 @@ import static org.junit.Assert.assertTrue;
 public class TestRunnerTest extends AbstractTest {
 
     @Test
+    public void testExecutionTestClassWithBlackList() {
+
+        /*
+            Run the whole test class given by the command line.
+                    - the listener is loaded using the static method load()
+                    - test2 is in the blacklist and should be executed.
+         */
+
+        final String blacklistOption = " " + TestRunner.BLACK_LIST_OPTION + " test8:test2";
+
+        Process p;
+        try {
+            System.out.println(commandLine + blacklistOption);
+            p = Runtime.getRuntime().exec(commandLine + blacklistOption);
+            p.waitFor();
+            assertEquals(0, p.exitValue());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        final TestListener load = TestListener.load();
+        assertEquals(4, load.getPassingTests().size());
+        assertTrue(load.getFailingTests().isEmpty());
+    }
+
+    @Test
     public void testExecutionTestClass() {
 
         /*

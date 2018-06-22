@@ -31,6 +31,27 @@ public class EntryPointTest extends AbstractTest {
         EntryPoint.errPrintStream = null;
     }
 
+    @Test
+    public void testWithBlackList() throws Exception {
+        /*
+            EntryPoint should not execute blacklisted test method
+         */
+
+        EntryPoint.blackList.add("testFailing");
+
+        final TestListener testListener = EntryPoint.runTestClasses(
+                JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                "failing.FailingTestClass"
+        );
+
+        assertEquals(2, testListener.getRunningTests().size());
+        assertEquals(1, testListener.getPassingTests().size());
+        assertEquals(0, testListener.getFailingTests().size());
+        assertEquals(1, testListener.getAssumptionFailingTests().size());
+        assertEquals(1, testListener.getIgnoredTests().size());
+    }
+
+
     // TODO FIXME: This test seems to be flaky. Something happens with the stream of outputs
     @Test
     public void testJVMArgsAndCustomPrintStream() throws Exception {
