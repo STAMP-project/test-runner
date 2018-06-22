@@ -219,7 +219,10 @@ public class EntryPoint {
                         JACOCO_RUNNER_QUALIFIED_NAME,
                         targetProjectClasses,
                         Arrays.stream(fullQualifiedNameOfTestClasses)
-                                .collect(Collectors.joining(":"))
+                                .collect(Collectors.joining(":")),
+                        blackList.isEmpty() ? "" :
+                            TestRunner.BLACK_LIST_OPTION + " " +
+                                    blackList.stream().collect(Collectors.joining(":"))
                 }).collect(Collectors.joining(WHITE_SPACE))
         );
     }

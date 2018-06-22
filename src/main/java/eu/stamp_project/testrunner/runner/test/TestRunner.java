@@ -25,6 +25,8 @@ public class TestRunner {
      * @param args this array should be build by {@link EntryPoint}.
      *             the first argument is the full qualified name of the test class
      *             the second argument is optionally the list of the test method name separated by ":".
+     *             You can pass the --blacklist flag, following by a list of test method name to be blacklisted.
+     *             Each method name is separated with ":".
      * @throws ClassNotFoundException in case of the supplied classpath is wrong
      */
     public static void main(String[] args) throws ClassNotFoundException {

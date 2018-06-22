@@ -20,8 +20,10 @@ import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Collectors;
 
+import static eu.stamp_project.testrunner.EntryPoint.blackList;
 import static java.util.ResourceBundle.clearCache;
 
 /**
@@ -34,28 +36,45 @@ public class JacocoRunner {
     /**
      * The entry method to compute the instruction coverage.
      * This method is not meant to be used directly, but rather using {@link EntryPoint}
+     *
      * @param args this array should be build by {@link EntryPoint}
      *             the first argument is the path to classes and test classes separated by ":". <i>e.g. target/classes:target/test-classes</i> for a typical maven project.
      *             the second argument is the full qualified name of the test class
      *             the third argument is optionally the list of the test method name separated by ":".
+     *             You can pass the --blacklist flag, following by a list of test method name to be blacklisted.
+     *             Each method name is separated with ":".
      * @throws ClassNotFoundException in case of the supplied classpath is wrong
      */
     public static void main(String[] args) throws ClassNotFoundException {
         // inputs: classes:test-classes, fullqualifiednameoftest, method1:method2....
-        final String classesDirectory = args[0].split(":")[0];
-        final String testClassesDirectory = args[0].split(":")[1];
-        final JacocoRunner jacocoRunner = new JacocoRunner(classesDirectory, testClassesDirectory);
-        if (args[1].contains(":")) {
+        final String[] splittedArgs0 = args[0].split(":");
+        final String classesDirectory = splittedArgs0[0];
+        final String testClassesDirectory = splittedArgs0[1];
+        final JacocoRunner jacocoRunner;
+        if (args.length > 3 && args[2].equals(TestRunner.BLACK_LIST_OPTION)) {
+            jacocoRunner = new JacocoRunner(classesDirectory, testClassesDirectory, Arrays.asList(args[3].split(":")));
+        } else {
+            jacocoRunner = new JacocoRunner(classesDirectory, testClassesDirectory);
+        }
+        if (args[1].contains(":")) { // multiple test classes
             jacocoRunner.run(classesDirectory,
                     testClassesDirectory,
                     args[1].split(":")
             ).save();
         } else {
-            jacocoRunner.run(classesDirectory,
-                    testClassesDirectory,
-                    args[1],
-                    args.length > 2 ? args[2].split(":") : new String[]{}
-            ).save();
+            if (args.length > 2 && args[2].equals(TestRunner.BLACK_LIST_OPTION)) {
+                jacocoRunner.run(classesDirectory,
+                        testClassesDirectory,
+                        new String[]{args[1]}
+                ).save();
+            } else {
+                jacocoRunner.run(classesDirectory,
+                        testClassesDirectory,
+                        args[1],
+                        args.length > 2 ?
+                                args[2].split(":") : new String[]{}
+                ).save();
+            }
         }
     }
 
@@ -65,7 +84,13 @@ public class JacocoRunner {
 
     protected IRuntime runtime;
 
+    protected List<String> blackList;
+
     public JacocoRunner(String classesDirectory, String testClassesDirectory) {
+        this(classesDirectory, testClassesDirectory, Collections.emptyList());
+    }
+
+    public JacocoRunner(String classesDirectory, String testClassesDirectory, List<String> blackList) {
         try {
             this.instrumentedClassLoader = new MemoryClassLoader(
                     new URL[]{
@@ -76,6 +101,7 @@ public class JacocoRunner {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
+        this.blackList = blackList;
         this.runtime = new LoggerRuntime();
         this.instrumenter = new Instrumenter(this.runtime);
         // instrument source code
@@ -149,7 +175,7 @@ public class JacocoRunner {
         try {
             runtime.startup(data);
             final Coverage listener = new Coverage();
-            TestRunner.run(Arrays.asList(fullQualifiedNameOfTestClasses), Collections.emptyList(), listener, this.instrumentedClassLoader); // TODO!
+            TestRunner.run(Arrays.asList(fullQualifiedNameOfTestClasses), this.blackList, listener, this.instrumentedClassLoader);
             if (!listener.getFailingTests().isEmpty()) {
                 System.err.println("Some test(s) failed during computation of coverage:\n" +
                         listener.getFailingTests()
