@@ -140,10 +140,10 @@ public class EntryPoint {
                         classpath + PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES,
                         TEST_RUNNER_QUALIFIED_NAME,
                         Arrays.stream(fullQualifiedNameOfTestClasses)
-                                .collect(Collectors.joining(":")),
+                                .collect(Collectors.joining(TestRunner.PATH_SEPARATOR)),
                         blackList.isEmpty() ? "" :
                                 TestRunner.BLACK_LIST_OPTION + " " +
-                                        blackList.stream().collect(Collectors.joining(":"))
+                                        blackList.stream().collect(Collectors.joining(TestRunner.PATH_SEPARATOR))
                 }).collect(Collectors.joining(WHITE_SPACE))
         );
     }
@@ -171,7 +171,7 @@ public class EntryPoint {
                         TEST_RUNNER_QUALIFIED_NAME,
                         fullQualifiedNameOfTestClass,
                         Arrays.stream(testMethods)
-                                .collect(Collectors.joining(":"))
+                                .collect(Collectors.joining(TestRunner.PATH_SEPARATOR))
                 }).collect(Collectors.joining(WHITE_SPACE))
         );
     }
@@ -219,10 +219,10 @@ public class EntryPoint {
                         JACOCO_RUNNER_QUALIFIED_NAME,
                         targetProjectClasses,
                         Arrays.stream(fullQualifiedNameOfTestClasses)
-                                .collect(Collectors.joining(":")),
+                                .collect(Collectors.joining(TestRunner.PATH_SEPARATOR)),
                         blackList.isEmpty() ? "" :
                             TestRunner.BLACK_LIST_OPTION + " " +
-                                    blackList.stream().collect(Collectors.joining(":"))
+                                    blackList.stream().collect(Collectors.joining(TestRunner.PATH_SEPARATOR))
                 }).collect(Collectors.joining(WHITE_SPACE))
         );
     }
@@ -256,7 +256,7 @@ public class EntryPoint {
                         targetProjectClasses,
                         fullQualifiedNameOfTestClass,
                         Arrays.stream(methodNames)
-                                .collect(Collectors.joining(":"))
+                                .collect(Collectors.joining(TestRunner.PATH_SEPARATOR))
                 }).collect(Collectors.joining(WHITE_SPACE))
         );
     }
@@ -290,7 +290,7 @@ public class EntryPoint {
                 targetProjectClasses,
                 fullQualifiedNameOfTestClass,
                 Arrays.stream(methodNames)
-                        .collect(Collectors.joining(":"))
+                        .collect(Collectors.joining(TestRunner.PATH_SEPARATOR))
         }).collect(Collectors.joining(WHITE_SPACE));
         try {
             EntryPoint.runGivenCommandLine(commandLine);

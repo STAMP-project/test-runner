@@ -2,6 +2,7 @@ package eu.stamp_project.testrunner.runner.coverage;
 
 import eu.stamp_project.testrunner.runner.test.Loader;
 import eu.stamp_project.testrunner.runner.test.TestListener;
+import eu.stamp_project.testrunner.runner.test.TestRunner;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IClassCoverage;
@@ -38,7 +39,7 @@ public class Coverage extends TestListener {
             coverageBuilder.getClasses()
                     .stream()
                     .map(iClassCoverage ->
-                            iClassCoverage.getName().replaceAll("/", ".") + ":" +
+                            iClassCoverage.getName().replaceAll("/", ".") + TestRunner.PATH_SEPARATOR  +
                                     IntStream.range(iClassCoverage.getFirstLine(), iClassCoverage.getLastLine())
                                             .mapToObj(iClassCoverage::getLine)
                                             .map(ILine::getInstructionCounter)
