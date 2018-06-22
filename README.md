@@ -16,6 +16,27 @@ This project provides a framework to run JUnit test in a new JVM. It allows to r
 * timeout: can specify a custom time out in milli second.
 * blacklist: can discard test methods by their name among test classes.
 
+# Development:
+
+1. clone:
+```
+git clone https://github.com/STAMP-project/testrunner.git
+```
+
+2. build resources:
+```
+cd testrunner/src/test/resources/test-projects/
+mvn install
+```
+
+3. build `testrunner`:
+```
+cd ../../../..
+mvn install
+```
+
+Please, open an issue if you have any question / suggestion. Pull request are welcome! 😃
+
 ### Licence
 
 TestRunner is published under LGPL-3.0 (see [Licence.md](https://github.com/STAMP-project/testrunner/blob/master/LICENSE) for
