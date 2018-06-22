@@ -18,27 +18,29 @@ public class TestRunner {
 
     public static final String BLACK_LIST_OPTION = "--blacklist";
 
+    public static final String PATH_SEPARATOR = System.getProperty("path.separator");
+
     /**
      * The entry method to execute junit tests.
      * This method is not meant to be used directly, but rather using {@link EntryPoint}
      *
      * @param args this array should be build by {@link EntryPoint}.
      *             the first argument is the full qualified name of the test class
-     *             the second argument is optionally the list of the test method name separated by ":".
+     *             the second argument is optionally the list of the test method name separated by the path separator of the system, <i>e.g.</i> ':' on Linux.
      *             You can pass the --blacklist flag, following by a list of test method name to be blacklisted.
-     *             Each method name is separated with ":".
+     *             Each method name is separated with the path separator of the system, <i>e.g.</i> ':' on Linux.
      * @throws ClassNotFoundException in case of the supplied classpath is wrong
      */
     public static void main(String[] args) throws ClassNotFoundException {
         final TestListener testListener = new TestListener();
-        if (args[0].contains(":")) {
-            TestRunner.run(Arrays.asList(args[0].split(":")), Collections.emptyList(), testListener);
+        if (args[0].contains(PATH_SEPARATOR )) {
+            TestRunner.run(Arrays.asList(args[0].split(PATH_SEPARATOR )), Collections.emptyList(), testListener);
         } else {
             if (args.length > 1) {
                 if (args[1].startsWith(BLACK_LIST_OPTION)) {
-                    TestRunner.run(Collections.singletonList(args[0]), Arrays.asList(args[2].split(":")), testListener);
+                    TestRunner.run(Collections.singletonList(args[0]), Arrays.asList(args[2].split(PATH_SEPARATOR )), testListener);
                 } else {
-                    TestRunner.run(args[0], Arrays.asList(args[1].split(":")), testListener);
+                    TestRunner.run(args[0], Arrays.asList(args[1].split(PATH_SEPARATOR )), testListener);
                 }
             } else {
                 TestRunner.run(Collections.singletonList(args[0]), Collections.emptyList(), testListener);

@@ -1,6 +1,7 @@
 package eu.stamp_project.testrunner.runner.coverage;
 
 import eu.stamp_project.testrunner.AbstractTest;
+import eu.stamp_project.testrunner.runner.test.TestRunner;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -94,7 +95,8 @@ public class JacocoRunnerTest extends AbstractTest {
             JUNIT_CP;
 
     private final String commandLine = "java -cp " +
-            classpath + ":" + TEST_PROJECT_CLASSES + ":" + PATH_TO_RUNNER_CLASSES +
+            classpath + TestRunner.PATH_SEPARATOR + TEST_PROJECT_CLASSES +
+            TestRunner.PATH_SEPARATOR + PATH_TO_RUNNER_CLASSES +
             " eu.stamp_project.testrunner.runner.coverage.JacocoRunner " +
             TEST_PROJECT_CLASSES +
             " example.TestSuiteExample";

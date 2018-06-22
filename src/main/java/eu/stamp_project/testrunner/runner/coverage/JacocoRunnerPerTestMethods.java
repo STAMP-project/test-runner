@@ -26,20 +26,20 @@ public class JacocoRunnerPerTestMethods extends JacocoRunner {
      * The entry method to compute the instruction coverage per test method.
      * This method is not meant to be used directly, but rather using {@link EntryPoint}
      * @param args this array should be build by {@link EntryPoint}
-     *             the first argument is the path to classes and test classes separated by ":". <i>e.g. target/classes:target/test-classes</i> for a typical maven project.
+     *             the first argument is the path to classes and test classes separated by the system path separator. <i>e.g. target/classes:target/test-classes</i> for a typical maven project.
      *             the second argument is the full qualified name of the test class
-     *             the third argument is optionally the list of the test method name separated by ":".
+     *             the third argument is optionally the list of the test method name separated by the system path separator.
      * @throws ClassNotFoundException in case of the supplied classpath is wrong
      */
     public static void main(String[] args) throws ClassNotFoundException {
         // inputs: classes:test-classes, fullqualifiednameoftest, method1:method2....
-        final String classesDirectory = args[0].split(":")[0];
-        final String testClassesDirectory = args[0].split(":")[1];
+        final String classesDirectory = args[0].split(TestRunner.PATH_SEPARATOR)[0];
+        final String testClassesDirectory = args[0].split(TestRunner.PATH_SEPARATOR)[1];
         final JacocoRunnerPerTestMethods jacocoRunner = new JacocoRunnerPerTestMethods(classesDirectory, testClassesDirectory);
         jacocoRunner.run(classesDirectory,
                     testClassesDirectory,
                     args[1],
-                    args.length > 2 ? args[2].split(":") : new String[]{}
+                    args.length > 2 ? args[2].split(TestRunner.PATH_SEPARATOR) : new String[]{}
         ).save();
     }
 

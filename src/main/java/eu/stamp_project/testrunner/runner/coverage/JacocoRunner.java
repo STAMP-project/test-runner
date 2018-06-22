@@ -38,28 +38,28 @@ public class JacocoRunner {
      * This method is not meant to be used directly, but rather using {@link EntryPoint}
      *
      * @param args this array should be build by {@link EntryPoint}
-     *             the first argument is the path to classes and test classes separated by ":". <i>e.g. target/classes:target/test-classes</i> for a typical maven project.
+     *             the first argument is the path to classes and test classes separated by the system path separator, <i>e.g. target/classes:target/test-classes</i> for a typical maven project on Linux (the system path separator is ':').
      *             the second argument is the full qualified name of the test class
-     *             the third argument is optionally the list of the test method name separated by ":".
+     *             the third argument is optionally the list of the test method name separated by the system path separator.
      *             You can pass the --blacklist flag, following by a list of test method name to be blacklisted.
-     *             Each method name is separated with ":".
+     *             Each method name is separated with the system path separator.
      * @throws ClassNotFoundException in case of the supplied classpath is wrong
      */
     public static void main(String[] args) throws ClassNotFoundException {
         // inputs: classes:test-classes, fullqualifiednameoftest, method1:method2....
-        final String[] splittedArgs0 = args[0].split(":");
+        final String[] splittedArgs0 = args[0].split(TestRunner.PATH_SEPARATOR);
         final String classesDirectory = splittedArgs0[0];
         final String testClassesDirectory = splittedArgs0[1];
         final JacocoRunner jacocoRunner;
         if (args.length > 3 && args[2].equals(TestRunner.BLACK_LIST_OPTION)) {
-            jacocoRunner = new JacocoRunner(classesDirectory, testClassesDirectory, Arrays.asList(args[3].split(":")));
+            jacocoRunner = new JacocoRunner(classesDirectory, testClassesDirectory, Arrays.asList(args[3].split(TestRunner.PATH_SEPARATOR)));
         } else {
             jacocoRunner = new JacocoRunner(classesDirectory, testClassesDirectory);
         }
-        if (args[1].contains(":")) { // multiple test classes
+        if (args[1].contains(TestRunner.PATH_SEPARATOR)) { // multiple test classes
             jacocoRunner.run(classesDirectory,
                     testClassesDirectory,
-                    args[1].split(":")
+                    args[1].split(TestRunner.PATH_SEPARATOR)
             ).save();
         } else {
             if (args.length > 2 && args[2].equals(TestRunner.BLACK_LIST_OPTION)) {
@@ -72,7 +72,7 @@ public class JacocoRunner {
                         testClassesDirectory,
                         args[1],
                         args.length > 2 ?
-                                args[2].split(":") : new String[]{}
+                                args[2].split(TestRunner.PATH_SEPARATOR) : new String[]{}
                 ).save();
             }
         }

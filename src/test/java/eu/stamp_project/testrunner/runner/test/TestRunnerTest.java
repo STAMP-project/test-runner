@@ -84,6 +84,7 @@ public class TestRunnerTest extends AbstractTest {
 
 
     private final String commandLine = "java -cp " +
-            JUNIT_CP + ":" + TEST_PROJECT_CLASSES + ":" + PATH_TO_RUNNER_CLASSES +
+            JUNIT_CP + TestRunner.PATH_SEPARATOR + TEST_PROJECT_CLASSES +
+            TestRunner.PATH_SEPARATOR + PATH_TO_RUNNER_CLASSES +
             " eu.stamp_project.testrunner.runner.test.TestRunner example.TestSuiteExample";
 }
