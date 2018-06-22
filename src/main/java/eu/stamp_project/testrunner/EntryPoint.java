@@ -50,10 +50,15 @@ import java.util.stream.Stream;
  * </p>
  * <p>
  * <p>
- * This class has two options accessible from the outside:
+ * This class has options accessible from the outside:
  * <ul>
  * <li>verbose: boolean to enable traces to track the progress</li>
  * <li>timeoutInMs: integer timeout time in milliseconds for the whole requested process.</li>
+ * <li>workingDirectory: change the directory where the java command will be launch</li>
+ * <li>JVMArgs: pass Java Virtual Machine arguments to the java command</li>
+ * <li>outPrintStream: to redirect the standard output to a custom print stream</li>
+ * <li>errPrintStream: to redirect the standard error output to a custom print stream</li>
+ * <li>persistence: if enable, keeps the configuration between runs, else reset it</li>
  * </ul>
  * </p>
  */
@@ -85,17 +90,6 @@ public class EntryPoint {
     public static String JVMArgs = null;
 
     /**
-     *  Enable this boolean to keep the values after each run.
-     *  The list of concerned values are:
-     *      JVMArgs,
-     *      outPrintStream,
-     *      errPrintStream,
-     *      workingDirectory,
-     *      timeoutInMs,
-     */
-    public static boolean persistence = true;
-
-    /**
      * Allows to pass a customized PrintStream on which the java process called will printout.
      * If this field is equal to null, {@link EntryPoint} with use the stdout.
      */
@@ -106,6 +100,17 @@ public class EntryPoint {
      * If this field is equal to null, {@link EntryPoint} with use the stderr.
      */
     public static PrintStream errPrintStream = null;
+
+    /**
+     *  Enable this boolean to keep the values after each run.
+     *  The list of concerned values are:
+     *      JVMArgs,
+     *      outPrintStream,
+     *      errPrintStream,
+     *      workingDirectory,
+     *      timeoutInMs,
+     */
+    public static boolean persistence = true;
 
     /**
      * Execution of various test classes.
