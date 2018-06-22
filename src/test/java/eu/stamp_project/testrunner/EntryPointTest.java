@@ -31,6 +31,32 @@ public class EntryPointTest extends AbstractTest {
         EntryPoint.errPrintStream = null;
     }
 
+    @After
+    public void tearDown() throws Exception {
+        EntryPoint.blackList.clear();
+    }
+
+    @Test
+    public void testWithBlackList() throws Exception {
+        /*
+            EntryPoint should not execute blacklisted test method
+         */
+
+        EntryPoint.blackList.add("testFailing");
+
+        final TestListener testListener = EntryPoint.runTestClasses(
+                JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                "failing.FailingTestClass"
+        );
+
+        assertEquals(2, testListener.getRunningTests().size());
+        assertEquals(1, testListener.getPassingTests().size());
+        assertEquals(0, testListener.getFailingTests().size());
+        assertEquals(1, testListener.getAssumptionFailingTests().size());
+        assertEquals(1, testListener.getIgnoredTests().size());
+    }
+
+
     // TODO FIXME: This test seems to be flaky. Something happens with the stream of outputs
     @Test
     public void testJVMArgsAndCustomPrintStream() throws Exception {
@@ -264,6 +290,34 @@ public class EntryPointTest extends AbstractTest {
         );
 
         assertEquals(33, globalCoverage.getInstructionsCovered());
+        assertEquals(118, globalCoverage.getInstructionsTotal());
+    }
+
+    @Test
+    public void testRunGlobalCoverageWithBlackList() throws Exception {
+
+        /*
+            Test the runCoverage() of EntryPoint with blacklisted test methods.
+         */
+        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar:" +
+                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar:" +
+                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar:" +
+                JUNIT_CP;
+
+        EntryPoint.blackList.add("test8");
+        EntryPoint.blackList.add("test6");
+        EntryPoint.blackList.add("test3");
+        EntryPoint.blackList.add("test4");
+        EntryPoint.blackList.add("test7");
+        EntryPoint.blackList.add("test9");
+
+        final Coverage globalCoverage = EntryPoint.runCoverageOnTestClasses(
+                classpath + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                TEST_PROJECT_CLASSES,
+                "example.TestSuiteExample"
+        );
+
+        assertEquals(26, globalCoverage.getInstructionsCovered());
         assertEquals(118, globalCoverage.getInstructionsTotal());
     }
 

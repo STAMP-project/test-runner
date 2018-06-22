@@ -16,7 +16,9 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -50,10 +52,15 @@ import java.util.stream.Stream;
  * </p>
  * <p>
  * <p>
- * This class has two options accessible from the outside:
+ * This class has options accessible from the outside:
  * <ul>
  * <li>verbose: boolean to enable traces to track the progress</li>
  * <li>timeoutInMs: integer timeout time in milliseconds for the whole requested process.</li>
+ * <li>workingDirectory: change the directory where the java command will be launch</li>
+ * <li>JVMArgs: pass Java Virtual Machine arguments to the java command</li>
+ * <li>outPrintStream: to redirect the standard output to a custom print stream</li>
+ * <li>errPrintStream: to redirect the standard error output to a custom print stream</li>
+ * <li>persistence: if enable, keeps the configuration between runs, else reset it</li>
  * </ul>
  * </p>
  */
@@ -70,8 +77,8 @@ public class EntryPoint {
     public static int timeoutInMs = 10000;
 
     /**
-     *  working directory of the java sub-process.
-     *  By Default, it is set to null to inherit from this java process.
+     * working directory of the java sub-process.
+     * By Default, it is set to null to inherit from this java process.
      */
     public static File workingDirectory = null;
 
@@ -85,17 +92,6 @@ public class EntryPoint {
     public static String JVMArgs = null;
 
     /**
-     *  Enable this boolean to keep the values after each run.
-     *  The list of concerned values are:
-     *      JVMArgs,
-     *      outPrintStream,
-     *      errPrintStream,
-     *      workingDirectory,
-     *      timeoutInMs,
-     */
-    public static boolean persistence = true;
-
-    /**
      * Allows to pass a customized PrintStream on which the java process called will printout.
      * If this field is equal to null, {@link EntryPoint} with use the stdout.
      */
@@ -106,6 +102,24 @@ public class EntryPoint {
      * If this field is equal to null, {@link EntryPoint} with use the stderr.
      */
     public static PrintStream errPrintStream = null;
+
+    /**
+     * Enable this boolean to keep the values after each run.
+     * The list of concerned values are:
+     * JVMArgs,
+     * outPrintStream,
+     * errPrintStream,
+     * workingDirectory,
+     * timeoutInMs,
+     */
+    public static boolean persistence = true;
+
+    /**
+     * Allows to blacklist specific test methods of a test class.
+     * This blackList is used only in {@link EntryPoint#runTestClasses} and {@link EntryPoint#runCoverageOnTestClasses} since
+     * other methods allow to specify which test method to execute.
+     */
+    public static List<String> blackList = new ArrayList<>();
 
     /**
      * Execution of various test classes.
@@ -126,7 +140,10 @@ public class EntryPoint {
                         classpath + PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES,
                         TEST_RUNNER_QUALIFIED_NAME,
                         Arrays.stream(fullQualifiedNameOfTestClasses)
-                                .collect(Collectors.joining(":"))
+                                .collect(Collectors.joining(":")),
+                        blackList.isEmpty() ? "" :
+                                TestRunner.BLACK_LIST_OPTION + " " +
+                                        blackList.stream().collect(Collectors.joining(":"))
                 }).collect(Collectors.joining(WHITE_SPACE))
         );
     }
@@ -202,7 +219,10 @@ public class EntryPoint {
                         JACOCO_RUNNER_QUALIFIED_NAME,
                         targetProjectClasses,
                         Arrays.stream(fullQualifiedNameOfTestClasses)
-                                .collect(Collectors.joining(":"))
+                                .collect(Collectors.joining(":")),
+                        blackList.isEmpty() ? "" :
+                            TestRunner.BLACK_LIST_OPTION + " " +
+                                    blackList.stream().collect(Collectors.joining(":"))
                 }).collect(Collectors.joining(WHITE_SPACE))
         );
     }
@@ -351,6 +371,7 @@ public class EntryPoint {
         EntryPoint.timeoutInMs = EntryPoint.DEFAULT_TIMEOUT;
         EntryPoint.outPrintStream = null;
         EntryPoint.errPrintStream = null;
+        EntryPoint.blackList.clear();
     }
 
     private static class ThreadToReadInputStream extends Thread {
