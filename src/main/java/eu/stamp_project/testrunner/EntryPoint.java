@@ -334,20 +334,25 @@ public class EntryPoint {
         }
         ExecutorService executor = Executors.newSingleThreadExecutor();
         final Future<?> submit = executor.submit(() -> {
+            Process process = null;
             try {
-                Process p = Runtime.getRuntime().exec(commandLine, null, workingDirectory);
+                process = Runtime.getRuntime().exec(commandLine, null, workingDirectory);
                 if (EntryPoint.verbose) {
                     new ThreadToReadInputStream(
                             EntryPoint.outPrintStream != null ? EntryPoint.outPrintStream : System.out,
-                            p.getInputStream()
+                            process.getInputStream()
                     ).start();
                     new ThreadToReadInputStream(EntryPoint.errPrintStream != null ? EntryPoint.errPrintStream : System.err
-                            , p.getErrorStream()
+                            , process.getErrorStream()
                     ).start();
                 }
-                p.waitFor();
+                process.waitFor();
             } catch (Exception e) {
                 throw new RuntimeException(e);
+            } finally {
+                if (process != null) {
+                    process.destroyForcibly();
+                }
             }
         });
         try {
