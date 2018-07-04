@@ -50,10 +50,11 @@ public class TestRunner {
     }
 
     /**
-     * Run all methods of testClassNames
+     * Run all test methods of testClassNames
      *
-     * @param testClassNames
-     * @param listener
+     * @param testClassNames list of full qualified name of test classes
+     * @param blackList list of test methods name to not execute
+     * @param listener test listener to gather test result
      */
     public static void run(List<String> testClassNames, List<String> blackList, TestListener listener) {
         TestRunner.run(testClassNames, blackList, listener, TestRunner.class.getClassLoader());
@@ -62,9 +63,10 @@ public class TestRunner {
     /**
      * Run all test methods of testClassNames using custom class loader
      *
-     * @param testClassNames
-     * @param listener
-     * @param customClassLoader
+     * @param testClassNames list of full qualified name of test classes
+     * @param blackList list of test methods name to not execute
+     * @param listener test listener to gather test result
+     * @param customClassLoader this class loader should contains the .class to be executed and all the dependencies
      */
     public static void run(List<String> testClassNames, List<String> blackList, TestListener listener, ClassLoader customClassLoader) {
         Request request;

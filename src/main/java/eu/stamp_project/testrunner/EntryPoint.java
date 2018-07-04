@@ -35,24 +35,23 @@ import java.util.stream.Stream;
  * on 19/12/17
  * <p>
  * This class is the EntryPoint of the project. This is the only class that the user should use.
+ * </p>
  * <p>
  * Main methods are:
+ * </p>
  * <ul>
  * <li>{@link EntryPoint#runTestClasses(String, String...)} to run all the given test classes.</li>
  * <li>{@link EntryPoint#runTests(String, String, String...)} to run all the test methods of the given test class</li>
  * <li>{@link EntryPoint#runCoverageOnTestClasses(String, String, String...)} to compute the coverage of the given test classes</li>
  * <li>{@link EntryPoint#runTests(String, String, String...)} to compute the coverage of the test methods of the given test classes</li>
  * </ul>
- * </p>
- * <p>
  * <p>
  * This class relies on {@link TestRunner} and {@link JacocoRunner}
  * to respectively execute tests and compute the coverage.
  * This class creates a new JVM by calling the command "java" with proper arguments.
- * </p>
- * <p>
  * <p>
  * This class has options accessible from the outside:
+ * </p>
  * <ul>
  * <li>verbose: boolean to enable traces to track the progress</li>
  * <li>timeoutInMs: integer timeout time in milliseconds for the whole requested process.</li>
@@ -62,7 +61,6 @@ import java.util.stream.Stream;
  * <li>errPrintStream: to redirect the standard error output to a custom print stream</li>
  * <li>persistence: if enable, keeps the configuration between runs, else reset it</li>
  * </ul>
- * </p>
  */
 public class EntryPoint {
 
@@ -199,13 +197,13 @@ public class EntryPoint {
      * This method compute the instruction coverage, using <a href=http://www.eclemma.org/jacoco/>JaCoCo</a> obtained by executing the given test classes.
      * This method require the path to the binaries, i.e. .class, of the source code on which the instruction must be computed.
      * This method computes the "global" coverage, <i>i.e.</i> the coverage obtained if all the test are run.
-     * For a test method per test method result, see {{@link {@link EntryPoint#runCoveragePerTestMethods(String, String, String, String...)}
+     * For a test method per test method result, see {@link EntryPoint#runCoveragePerTestMethods(String, String, String, String...)}
      * </p>
      *
      * @param classpath                      the classpath required to run the given tests classes.
      * @param targetProjectClasses           path to the folder that contains binaries, i.e. .class, on which Jacoco computes the coverage.
      * @param fullQualifiedNameOfTestClasses test classes to be run.
-     * @return an instance of Coverage {@link Coverage } containing result of the execution of test classes.
+     * @return an instance of Coverage {@link Coverage} containing result of the execution of test classes.
      * @throws TimeoutException when the execution takes longer than timeoutInMs
      */
     public static Coverage runCoverageOnTestClasses(String classpath,
@@ -233,14 +231,14 @@ public class EntryPoint {
      * This method compute the instruction coverage, using <a href=http://www.eclemma.org/jacoco/>JaCoCo</a> obtained by executing the given test methods inside the given test classes.
      * This method require the path to the binaries, i.e. .class, of the source code on which the instruction must be computed.
      * This method computes the "global" coverage, <i>i.e.</i> the coverage obtained if all the test are run.
-     * For a test method per test method result, see {{@link {@link EntryPoint#runCoveragePerTestMethods(String, String, String, String...)}
+     * For a test method per test method result, see {@link EntryPoint#runCoveragePerTestMethods(String, String, String, String...)}
      * </p>
      *
      * @param classpath                    the classpath required to run the given tests classes.
      * @param targetProjectClasses         path to the folder that contains binaries, i.e. .class, on which Jacoco computes the coverage.
      * @param fullQualifiedNameOfTestClass test classes to be run.
      * @param methodNames                  test methods to be run.
-     * @return an instance of Coverage {@link Coverage } containing result of the exeuction of test classes.
+     * @return an instance of Coverage {@link Coverage} containing result of the exeuction of test classes.
      * @throws TimeoutException when the execution takes longer than timeoutInMs
      */
     public static Coverage runCoverageOnTests(String classpath,
