@@ -29,14 +29,14 @@ public class TestListener extends RunListener implements Serializable {
 
     @Override
     public void testFinished(Description description) throws Exception {
-        this.runningTests.add(description.getMethodName());
+        this.runningTests.add(MethodFilter.getMethodName(description));
     }
 
     @Override
     public void testFailure(org.junit.runner.notification.Failure failure) throws Exception {
         this.failingTests.add(
                 new Failure(
-                        failure.getDescription().getMethodName(),
+                        MethodFilter.getMethodName(failure.getDescription()),
                         failure.getDescription().getClassName(),
                         failure.getException()
                 )
@@ -47,7 +47,7 @@ public class TestListener extends RunListener implements Serializable {
     public void testAssumptionFailure(org.junit.runner.notification.Failure failure) {
         this.assumptionFailingTests.add(
                 new Failure(
-                        failure.getDescription().getMethodName(),
+                        MethodFilter.getMethodName(failure.getDescription()),
                         failure.getDescription().getClassName(),
                         failure.getException()
                 )
@@ -56,7 +56,7 @@ public class TestListener extends RunListener implements Serializable {
 
     @Override
     public void testIgnored(Description description) throws Exception {
-        this.ignoredTests.add(description.getMethodName());
+        this.ignoredTests.add(MethodFilter.getMethodName(description));
     }
 
     public List<String> getRunningTests() {
