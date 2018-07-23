@@ -24,9 +24,17 @@ class MethodFilter extends Filter {
         this.blackList = blackListMethodNames;
     }
 
+    public static String getMethodName(Description description) {
+        try {
+            return description.getMethodName();
+        } catch (NoSuchMethodError error) {
+            return description.getDisplayName().split("\\(")[0];
+        }
+    }
+
     @Override
     public boolean shouldRun(Description description) {
-        return !this.blackList.contains(description.getMethodName()) &&
+        return !this.blackList.contains(getMethodName(description)) &&
                 (
                         (description.isTest() &&
                         this.anyTestMethodNamesMatch.test(description) ||
@@ -45,7 +53,7 @@ class MethodFilter extends Filter {
                     Pattern.compile(testMethodName + "\\[\\d:(.*?)\\]")
                             .matcher(description.getMethodName())
                             .find()
-            ) || this.testMethodNames.contains(description.getMethodName());
+            ) || this.testMethodNames.contains(getMethodName(description));
 
     @Override
     public String describe() {

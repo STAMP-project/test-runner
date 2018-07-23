@@ -5,6 +5,7 @@ import org.junit.runner.Request;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -70,19 +71,35 @@ public class TestRunner {
      */
     public static void run(List<String> testClassNames, List<String> blackList, TestListener listener, ClassLoader customClassLoader) {
         Request request;
-        request = Request.classes(testClassNames.stream().map(testClassName -> {
+        final Class[] testClasses = testClassNames.stream().map(testClassName -> {
             try {
                 return customClassLoader.loadClass(testClassName);
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
-        }).toArray(Class[]::new));
+        }).toArray(Class[]::new);
+        try {
+            request = Request.classes(testClasses);
+        } catch (NoSuchMethodError error) {
+            // it seems that the version of JUnit is low....
+            // We try using reflection to instantiate the request object
+            request = instantiateRequestUsingOldApi(testClasses);
+        }
         final MethodFilter filter = new MethodFilter(Collections.emptyList(), blackList);
         request = request.filterWith(filter);
         final Runner runner = request.getRunner();
         final RunNotifier runNotifier = new RunNotifier();
         runNotifier.addFirstListener(listener);
         runner.run(runNotifier);
+    }
+
+    private static Request instantiateRequestUsingOldApi(Class[] testClasses) {
+        try {
+            final Method classes = Request.class.getMethod("classes", String.class, Class[].class);
+            return (Request) classes.invoke(null, "", testClasses);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void run(String testClassName, TestListener listener) {

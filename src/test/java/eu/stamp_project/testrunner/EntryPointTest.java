@@ -38,6 +38,22 @@ public class EntryPointTest extends AbstractTest {
     }
 
     @Test
+    public void testRunTestTestClassOldJUnit() throws Exception {
+
+        /*
+            Test the method runTest() of EntryPoint.
+                It should return the TestListener with the result of the execution of the test class.
+         */
+
+        final TestListener testListener = EntryPoint.runTestClasses(
+                JUNIT_CP_OLD + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES_OLD,
+                "example.TestSuiteExample"
+        );
+        assertEquals(6, testListener.getPassingTests().size());
+        assertEquals(testListener.getFailingTests().toString(), 0, testListener.getFailingTests().size());
+    }
+
+    @Test
     public void testWithBlackList() throws Exception {
         /*
             EntryPoint should not execute blacklisted test method

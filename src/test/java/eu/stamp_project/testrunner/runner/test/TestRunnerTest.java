@@ -4,6 +4,7 @@ import eu.stamp_project.testrunner.AbstractTest;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -14,6 +15,28 @@ import static org.junit.Assert.assertTrue;
  * on 19/12/17
  */
 public class TestRunnerTest extends AbstractTest {
+
+    @Test
+    public void testExecutionTestClassOldJUnit() {
+
+        /*
+            Run the whole test class given by the command line.
+                    - the listener is loaded using the static method load()
+                    - using old junit version: 4.4
+         */
+
+        Process p;
+        try {
+            p = Runtime.getRuntime().exec(commandLineOld);
+            p.waitFor();
+            assertEquals(0, p.exitValue());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        final TestListener load = TestListener.load();
+        assertEquals(6, load.getPassingTests().size());
+        assertTrue(load.getFailingTests().isEmpty());
+    }
 
     @Test
     public void testExecutionTestClassWithBlackList() {
@@ -85,6 +108,11 @@ public class TestRunnerTest extends AbstractTest {
 
     private final String commandLine = "java -cp " +
             JUNIT_CP + TestRunner.PATH_SEPARATOR + TEST_PROJECT_CLASSES +
+            TestRunner.PATH_SEPARATOR + PATH_TO_RUNNER_CLASSES +
+            " eu.stamp_project.testrunner.runner.test.TestRunner example.TestSuiteExample";
+
+    private final String commandLineOld = "java -cp " +
+            JUNIT_CP_OLD + TestRunner.PATH_SEPARATOR + TEST_PROJECT_CLASSES_OLD +
             TestRunner.PATH_SEPARATOR + PATH_TO_RUNNER_CLASSES +
             " eu.stamp_project.testrunner.runner.test.TestRunner example.TestSuiteExample";
 }

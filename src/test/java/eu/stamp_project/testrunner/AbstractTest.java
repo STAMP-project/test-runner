@@ -72,8 +72,13 @@ public class AbstractTest {
     public static final String TEST_PROJECT_CLASSES = "src/test/resources/test-projects/target/classes" + EntryPoint.PATH_SEPARATOR +
             "src/test/resources/test-projects/target/test-classes";
 
+    public static final String TEST_PROJECT_CLASSES_OLD = "src/test/resources/test-projects/target/classes" + EntryPoint.PATH_SEPARATOR +
+            "src/test/resources/test-projects/target/test-classes";
+
     public static final String JUNIT_CP = MAVEN_HOME + "junit/junit/4.12/junit-4.12.jar" + EntryPoint.PATH_SEPARATOR
             + MAVEN_HOME + "org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar";
+
+    public static final String JUNIT_CP_OLD = MAVEN_HOME + "junit/junit/4.4/junit-4.4.jar";
 
     public static final String EASYMOCK_CP = MAVEN_HOME + "org/easymock/easymock/3.4/easymock-3.4.jar" + EntryPoint.PATH_SEPARATOR
             + MAVEN_HOME + "org/objenesis/objenesis/2.2/objenesis-2.2.jar";
