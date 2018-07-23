@@ -8,6 +8,7 @@ import org.junit.runner.notification.RunNotifier;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Created by Benjamin DANGLOT
@@ -19,6 +20,17 @@ public class TestRunner {
     public static final String BLACK_LIST_OPTION = "--blacklist";
 
     public static final String PATH_SEPARATOR = System.getProperty("path.separator");
+
+    public static final String FILE_SEPARATOR = System.getProperty("file.separator");
+
+    public static final transient Function<String, String> pathToFullQualifiedName = string ->
+    {
+        if (TestRunner.FILE_SEPARATOR.equals("\\")) {
+            return string.replace("\\\\", ".");
+        } else {
+            return string.replace(TestRunner.FILE_SEPARATOR, ".");
+        }
+    };
 
     /**
      * The entry method to execute junit tests.
@@ -34,7 +46,7 @@ public class TestRunner {
     public static void main(String[] args) throws ClassNotFoundException {
         final TestListener testListener = new TestListener();
         if (args[0].contains(PATH_SEPARATOR )) {
-            TestRunner.run(Arrays.asList(args[0].split(PATH_SEPARATOR )), Collections.emptyList(), testListener);
+            TestRunner.run(Arrays.asList(args[0].split(PATH_SEPARATOR)), Collections.emptyList(), testListener);
         } else {
             if (args.length > 1) {
                 if (args[1].startsWith(BLACK_LIST_OPTION)) {

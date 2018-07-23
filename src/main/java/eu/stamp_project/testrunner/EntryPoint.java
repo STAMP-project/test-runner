@@ -434,7 +434,8 @@ public class EntryPoint {
 
     private static final Function<List<Class<?>>, String> CLASSES_TO_PATH_OF_DEPENDENCIES = classes ->
             classes.stream()
-                    .map(clazz -> clazz.getResource("/" + clazz.getName().replaceAll("\\.", "/") + ".class"))
+                    .map(clazz -> clazz.getResource(TestRunner.FILE_SEPARATOR
+                            + TestRunner.pathToFullQualifiedName.apply(clazz.getName()) + ".class"))
                     .map(URL::getPath)
                     .map(path -> path.substring("file:".length()))
                     .map(path -> path.split("!")[0])

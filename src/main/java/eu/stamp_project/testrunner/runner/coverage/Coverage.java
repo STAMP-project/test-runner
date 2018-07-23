@@ -39,7 +39,7 @@ public class Coverage extends TestListener {
             coverageBuilder.getClasses()
                     .stream()
                     .map(iClassCoverage ->
-                            iClassCoverage.getName().replaceAll("/", ".") + TestRunner.PATH_SEPARATOR  +
+                            TestRunner.pathToFullQualifiedName.apply(iClassCoverage.getName()) + TestRunner.PATH_SEPARATOR  +
                                     IntStream.range(iClassCoverage.getFirstLine(), iClassCoverage.getLastLine())
                                             .mapToObj(iClassCoverage::getLine)
                                             .map(ILine::getInstructionCounter)
