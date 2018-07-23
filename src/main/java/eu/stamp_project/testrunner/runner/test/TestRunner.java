@@ -32,6 +32,15 @@ public class TestRunner {
         }
     };
 
+    public static final transient Function<String, String> fullQualifiedNameToPath = (String string) ->
+    {
+        if (TestRunner.FILE_SEPARATOR.equals("\\")) {
+            return string.replace(".", "\\\\");
+        } else {
+            return string.replace(".", TestRunner.FILE_SEPARATOR);
+        }
+    };
+
     /**
      * The entry method to execute junit tests.
      * This method is not meant to be used directly, but rather using {@link EntryPoint}
