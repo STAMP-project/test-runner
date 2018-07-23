@@ -20,6 +20,8 @@ public class TestRunner {
 
     public static final String PATH_SEPARATOR = System.getProperty("path.separator");
 
+    public static final String FILE_SEPARATOR = System.getProperty("file.separator");
+
     /**
      * The entry method to execute junit tests.
      * This method is not meant to be used directly, but rather using {@link EntryPoint}
@@ -34,7 +36,7 @@ public class TestRunner {
     public static void main(String[] args) throws ClassNotFoundException {
         final TestListener testListener = new TestListener();
         if (args[0].contains(PATH_SEPARATOR )) {
-            TestRunner.run(Arrays.asList(args[0].split(PATH_SEPARATOR )), Collections.emptyList(), testListener);
+            TestRunner.run(Arrays.asList(args[0].split(PATH_SEPARATOR)), Collections.emptyList(), testListener);
         } else {
             if (args.length > 1) {
                 if (args[1].startsWith(BLACK_LIST_OPTION)) {

@@ -35,11 +35,20 @@ public class Coverage extends TestListener {
         return instructionsTotal;
     }
 
+    private static final transient Function<String, String> pathToFullQualifiedName = string ->
+    {
+        if (TestRunner.FILE_SEPARATOR.equals("\\")) {
+            return string.replace("\\\\", ".");
+        } else {
+            return string.replace(TestRunner.FILE_SEPARATOR, ".");
+        }
+    };
+
     private static final transient Function<CoverageBuilder, String> computePathExecuted = coverageBuilder ->
             coverageBuilder.getClasses()
                     .stream()
                     .map(iClassCoverage ->
-                            iClassCoverage.getName().replaceAll("/", ".") + TestRunner.PATH_SEPARATOR  +
+                            pathToFullQualifiedName.apply(iClassCoverage.getName()) + TestRunner.PATH_SEPARATOR  +
                                     IntStream.range(iClassCoverage.getFirstLine(), iClassCoverage.getLastLine())
                                             .mapToObj(iClassCoverage::getLine)
                                             .map(ILine::getInstructionCounter)
