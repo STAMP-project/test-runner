@@ -199,8 +199,8 @@ public class JacocoRunner {
         final Iterator<File> iterator = FileUtils.iterateFiles(new File(classesDirectory), new String[]{"class"}, true);
         while (iterator.hasNext()) {
             final File next = iterator.next();
-            final String fileName = next.getPath().substring(classesDirectory.length() + (classesDirectory.endsWith("/") ? 0 : 1));
-            final String fullQualifiedName = fileName.replaceAll("/", ".").substring(0, fileName.length() - ".class".length());
+            final String fileName = next.getPath().substring(classesDirectory.length() + (classesDirectory.endsWith(TestRunner.FILE_SEPARATOR) ? 0 : 1));
+            final String fullQualifiedName = TestRunner.pathToFullQualifiedName.apply(fileName).substring(0, fileName.length() - ".class".length());
             try {
                 instrumentedClassLoader.addDefinition(fullQualifiedName,
                         instrumenter.instrument(instrumentedClassLoader.getResourceAsStream(fileName), fullQualifiedName));
