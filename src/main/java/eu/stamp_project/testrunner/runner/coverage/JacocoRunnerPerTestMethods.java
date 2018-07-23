@@ -55,7 +55,7 @@ public class JacocoRunnerPerTestMethods extends JacocoRunner {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
-        final String resource = fullQualifiedNameOfTestClass.replace('.', TestRunner.FILE_SEPARATOR.charAt(0)) + ".class";
+        final String resource = TestRunner.fullQualifiedNameToPath.apply(fullQualifiedNameOfTestClass) + ".class";
         try {
             this.instrumentedClassLoader.addDefinition(
                     fullQualifiedNameOfTestClass,
