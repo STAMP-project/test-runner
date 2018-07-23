@@ -4,6 +4,7 @@ import eu.stamp_project.testrunner.runner.coverage.Coverage;
 import eu.stamp_project.testrunner.runner.coverage.CoveragePerTestMethod;
 import eu.stamp_project.testrunner.runner.test.Failure;
 import eu.stamp_project.testrunner.runner.test.TestListener;
+import eu.stamp_project.testrunner.runner.test.TestRunner;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -256,9 +257,9 @@ public class EntryPointTest extends AbstractTest {
             Test the runCoverage() of EntryPoint.
                 It should return the CoverageResult with the instruction coverage computed by Jacoco.
          */
-        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar:" +
-                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar:" +
-                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar:" +
+        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + TestRunner.PATH_SEPARATOR +
+                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + TestRunner.PATH_SEPARATOR +
+                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + TestRunner.PATH_SEPARATOR +
                 JUNIT_CP;
 
         final Coverage coverage = EntryPoint.runCoverageOnTests(
@@ -278,9 +279,9 @@ public class EntryPointTest extends AbstractTest {
             Test the runCoverage() of EntryPoint.
                 It should return the CoverageResult with the instruction coverage computed by Jacoco.
          */
-        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar:" +
-                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar:" +
-                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar:" +
+        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + TestRunner.PATH_SEPARATOR +
+                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + TestRunner.PATH_SEPARATOR +
+                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + TestRunner.PATH_SEPARATOR +
                 JUNIT_CP;
 
         final Coverage globalCoverage = EntryPoint.runCoverageOnTestClasses(
@@ -299,9 +300,9 @@ public class EntryPointTest extends AbstractTest {
         /*
             Test the runCoverage() of EntryPoint with blacklisted test methods.
          */
-        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar:" +
-                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar:" +
-                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar:" +
+        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + TestRunner.PATH_SEPARATOR+
+                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + TestRunner.PATH_SEPARATOR+
+                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + TestRunner.PATH_SEPARATOR+
                 JUNIT_CP;
 
         EntryPoint.blackList.add("test8");
@@ -328,9 +329,9 @@ public class EntryPointTest extends AbstractTest {
             Test the runCoveragePerTestMethods() of EntryPoint.
                 It should return the CoverageResult with the instruction coverage computed by Jacoco.
          */
-        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar:" +
-                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar:" +
-                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar:" +
+        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + TestRunner.PATH_SEPARATOR+
+                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + TestRunner.PATH_SEPARATOR+
+                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + TestRunner.PATH_SEPARATOR+
                 JUNIT_CP;
 
         final CoveragePerTestMethod coveragePerTestMethod = EntryPoint.runCoveragePerTestMethods(
