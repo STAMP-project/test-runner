@@ -122,7 +122,7 @@ public class JacocoRunner {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
-        final String resource = fullQualifiedNameOfTestClass.replace('.', '/') + ".class";
+        final String resource = TestRunner.fullQualifiedNameToPath.apply(fullQualifiedNameOfTestClass) + ".class";
         try {
             this.instrumentedClassLoader.addDefinition(
                     fullQualifiedNameOfTestClass,
@@ -163,7 +163,7 @@ public class JacocoRunner {
             throw new RuntimeException(e);
         }
         Arrays.stream(fullQualifiedNameOfTestClasses).forEach(fullQualifiedNameOfTestClass -> {
-            final String resource = fullQualifiedNameOfTestClass.replace('.', '/') + ".class";
+            final String resource = TestRunner.fullQualifiedNameToPath.apply(fullQualifiedNameOfTestClass) + ".class";
             try {
                 this.instrumentedClassLoader.addDefinition(
                         fullQualifiedNameOfTestClass,
@@ -209,8 +209,8 @@ public class JacocoRunner {
                 System.out.println(fileName);
                 System.out.println(new File(fileName).getAbsolutePath());
                 System.out.println(fullQualifiedName);
-                e.printStackTrace();
-                throw new RuntimeException(e);
+                throw new RuntimeException(fileName + "," + new File(fileName).getAbsolutePath() +
+                        "," + fullQualifiedName, e);
             }
         }
         clearCache(instrumentedClassLoader);

@@ -432,6 +432,15 @@ public class EntryPoint {
 
     private static final Function<List<Class<?>>, String> CLASSES_TO_PATH_OF_DEPENDENCIES = classes ->
             classes.stream()
+                    .map(clazz -> {
+                        System.out.println(clazz.getProtectionDomain().getCodeSource().getLocation());
+                        System.out.println(TestRunner.fullQualifiedNameToPath.apply(clazz.getName()) + ".class");
+                        System.out.println(clazz.getResource(TestRunner.FILE_SEPARATOR
+                                + TestRunner.fullQualifiedNameToPath.apply(clazz.getName()) + ".class"));
+                        System.out.println(clazz.getResource(TestRunner.fullQualifiedNameToPath.apply(clazz.getName()) + ".class"));
+                        System.out.println(new File(".").getAbsolutePath());
+                        return clazz;
+                    })
                     .map(clazz -> clazz.getResource(TestRunner.FILE_SEPARATOR
                             + TestRunner.fullQualifiedNameToPath.apply(clazz.getName()) + ".class"))
                     .map(URL::getPath)
