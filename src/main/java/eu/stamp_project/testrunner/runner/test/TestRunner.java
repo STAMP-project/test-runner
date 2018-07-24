@@ -26,7 +26,7 @@ public class TestRunner {
     public static final transient Function<String, String> pathToFullQualifiedName = string ->
     {
         if (TestRunner.FILE_SEPARATOR.equals("\\")) {
-            return string.replace("\\\\", ".");
+            return string.replace("\\", ".");
         } else {
             return string.replace(TestRunner.FILE_SEPARATOR, ".");
         }

@@ -123,6 +123,7 @@ public class JacocoRunner {
             throw new RuntimeException(e);
         }
         final String resource = TestRunner.fullQualifiedNameToPath.apply(fullQualifiedNameOfTestClass) + ".class";
+        System.out.println(resource);
         try {
             this.instrumentedClassLoader.addDefinition(
                     fullQualifiedNameOfTestClass,
@@ -201,14 +202,10 @@ public class JacocoRunner {
             final File next = iterator.next();
             final String fileName = next.getPath().substring(classesDirectory.length() + (classesDirectory.endsWith(TestRunner.FILE_SEPARATOR) ? 0 : 1));
             final String fullQualifiedName = TestRunner.pathToFullQualifiedName.apply(fileName).substring(0, fileName.length() - ".class".length());
-            System.out.println("Instrumenting " + fullQualifiedName + " ...");
             try {
                 instrumentedClassLoader.addDefinition(fullQualifiedName,
                         instrumenter.instrument(instrumentedClassLoader.getResourceAsStream(fileName), fullQualifiedName));
             } catch (IOException e) {
-                System.out.println(fileName);
-                System.out.println(new File(fileName).getAbsolutePath());
-                System.out.println(fullQualifiedName);
                 throw new RuntimeException(fileName + "," + new File(fileName).getAbsolutePath() +
                         "," + fullQualifiedName, e);
             }
