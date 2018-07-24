@@ -219,8 +219,8 @@ public class EntryPoint {
                         Arrays.stream(fullQualifiedNameOfTestClasses)
                                 .collect(Collectors.joining(TestRunner.PATH_SEPARATOR)),
                         blackList.isEmpty() ? "" :
-                            TestRunner.BLACK_LIST_OPTION + " " +
-                                    blackList.stream().collect(Collectors.joining(TestRunner.PATH_SEPARATOR))
+                                TestRunner.BLACK_LIST_OPTION + " " +
+                                        blackList.stream().collect(Collectors.joining(TestRunner.PATH_SEPARATOR))
                 }).collect(Collectors.joining(WHITE_SPACE))
         );
     }
@@ -432,17 +432,7 @@ public class EntryPoint {
 
     private static final Function<List<Class<?>>, String> CLASSES_TO_PATH_OF_DEPENDENCIES = classes ->
             classes.stream()
-                    .map(clazz -> {
-                        System.out.println(clazz.getProtectionDomain().getCodeSource().getLocation());
-                        System.out.println(TestRunner.fullQualifiedNameToPath.apply(clazz.getName()) + ".class");
-                        System.out.println(clazz.getResource(TestRunner.FILE_SEPARATOR
-                                + TestRunner.fullQualifiedNameToPath.apply(clazz.getName()) + ".class"));
-                        System.out.println(clazz.getResource(TestRunner.fullQualifiedNameToPath.apply(clazz.getName()) + ".class"));
-                        System.out.println(new File(".").getAbsolutePath());
-                        return clazz;
-                    })
-                    .map(clazz -> clazz.getResource(TestRunner.FILE_SEPARATOR
-                            + TestRunner.fullQualifiedNameToPath.apply(clazz.getName()) + ".class"))
+                    .map(clazz -> clazz.getProtectionDomain().getCodeSource().getLocation())
                     .map(URL::getPath)
                     .map(path -> path.substring("file:".length()))
                     .map(path -> path.split("!")[0])
