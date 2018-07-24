@@ -1,5 +1,6 @@
 package eu.stamp_project.testrunner.runner.test;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
 import eu.stamp_project.testrunner.EntryPoint;
 
 import java.io.File;
@@ -17,10 +18,12 @@ public class Loader<T> {
     public T load(String name) {
         T object;
         String outputDirectoryPath = EntryPoint.workingDirectory != null ?
-                EntryPoint.workingDirectory.getAbsolutePath() + "/" : "";
+                EntryPoint.workingDirectory.getAbsolutePath() + TestRunner.FILE_SEPARATOR : "";
         File f = new File(outputDirectoryPath + TestListener.OUTPUT_DIR + name + TestListener.EXTENSION);
         if (!f.exists()) {
             throw new RuntimeException(new FileNotFoundException(f.getAbsolutePath() + " does not exist."));
+        } else {
+            System.out.println("Loading " + f.getAbsolutePath());
         }
         try (FileInputStream fin = new FileInputStream(f);) {
             try (ObjectInputStream ois = new ObjectInputStream(fin)) {

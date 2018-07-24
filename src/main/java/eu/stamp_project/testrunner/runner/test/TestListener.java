@@ -24,7 +24,7 @@ public class TestListener extends RunListener implements Serializable {
     private List<Failure> failingTests = new ArrayList<>();
     private List<Failure> assumptionFailingTests = new ArrayList<>();
     private List<String> ignoredTests = new ArrayList<>();
-    public static final String OUTPUT_DIR = "target/dspot/";
+    public static final String OUTPUT_DIR = "target" + TestRunner.FILE_SEPARATOR + "dspot" + TestRunner.FILE_SEPARATOR;
     public static final String EXTENSION = ".ser";
 
     @Override
@@ -125,7 +125,7 @@ public class TestListener extends RunListener implements Serializable {
             System.err.println("Error while writing serialized file.");
             throw new RuntimeException(e);
         }
-        System.out.println("File saved to the following path: "+f.getAbsolutePath());
+        System.out.println("File saved to the following path: " + f.getAbsolutePath());
     }
 
     public static TestListener load() {
