@@ -430,12 +430,26 @@ public class EntryPoint {
         }
     }
 
+    private static String RemoveWinFileSeparator(String string) {
+        if (!"/".equals(TestRunner.FILE_SEPARATOR) && string.startsWith(TestRunner.FILE_SEPARATOR)) {
+            return string.substring(1);
+        } else {
+            return string;
+        }
+    }
+
     private static final Function<List<Class<?>>, String> CLASSES_TO_PATH_OF_DEPENDENCIES = classes ->
             classes.stream()
                     .map(clazz -> clazz.getProtectionDomain().getCodeSource().getLocation())
                     .map(URL::getPath)
-                    .map(path -> path.substring("file:".length()))
+                    .map(path -> path.startsWith("file:") ? path.substring("file:".length()) : path)
                     .map(path -> path.split("!")[0])
+                    .map(path -> path.replace("/", TestRunner.FILE_SEPARATOR))
+                    .map(EntryPoint::RemoveWinFileSeparator)
+                    .map(path -> {
+                        LOGGER.info("{}", path);
+                        return path;
+                    })
                     .collect(Collectors.joining(PATH_SEPARATOR));
 
     private static final List<Class<?>> JACOCO_DEPENDENCIES = Arrays.asList(
@@ -464,12 +478,13 @@ public class EntryPoint {
                 throw new RuntimeException(e);
             }
         }
-        final String path = resource.getPath();
+        String path = resource.getPath();
         if (path.contains("!") && path.startsWith("file:")) {
-            return path.substring("file:".length()).split("!")[0];
-        } else {
-            return path;
+            path = path.substring("file:".length()).split("!")[0];
         }
+        path = RemoveWinFileSeparator(path.replace("/", TestRunner.FILE_SEPARATOR));
+        LOGGER.info("Path to runner Classes: {}", path);
+        return path;
     }
 
 }
