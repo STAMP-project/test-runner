@@ -462,6 +462,10 @@ public class EntryPoint {
 
     private static String initAbsolutePathToRunnerClasses() {
         URL resource = ClassLoader.getSystemClassLoader().getResource("runner-classes/");
+        //this is the way to make it work from a jenkins plugin
+		if (resource == null) {
+			EntryPoint.class.getClassLoader().getResource("runner-classes/");
+		}
         // if the resource is null, this is because of the usage of a custom class loader.
         // For example, if we use the test-runner within a maven plugin, the resource must be find using
         // ClassRealm#findResource(String)
