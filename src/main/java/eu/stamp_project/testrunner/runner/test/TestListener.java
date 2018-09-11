@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
  */
 public class TestListener extends RunListener implements Serializable {
 
+    private final static long serialVersionUID = 2295395800748319976L;
+
     private List<String> runningTests = new ArrayList<>();
     private List<Failure> failingTests = new ArrayList<>();
     private List<Failure> assumptionFailingTests = new ArrayList<>();
