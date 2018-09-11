@@ -1,6 +1,5 @@
 package eu.stamp_project.testrunner.runner.test;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
 import eu.stamp_project.testrunner.EntryPoint;
 
 import java.io.File;
