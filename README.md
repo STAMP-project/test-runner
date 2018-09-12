@@ -1,7 +1,6 @@
-[![Build Status](https://travis-ci.org/STAMP-project/testrunner.svg?branch=master)](https://travis-ci.org/STAMP-project/testrunner)[![Coverage Status](https://coveralls.io/repos/github/STAMP-project/testrunner/badge.svg?branch=master)](https://coveralls.io/github/STAMP-project/testrunner?branch=master)[![Maven Central](https://maven-badges.herokuapp.com/maven-central/eu.stamp-project/test-runner/badge.svg)](https://mavenbadges.herokuapp.com/maven-central/eu.stamp-project/test-runner)
-
-
 # Test Runner
+
+[![Build Status](https://travis-ci.org/STAMP-project/testrunner.svg?branch=master)](https://travis-ci.org/STAMP-project/testrunner)[![Coverage Status](https://coveralls.io/repos/github/STAMP-project/testrunner/badge.svg?branch=master)](https://coveralls.io/github/STAMP-project/testrunner?branch=master)[![Maven Central](https://maven-badges.herokuapp.com/maven-central/eu.stamp-project/test-runner/badge.svg)](https://mavenbadges.herokuapp.com/maven-central/eu.stamp-project/test-runner)
 
 This project provides a framework to run JUnit test in a new JVM. It allows to retrieve results using serialization / deserialization.
 
@@ -15,6 +14,7 @@ This project provides a framework to run JUnit test in a new JVM. It allows to r
 * outputStream and errStream: can customize the output stream and the error stream of the java process.
 * timeout: can specify a custom time out in milli second.
 * blacklist: can discard test methods by their name among test classes.
+* maven execution: can now executes the test using **Maven**. This allows users to have a complex build configured in their `pom.xml`.
 
 # Development:
 

@@ -403,7 +403,7 @@ public class EntryPoint {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EntryPoint.class);
 
-    static final String WHITE_SPACE = " ";
+    public static final String WHITE_SPACE = " ";
 
     static final String JAVA_COMMAND = "java";
 
