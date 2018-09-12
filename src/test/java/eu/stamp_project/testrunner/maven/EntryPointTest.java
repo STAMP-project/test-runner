@@ -2,6 +2,7 @@ package eu.stamp_project.testrunner.maven;
 
 import eu.stamp_project.testrunner.runner.test.Failure;
 import eu.stamp_project.testrunner.runner.test.TestListener;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,6 +19,11 @@ public class EntryPointTest {
 
     @Before
     public void setUp() throws Exception {
+        EntryPoint.runMavenGoal("src/test/resources/test-projects", "clean");
+    }
+
+    @After
+    public void tearDown() throws Exception {
         EntryPoint.runMavenGoal("src/test/resources/test-projects", "clean");
     }
 
