@@ -7,7 +7,6 @@ import eu.stamp_project.testrunner.runner.coverage.JacocoRunner;
 import eu.stamp_project.testrunner.runner.test.TestRunner;
 import org.apache.commons.io.FileUtils;
 import org.jacoco.core.runtime.IRuntime;
-import org.objectweb.asm.Type;
 import org.objectweb.asm.xml.Processor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -455,7 +454,6 @@ public class EntryPoint {
 
     private static final List<Class<?>> JACOCO_DEPENDENCIES = Arrays.asList(
             IRuntime.class,
-            // Type.class,
             Processor.class,
             FileUtils.class
     );
