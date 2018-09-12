@@ -30,6 +30,14 @@ public class Failure implements Serializable {
         this.stackTrace = sw.toString(); // stack trace as a string
     }
 
+    public Failure(String testCaseName, String testClassName, String fullQualifiedNameOfException, String messageOfFailure, String stackTrace) {
+        this.testCaseName = testCaseName;
+        this.fullQualifiedNameOfException = stackTrace;
+        this.messageOfFailure = messageOfFailure;
+        this.testClassName = testClassName;
+        this.stackTrace = stackTrace;
+    }
+
     @Override
     public String toString() {
         return this.testCaseName + "(" + this.testClassName + "): " + this.messageOfFailure;

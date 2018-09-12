@@ -31,20 +31,20 @@ public class EntryPoint {
      * This methods will run all the test methods within the given test classes.
      * </p>
      *
-     * @param absolutePathToPomFile          path to the pom file of the targeted project
+     * @param absolutePathToRootProject      path to the root of the targeted project
      * @param fullQualifiedNameOfTestClasses test classes to be run.
      * @return an instance of TestListener {@link TestListener} containing result of the exeuction of test methods.
      */
-    public static TestListener runTestClasses(String absolutePathToPomFile,
+    public static TestListener runTestClasses(String absolutePathToRootProject,
                                               String... fullQualifiedNameOfTestClasses) {
         if (fullQualifiedNameOfTestClasses.length > 0) {
-            EntryPoint.runMavenGoal(absolutePathToPomFile, GOAL_TEST, GOAL_SPECIFY +
+            EntryPoint.runMavenGoal(absolutePathToRootProject, GOAL_TEST, GOAL_SPECIFY +
                     String.join(TEST_CLASS_SEPARATOR, fullQualifiedNameOfTestClasses)
             );
         } else {
-            EntryPoint.runMavenGoal(absolutePathToPomFile, GOAL_TEST);
+            EntryPoint.runMavenGoal(absolutePathToRootProject, GOAL_TEST);
         }
-        return null;
+        return new SurefireReportsReader().readAll(absolutePathToRootProject + "/" + PATH_TO_SUREFIRE);
     }
 
     /**
@@ -55,30 +55,30 @@ public class EntryPoint {
      * This methods will run all the test methods given.
      * </p>
      *
-     * @param absolutePathToPomFile        path to the pom file of the targeted project
+     * @param absolutePathToRootProject    path to the root of the targeted project
      * @param fullQualifiedNameOfTestClass test class to be run.
      * @param testMethods                  test methods to be run.
      * @return an instance of TestListener {@link TestListener} containing result of the execution of test methods.
      */
-    public static TestListener runTests(String absolutePathToPomFile,
+    public static TestListener runTests(String absolutePathToRootProject,
                                         String fullQualifiedNameOfTestClass,
                                         String... testMethods) {
         if (testMethods.length > 0) {
-            EntryPoint.runMavenGoal(absolutePathToPomFile, GOAL_TEST, GOAL_SPECIFY +
+            EntryPoint.runMavenGoal(absolutePathToRootProject, GOAL_TEST, GOAL_SPECIFY +
                     fullQualifiedNameOfTestClass + TEST_CLASS_METHOD_SEPARATOR +
                     String.join(TEST_METHOD_SEPARATOR, testMethods)
             );
         } else {
-            EntryPoint.runMavenGoal(absolutePathToPomFile, GOAL_TEST);
+            EntryPoint.runMavenGoal(absolutePathToRootProject, GOAL_TEST);
         }
-        return null;
+        return new SurefireReportsReader().readAll(absolutePathToRootProject + "/" + PATH_TO_SUREFIRE);
     }
 
-    private static int runMavenGoal(String absolutePathToPomFile, String... goals) {
+    static int runMavenGoal(String absolutePathToPomFile, String... goals) {
         LOGGER.info("run mvn {}", String.join(eu.stamp_project.testrunner.EntryPoint.WHITE_SPACE, goals));
         InvocationRequest request = new DefaultInvocationRequest();
         request.setGoals(Arrays.asList(goals));
-        request.setPomFile(new File(absolutePathToPomFile));
+        request.setPomFile(new File(absolutePathToPomFile + "/" + POM_FILE));
         request.setJavaHome(new File(System.getProperty("java.home")));
         request.setProperties(properties);
         Invoker invoker = new DefaultInvoker();
@@ -110,6 +110,8 @@ public class EntryPoint {
         properties.setProperty("jacoco.skip", "true");
     }
 
+    private static final String POM_FILE = "pom.xml";
+
     private static final String GOAL_TEST = "test";
 
     private static final String GOAL_SPECIFY = "-Dtest=";
@@ -119,6 +121,8 @@ public class EntryPoint {
     private static final String TEST_METHOD_SEPARATOR = "+";
 
     private static final String TEST_CLASS_METHOD_SEPARATOR = "#";
+
+    private static final String PATH_TO_SUREFIRE = "target/surefire-reports/";
 
     public static String mavenHome;
 
@@ -140,8 +144,8 @@ public class EntryPoint {
     }
 
     private static String getMavenHome(Predicate<String> conditional,
-                                 Function<String, String> getFunction,
-                                 String... possibleValues) {
+                                       Function<String, String> getFunction,
+                                       String... possibleValues) {
         String mavenHome = null;
         final Optional<String> potentialMavenHome = Arrays.stream(possibleValues).filter(conditional).findFirst();
         if (potentialMavenHome.isPresent()) {
