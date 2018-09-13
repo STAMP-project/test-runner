@@ -8,6 +8,7 @@ import eu.stamp_project.testrunner.runner.test.TestRunner;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Ignore;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -229,6 +230,7 @@ public class EntryPointTest extends AbstractTest {
         assertEquals(0, testListener.getFailingTests().size());
     }
 
+    @Ignore
     @Test //TODO FIXME FLAKY
     public void testRunTestTestMethods() throws Exception {
 
