@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
@@ -316,6 +317,37 @@ public class EntryPoint {
         return load;
     }
 
+    public static class RunnableProcess implements Runnable {
+
+        private Process process;
+
+        private String commandLine;
+
+        public RunnableProcess(Process process, String commandLine) {
+            this.process = process;
+            this.commandLine = commandLine;
+        }
+
+        @Override
+        public void run() {
+            try {
+
+                if (EntryPoint.verbose) {
+                    new ThreadToReadInputStream(
+                            EntryPoint.outPrintStream != null ? EntryPoint.outPrintStream : System.out,
+                            process.getInputStream()
+                    ).start();
+                    new ThreadToReadInputStream(EntryPoint.errPrintStream != null ? EntryPoint.errPrintStream : System.err
+                            , process.getErrorStream()
+                    ).start();
+                }
+                process.waitFor();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     private static void runGivenCommandLine(String commandLine) throws TimeoutException {
         if (EntryPoint.verbose) {
             LOGGER.info("Run: {}", commandLine);
@@ -330,28 +362,13 @@ public class EntryPoint {
             workingDirectory = null;
         }
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        final Future<?> submit = executor.submit(() -> {
-            Process process = null;
-            try {
-                process = Runtime.getRuntime().exec(commandLine, null, workingDirectory);
-                if (EntryPoint.verbose) {
-                    new ThreadToReadInputStream(
-                            EntryPoint.outPrintStream != null ? EntryPoint.outPrintStream : System.out,
-                            process.getInputStream()
-                    ).start();
-                    new ThreadToReadInputStream(EntryPoint.errPrintStream != null ? EntryPoint.errPrintStream : System.err
-                            , process.getErrorStream()
-                    ).start();
-                }
-                process.waitFor();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            } finally {
-                if (process != null) {
-                    process.destroyForcibly();
-                }
-            }
-        });
+        Process process = null;
+        try {
+            process = Runtime.getRuntime().exec(commandLine, null, workingDirectory);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        final Future<?> submit = executor.submit(new RunnableProcess(process, commandLine));
         try {
             submit.get(timeoutInMs, TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
@@ -359,6 +376,9 @@ public class EntryPoint {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
+            if (process != null) {
+                process.destroyForcibly();
+            }
             submit.cancel(true);
             executor.shutdownNow();
             if (!persistence) {
@@ -461,7 +481,7 @@ public class EntryPoint {
 
     private static String initAbsolutePathToRunnerClasses() {
         URL resource = ClassLoader.getSystemClassLoader().getResource("runner-classes/");
-        
+
 	//this is the way to make it work from a jenkins plugin
 	if (resource == null) {
 		resource = EntryPoint.class.getClassLoader().getResource("runner-classes/");
