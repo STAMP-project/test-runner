@@ -43,11 +43,16 @@ public class AbstractTest {
             throw new RuntimeException("Problem when compiling sources.");
         }
         command = "javac -d src/test/resources/test-projects/target/test-classes" +
-                " -cp src/test/resources/test-projects/target/classes/" + EntryPoint.PATH_SEPARATOR + JUNIT_CP + EntryPoint.PATH_SEPARATOR + EASYMOCK_CP +
+                " -cp src/test/resources/test-projects/target/classes/" + EntryPoint.PATH_SEPARATOR +
+                JUNIT_CP + EntryPoint.PATH_SEPARATOR +
+                EASYMOCK_CP + EntryPoint.PATH_SEPARATOR +
+                JUNIT5_CP +
                 " src/test/resources/test-projects/src/test/java/example/TestSuiteExample.java" +
                 " src/test/resources/test-projects/src/test/java/failing/FailingTestClass.java" +
                 " src/test/resources/test-projects/src/test/java/example/TestSuiteExample2.java" +
-                " src/test/resources/test-projects/src/test/java/easymock/LoginControllerIntegrationTest.java";
+                " src/test/resources/test-projects/src/test/java/easymock/LoginControllerIntegrationTest.java" +
+                " src/test/resources/test-projects/src/test/java/junit5/TestSuiteExample.java" +
+                " src/test/resources/test-projects/src/test/java/junit5/FailingTestClass.java";
         System.out.println(command);
         if (Runtime.getRuntime().exec(command).waitFor() != 0) {
             throw new RuntimeException("Problem when compiling test sources.");
@@ -69,14 +74,22 @@ public class AbstractTest {
             .map(s -> s.substring(0, s.indexOf("/.m2/repository/") + "/.m2/repository/".length()))
             .get();
 
-    public static final String TEST_PROJECT_CLASSES = "src/test/resources/test-projects/target/classes" + EntryPoint.PATH_SEPARATOR +
-            "src/test/resources/test-projects/target/test-classes";
+    public static final String TEST_PROJECT_CLASSES = "src/test/resources/test-projects/target/classes/" + EntryPoint.PATH_SEPARATOR +
+            "src/test/resources/test-projects/target/test-classes/";
 
     public static final String JUNIT_CP = MAVEN_HOME + "junit/junit/4.12/junit-4.12.jar" + EntryPoint.PATH_SEPARATOR
             + MAVEN_HOME + "org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar";
 
     public static final String EASYMOCK_CP = MAVEN_HOME + "org/easymock/easymock/3.4/easymock-3.4.jar" + EntryPoint.PATH_SEPARATOR
             + MAVEN_HOME + "org/objenesis/objenesis/2.2/objenesis-2.2.jar";
+
+    public static final String JUNIT5_CP = MAVEN_HOME + "org/junit/jupiter/junit-jupiter-api/5.1.0/junit-jupiter-api-5.1.0.jar" + EntryPoint.PATH_SEPARATOR
+            + MAVEN_HOME + "org/apiguardian/apiguardian-api/1.0.0/apiguardian-api-1.0.0.jar" + EntryPoint.PATH_SEPARATOR
+            + MAVEN_HOME + "org/opentest4j/opentest4j/1.0.0/opentest4j-1.0.0.jar" + EntryPoint.PATH_SEPARATOR
+            + MAVEN_HOME + "org/junit/platform/junit-platform-commons/1.1.0/junit-platform-commons-1.1.0.jar" + EntryPoint.PATH_SEPARATOR
+            + MAVEN_HOME + "org/junit/jupiter/junit-jupiter-engine/5.1.0/junit-jupiter-engine-5.1.0.jar" + EntryPoint.PATH_SEPARATOR
+            + MAVEN_HOME + "org/junit/platform/junit-platform-engine/1.1.0/junit-platform-engine-1.1.0.jar" + EntryPoint.PATH_SEPARATOR
+            + MAVEN_HOME + "org/junit/platform/junit-platform-launcher/1.2.0/junit-platform-launcher-1.2.0.jar";
 
     public static final String PATH_TO_RUNNER_CLASSES = "src/main/resources/runner-classes/";
 

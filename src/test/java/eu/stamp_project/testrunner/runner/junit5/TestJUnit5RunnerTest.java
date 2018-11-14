@@ -1,8 +1,9 @@
-package eu.stamp_project.testrunner.runner.test;
+package eu.stamp_project.testrunner.runner.junit5;
 
 import eu.stamp_project.testrunner.AbstractTest;
 import eu.stamp_project.testrunner.TestListener;
 import eu.stamp_project.testrunner.TestListenerImpl;
+import eu.stamp_project.testrunner.runner.test.TestRunner;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -13,7 +14,7 @@ import static org.junit.Assert.assertTrue;
  * benjamin.danglot@inria.fr
  * on 19/12/17
  */
-public class TestRunnerTest extends AbstractTest {
+public class TestJUnit5RunnerTest extends AbstractTest {
 
     @Test
     public void testExecutionTestClassWithBlackList() {
@@ -22,6 +23,8 @@ public class TestRunnerTest extends AbstractTest {
             Run the whole test class given by the command line.
                     - the listener is loaded using the static method load()
                     - test2 is in the blacklist and should be executed.
+
+                    TODO the black list is not supported for now in JUNIT 5
          */
 
         final String blacklistOption = " " + TestRunner.BLACK_LIST_OPTION + " test8:test2";
@@ -36,7 +39,7 @@ public class TestRunnerTest extends AbstractTest {
             throw new RuntimeException(e);
         }
         final TestListener load = TestListenerImpl.load();
-        assertEquals(4, load.getPassingTests().size());
+        assertEquals(6, load.getPassingTests().size());
         assertTrue(load.getFailingTests().isEmpty());
     }
 
@@ -56,7 +59,7 @@ public class TestRunnerTest extends AbstractTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        final TestListener load = TestListenerImpl.load();;
+        final TestListener load = TestListenerImpl.load();
         assertEquals(6, load.getPassingTests().size());
         assertTrue(load.getFailingTests().isEmpty());
     }
@@ -77,14 +80,16 @@ public class TestRunnerTest extends AbstractTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        final TestListener load = TestListenerImpl.load();;
+        final TestListener load = TestListenerImpl.load();
+        System.out.println(load);
         assertEquals(2, load.getPassingTests().size());
         assertTrue(load.getFailingTests().isEmpty());
     }
 
 
-    private final String commandLine = "java -cp " +
-            JUNIT_CP + TestRunner.PATH_SEPARATOR + TEST_PROJECT_CLASSES +
+    private final String commandLine = "java -cp " + JUNIT_CP +
+            TestRunner.PATH_SEPARATOR + JUNIT5_CP +
             TestRunner.PATH_SEPARATOR + PATH_TO_RUNNER_CLASSES +
-            " eu.stamp_project.testrunner.runner.test.TestRunner example.TestSuiteExample";
+            TestRunner.PATH_SEPARATOR + TEST_PROJECT_CLASSES +
+            " eu.stamp_project.testrunner.runner.junit5.JUnit5Runner junit5.TestSuiteExample";
 }

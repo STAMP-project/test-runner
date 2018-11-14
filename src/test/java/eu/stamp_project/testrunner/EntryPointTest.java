@@ -1,9 +1,8 @@
 package eu.stamp_project.testrunner;
 
 import eu.stamp_project.testrunner.runner.coverage.Coverage;
-import eu.stamp_project.testrunner.runner.coverage.CoveragePerTestMethod;
+import eu.stamp_project.testrunner.runner.coverage.CoveragePerJUnit4TestMethod;
 import eu.stamp_project.testrunner.runner.test.Failure;
-import eu.stamp_project.testrunner.runner.test.TestListener;
 import eu.stamp_project.testrunner.runner.test.TestRunner;
 import org.junit.After;
 import org.junit.Before;
@@ -12,6 +11,7 @@ import org.junit.Ignore;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.concurrent.TimeoutException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -152,8 +152,8 @@ public class EntryPointTest extends AbstractTest {
     @Test
     public void testOnFailingTest() throws Exception {
         /*
-            EntryPoint should return a proper TestListener.
-            This TestListener contains:
+            EntryPoint should return a proper testListener.
+            This testListener contains:
                 - three running test
                 - one failing test
                 - one passing test
@@ -203,7 +203,7 @@ public class EntryPointTest extends AbstractTest {
 
         /*
             Test the method runTestClasses() of EntryPoint.
-                It should return the TestListener with the result of the execution of the list of test classes.
+                It should return the testListener with the result of the execution of the list of test classes.
          */
 
         final TestListener testListener = EntryPoint.runTestClasses(
@@ -219,7 +219,7 @@ public class EntryPointTest extends AbstractTest {
 
         /*
             Test the method runTest() of EntryPoint.
-                It should return the TestListener with the result of the execution of the test class.
+                It should return the testListener with the result of the execution of the test class.
          */
 
         final TestListener testListener = EntryPoint.runTestClasses(
@@ -236,7 +236,7 @@ public class EntryPointTest extends AbstractTest {
 
         /*
             Test the method runTest() of EntryPoint.
-                It should return the TestListener with the result of the execution of the test class.
+                It should return the testListener with the result of the execution of the test class.
          */
 
         EntryPoint.verbose = true;
@@ -336,7 +336,7 @@ public class EntryPointTest extends AbstractTest {
                 MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + TestRunner.PATH_SEPARATOR+
                 JUNIT_CP;
 
-        final CoveragePerTestMethod coveragePerTestMethod = EntryPoint.runCoveragePerTestMethods(
+        final CoveragePerJUnit4TestMethod coveragePerTestMethod = EntryPoint.runCoveragePerTestMethods(
                 classpath + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 TEST_PROJECT_CLASSES,
                 "example.TestSuiteExample",
