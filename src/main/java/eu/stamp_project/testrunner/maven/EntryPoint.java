@@ -1,6 +1,7 @@
 package eu.stamp_project.testrunner.maven;
 
-import eu.stamp_project.testrunner.runner.test.TestListener;
+import eu.stamp_project.testrunner.TestListener;
+import eu.stamp_project.testrunner.runner.test.JUnit4TestListener;
 import org.apache.maven.shared.invoker.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +10,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -61,8 +61,8 @@ public class EntryPoint {
      * @return an instance of TestListener {@link TestListener} containing result of the execution of test methods.
      */
     public static TestListener runTests(String absolutePathToRootProject,
-                                        String fullQualifiedNameOfTestClass,
-                                        String... testMethods) {
+                                              String fullQualifiedNameOfTestClass,
+                                              String... testMethods) {
         if (testMethods.length > 0) {
             EntryPoint.runMavenGoal(absolutePathToRootProject, GOAL_TEST, GOAL_SPECIFY +
                     fullQualifiedNameOfTestClass + TEST_CLASS_METHOD_SEPARATOR +

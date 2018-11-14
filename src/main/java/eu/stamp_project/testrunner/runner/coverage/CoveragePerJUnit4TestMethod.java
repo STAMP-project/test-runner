@@ -1,12 +1,16 @@
 package eu.stamp_project.testrunner.runner.coverage;
 
+import eu.stamp_project.testrunner.TestListener;
+import eu.stamp_project.testrunner.runner.test.JUnit4TestListener;
 import eu.stamp_project.testrunner.runner.test.Loader;
-import eu.stamp_project.testrunner.runner.test.TestListener;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.SessionInfoStore;
 import org.jacoco.core.runtime.RuntimeData;
 import org.junit.runner.Description;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,7 +21,7 @@ import java.util.Map;
  *
  * This class represents the instruction coverage per test method.
  */
-public class CoveragePerTestMethod extends TestListener {
+public class CoveragePerJUnit4TestMethod extends JUnit4TestListener {
 
     private final Map<String, Coverage> coverageResultsMap;
 
@@ -29,12 +33,12 @@ public class CoveragePerTestMethod extends TestListener {
 
     private transient SessionInfoStore sessionInfos;
 
-    private CoveragePerTestMethod() {
+    private CoveragePerJUnit4TestMethod() {
         coverageResultsMap = null;
         classesDirectory = null;
     }
 
-    public CoveragePerTestMethod(RuntimeData data, String classesDirectory) {
+    public CoveragePerJUnit4TestMethod(RuntimeData data, String classesDirectory) {
         this.data = data;
         this.classesDirectory = classesDirectory;
         this.coverageResultsMap = new HashMap<>();
@@ -65,15 +69,32 @@ public class CoveragePerTestMethod extends TestListener {
     }
 
     @Override
-    protected String getSerializeName() {
-        return "perTestCoverageResult";
+    public void save() {
+        File outputDir = new File(TestListener.OUTPUT_DIR);
+        if (!outputDir.exists()) {
+            if (!outputDir.mkdirs()) {
+                System.err.println("Error while creating output dir");
+            }
+        }
+        File f = new File(outputDir, SERIALIZE_NAME + EXTENSION);
+        try (FileOutputStream fout = new FileOutputStream(f)) {
+            try (ObjectOutputStream oos = new ObjectOutputStream(fout)) {
+                oos.writeObject(this);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } catch (Exception e) {
+            System.err.println("Error while writing serialized file.");
+            throw new RuntimeException(e);
+        }
+        System.out.println("File saved to the following path: " + f.getAbsolutePath());
     }
 
     /**
      * Load from serialized object
-     * @return an Instance of CoveragePerTestMethod loaded from a serialized file. The name of the file is returned by {@link #getSerializeName()}
+     * @return an Instance of CoveragePerJUnit4TestMethod loaded from a serialized file.
      */
-    public static CoveragePerTestMethod load() {
-        return new Loader<CoveragePerTestMethod>().load(new CoveragePerTestMethod().getSerializeName());
+    public static CoveragePerJUnit4TestMethod load() {
+        return new Loader<CoveragePerJUnit4TestMethod>().load(SERIALIZE_NAME);
     }
 }

@@ -1,8 +1,7 @@
 package eu.stamp_project.testrunner;
 
 import eu.stamp_project.testrunner.runner.coverage.Coverage;
-import eu.stamp_project.testrunner.runner.coverage.CoveragePerTestMethod;
-import eu.stamp_project.testrunner.runner.test.TestListener;
+import eu.stamp_project.testrunner.runner.coverage.CoveragePerJUnit4TestMethod;
 import eu.stamp_project.testrunner.runner.coverage.JacocoRunner;
 import eu.stamp_project.testrunner.runner.test.TestRunner;
 import org.apache.commons.io.FileUtils;
@@ -20,11 +19,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -128,11 +123,11 @@ public class EntryPoint {
      *
      * @param classpath                      the classpath required to run the given test classes.
      * @param fullQualifiedNameOfTestClasses test classes to be run.
-     * @return an instance of TestListener {@link TestListener} containing result of the exeuction of test methods.
+     * @return an instance of TestListener  {@link TestListener } containing result of the exeuction of test methods.
      * @throws TimeoutException when the execution takes longer than timeoutInMs
      */
     public static TestListener runTestClasses(String classpath,
-                                              String... fullQualifiedNameOfTestClasses) throws TimeoutException {
+                                                    String... fullQualifiedNameOfTestClasses) throws TimeoutException {
         return runTests(Arrays.stream(new String[]{
                         getJavaCommand(),
                         classpath + PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES,
@@ -161,8 +156,8 @@ public class EntryPoint {
      * @throws TimeoutException when the execution takes longer than timeoutInMs
      */
     public static TestListener runTests(String classpath,
-                                        String fullQualifiedNameOfTestClass,
-                                        String... testMethods) throws TimeoutException {
+                                              String fullQualifiedNameOfTestClass,
+                                              String... testMethods) throws TimeoutException {
         return runTests(Arrays.stream(new String[]{
                         getJavaCommand(),
                         classpath + PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES,
@@ -181,7 +176,7 @@ public class EntryPoint {
             LOGGER.warn("Timeout when running {}", commandLine);
             throw e;
         }
-        final TestListener load = TestListener.load();
+        final TestListener load = TestListenerImpl.load();
         if (EntryPoint.verbose) {
             LOGGER.info("Test has been run: {}",
                     Stream.concat(load.getPassingTests().stream().map(Object::toString),
@@ -275,10 +270,10 @@ public class EntryPoint {
      * @return a Map that associate each test method name to its instruction coverage, as an instance of Coverage {@link Coverage} of test classes.
      * @throws TimeoutException when the execution takes longer than timeoutInMs
      */
-    public static CoveragePerTestMethod runCoveragePerTestMethods(String classpath,
-                                                                  String targetProjectClasses,
-                                                                  String fullQualifiedNameOfTestClass,
-                                                                  String... methodNames) throws TimeoutException {
+    public static CoveragePerJUnit4TestMethod runCoveragePerTestMethods(String classpath,
+                                                                        String targetProjectClasses,
+                                                                        String fullQualifiedNameOfTestClass,
+                                                                        String... methodNames) throws TimeoutException {
         final String commandLine = Arrays.stream(new String[]{
                 getJavaCommand(),
                 classpath +
@@ -296,7 +291,7 @@ public class EntryPoint {
             LOGGER.warn("Timeout when running {}", commandLine);
             throw e;
         }
-        final CoveragePerTestMethod load = CoveragePerTestMethod.load();
+        final CoveragePerJUnit4TestMethod load = CoveragePerJUnit4TestMethod.load();
         if (EntryPoint.verbose) {
             LOGGER.info("Global Coverage has been computed {}", load.toString());
         }
@@ -430,6 +425,8 @@ public class EntryPoint {
     static final String CLASSPATH_OPT = "-classpath";
 
     static final String TEST_RUNNER_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.test.TestRunner";
+
+    static final String TEST_RUNNER_JUNIT5_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.test.JUnit5TestRunner";
 
     static final String JACOCO_RUNNER_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JacocoRunner";
 

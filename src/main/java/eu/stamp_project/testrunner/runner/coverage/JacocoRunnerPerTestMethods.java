@@ -43,10 +43,10 @@ public class JacocoRunnerPerTestMethods extends JacocoRunner {
         ).save();
     }
 
-    private CoveragePerTestMethod run(String classesDirectory,
-                         String testClassesDirectory,
-                         String fullQualifiedNameOfTestClass,
-                         String... testMethodNames) {
+    private CoveragePerJUnit4TestMethod run(String classesDirectory,
+                                            String testClassesDirectory,
+                                            String fullQualifiedNameOfTestClass,
+                                            String... testMethodNames) {
         final RuntimeData data = new RuntimeData();
         URLClassLoader classLoader;
         try {
@@ -62,7 +62,7 @@ public class JacocoRunnerPerTestMethods extends JacocoRunner {
                     IOUtils.toByteArray(classLoader.getResourceAsStream(resource))
             );
             this.runtime.startup(data);
-            final CoveragePerTestMethod listener = new CoveragePerTestMethod(data, classesDirectory);
+            final CoveragePerJUnit4TestMethod listener = new CoveragePerJUnit4TestMethod(data, classesDirectory);
             TestRunner.run(fullQualifiedNameOfTestClass, Arrays.asList(testMethodNames), listener, this.instrumentedClassLoader);
             if (!listener.getFailingTests().isEmpty()) {
                 System.err.println("Some test(s) failed during computation of coverage:\n" +

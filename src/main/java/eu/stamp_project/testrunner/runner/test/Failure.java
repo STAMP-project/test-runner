@@ -32,7 +32,7 @@ public class Failure implements Serializable {
 
     public Failure(String testCaseName, String testClassName, String fullQualifiedNameOfException, String messageOfFailure, String stackTrace) {
         this.testCaseName = testCaseName;
-        this.fullQualifiedNameOfException = stackTrace;
+        this.fullQualifiedNameOfException = fullQualifiedNameOfException;
         this.messageOfFailure = messageOfFailure;
         this.testClassName = testClassName;
         this.stackTrace = stackTrace;

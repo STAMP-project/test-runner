@@ -1,6 +1,7 @@
 package eu.stamp_project.testrunner.runner.test;
 
 import eu.stamp_project.testrunner.EntryPoint;
+import eu.stamp_project.testrunner.TestListener;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
@@ -50,24 +51,23 @@ public class TestRunner {
      *             the second argument is optionally the list of the test method name separated by the path separator of the system, <i>e.g.</i> ':' on Linux.
      *             You can pass the --blacklist flag, following by a list of test method name to be blacklisted.
      *             Each method name is separated with the path separator of the system, <i>e.g.</i> ':' on Linux.
-     * @throws ClassNotFoundException in case of the supplied classpath is wrong
      */
-    public static void main(String[] args) throws ClassNotFoundException {
-        final TestListener testListener = new TestListener();
+    public static void main(String[] args) {
+        final JUnit4TestListener jUnit4TestListener = new JUnit4TestListener();
         if (args[0].contains(PATH_SEPARATOR )) {
-            TestRunner.run(Arrays.asList(args[0].split(PATH_SEPARATOR)), Collections.emptyList(), testListener);
+            TestRunner.run(Arrays.asList(args[0].split(PATH_SEPARATOR)), Collections.emptyList(), jUnit4TestListener);
         } else {
             if (args.length > 1) {
                 if (args[1].startsWith(BLACK_LIST_OPTION)) {
-                    TestRunner.run(Collections.singletonList(args[0]), Arrays.asList(args[2].split(PATH_SEPARATOR )), testListener);
+                    TestRunner.run(Collections.singletonList(args[0]), Arrays.asList(args[2].split(PATH_SEPARATOR )), jUnit4TestListener);
                 } else {
-                    TestRunner.run(args[0], Arrays.asList(args[1].split(PATH_SEPARATOR )), testListener);
+                    TestRunner.run(args[0], Arrays.asList(args[1].split(PATH_SEPARATOR )), jUnit4TestListener);
                 }
             } else {
-                TestRunner.run(Collections.singletonList(args[0]), Collections.emptyList(), testListener);
+                TestRunner.run(Collections.singletonList(args[0]), Collections.emptyList(), jUnit4TestListener);
             }
         }
-        testListener.save();
+        jUnit4TestListener.save();
     }
 
     /**
@@ -77,7 +77,7 @@ public class TestRunner {
      * @param blackList list of test methods name to not execute
      * @param listener test listener to gather test result
      */
-    public static void run(List<String> testClassNames, List<String> blackList, TestListener listener) {
+    public static void run(List<String> testClassNames, List<String> blackList, JUnit4TestListener listener) {
         TestRunner.run(testClassNames, blackList, listener, TestRunner.class.getClassLoader());
     }
 
@@ -89,7 +89,7 @@ public class TestRunner {
      * @param listener test listener to gather test result
      * @param customClassLoader this class loader should contains the .class to be executed and all the dependencies
      */
-    public static void run(List<String> testClassNames, List<String> blackList, TestListener listener, ClassLoader customClassLoader) {
+    public static void run(List<String> testClassNames, List<String> blackList, JUnit4TestListener listener, ClassLoader customClassLoader) {
         Request request;
         request = Request.classes(testClassNames.stream().map(testClassName -> {
             try {
@@ -106,23 +106,23 @@ public class TestRunner {
         runner.run(runNotifier);
     }
 
-    public static void run(String testClassName, TestListener listener) {
+    public static void run(String testClassName, JUnit4TestListener listener) {
         TestRunner.run(testClassName, Collections.emptyList(), listener, TestRunner.class.getClassLoader());
     }
 
-    public static void run(String testClassName, List<String> testMethodNames, TestListener listener) {
+    public static void run(String testClassName, List<String> testMethodNames, JUnit4TestListener listener) {
         TestRunner.run(testClassName, testMethodNames, listener, TestRunner.class.getClassLoader());
     }
 
     public static void run(String testClassName,
-                           TestListener listener,
+                           JUnit4TestListener listener,
                            ClassLoader customClassLoader) {
         TestRunner.run(testClassName, Collections.emptyList(), listener, customClassLoader);
     }
 
     public static void run(String testClassName,
                            List<String> testMethodNames,
-                           TestListener listener,
+                           JUnit4TestListener listener,
                            ClassLoader customClassLoader) {
         Request request;
         try {

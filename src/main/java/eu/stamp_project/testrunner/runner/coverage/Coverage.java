@@ -1,7 +1,8 @@
 package eu.stamp_project.testrunner.runner.coverage;
 
+import eu.stamp_project.testrunner.TestListener;
 import eu.stamp_project.testrunner.runner.test.Loader;
-import eu.stamp_project.testrunner.runner.test.TestListener;
+import eu.stamp_project.testrunner.runner.test.JUnit4TestListener;
 import eu.stamp_project.testrunner.runner.test.TestRunner;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
@@ -11,7 +12,9 @@ import org.jacoco.core.analysis.ILine;
 import org.jacoco.core.data.ExecutionDataStore;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -19,7 +22,9 @@ import java.util.stream.IntStream;
 /**
  * This class represents the instruction coverage of source.
  */
-public class Coverage extends TestListener {
+public class Coverage extends JUnit4TestListener {
+
+    private static final long serialVersionUID = 109548359596802378L;
 
     private int instructionsCovered;
 
@@ -61,11 +66,6 @@ public class Coverage extends TestListener {
         return (!this.executionPath.equals(that.executionPath)) && percCoverageThis >= percCoverageThat;
     }
 
-    @Override
-    protected String getSerializeName() {
-        return "globalCoverageResult";
-    }
-
     void collectData(ExecutionDataStore executionData, String classesDirectory) {
         final CoverageBuilder coverageBuilder = new CoverageBuilder();
         final Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
@@ -92,12 +92,34 @@ public class Coverage extends TestListener {
         return this.instructionsCovered + " / " + this.instructionsTotal;
     }
 
+    @Override
+    public void save() {
+        File outputDir = new File(TestListener.OUTPUT_DIR);
+        if (!outputDir.exists()) {
+            if (!outputDir.mkdirs()) {
+                System.err.println("Error while creating output dir");
+            }
+        }
+        File f = new File(outputDir, SERIALIZE_NAME + EXTENSION);
+        try (FileOutputStream fout = new FileOutputStream(f)) {
+            try (ObjectOutputStream oos = new ObjectOutputStream(fout)) {
+                oos.writeObject(this);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } catch (Exception e) {
+            System.err.println("Error while writing serialized file.");
+            throw new RuntimeException(e);
+        }
+        System.out.println("File saved to the following path: " + f.getAbsolutePath());
+    }
+
     /**
      * Load from serialized object
-     * @return an Instance of Coverage loaded from a serialized file. The name of the file is returned by {@link #getSerializeName()}
+     * @return an Instance of Coverage loaded from a serialized file.
      */
     public static Coverage load() {
-        return new Loader<Coverage>().load(new Coverage().getSerializeName());
+        return new Loader<Coverage>().load(SERIALIZE_NAME);
     }
 
 }
