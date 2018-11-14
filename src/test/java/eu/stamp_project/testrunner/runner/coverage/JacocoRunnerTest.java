@@ -79,6 +79,10 @@ public class JacocoRunnerTest extends AbstractTest {
         try {
             p = Runtime.getRuntime().exec(commandLine + " test8:test3");
             p.waitFor();
+            int currentChar = 0;
+            while (-1 != (currentChar = p.getErrorStream().read())) {
+                System.out.print((char) currentChar);
+            }
             assertEquals(0, p.exitValue());
         } catch (Exception e) {
             throw new RuntimeException(e);
