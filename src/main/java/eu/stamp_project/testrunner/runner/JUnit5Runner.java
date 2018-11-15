@@ -1,6 +1,7 @@
-package eu.stamp_project.testrunner.runner.junit5;
+package eu.stamp_project.testrunner.runner;
 
 import eu.stamp_project.testrunner.EntryPoint;
+import eu.stamp_project.testrunner.listener.junit5.JUnit5TestListener;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
@@ -10,8 +11,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static eu.stamp_project.testrunner.runner.test.TestRunner.PATH_SEPARATOR;
-import static eu.stamp_project.testrunner.runner.test.TestRunner.BLACK_LIST_OPTION;
+import static eu.stamp_project.testrunner.runner.JUnit4Runner.PATH_SEPARATOR;
+import static eu.stamp_project.testrunner.runner.JUnit4Runner.BLACK_LIST_OPTION;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectMethod;
 
@@ -90,11 +91,11 @@ public class JUnit5Runner {
     }
 
     public static void run(String testClassName, JUnit5TestListener listener) {
-        JUnit5Runner.run(testClassName, Collections.emptyList(), listener, eu.stamp_project.testrunner.runner.test.TestRunner.class.getClassLoader());
+        JUnit5Runner.run(testClassName, Collections.emptyList(), listener, JUnit4Runner.class.getClassLoader());
     }
 
     public static void run(String testClassName, List<String> testMethodNames, JUnit5TestListener listener) {
-        JUnit5Runner.run(testClassName, testMethodNames, listener, eu.stamp_project.testrunner.runner.test.TestRunner.class.getClassLoader());
+        JUnit5Runner.run(testClassName, testMethodNames, listener, JUnit4Runner.class.getClassLoader());
     }
 
     public static void run(String testClassName,
@@ -108,14 +109,22 @@ public class JUnit5Runner {
                            JUnit5TestListener listener,
                            ClassLoader customClassLoader) {
         final LauncherDiscoveryRequestBuilder requestBuilder = LauncherDiscoveryRequestBuilder.request();
-        testMethodNames.forEach(testMethodName -> {
-                    try {
-                        requestBuilder.selectors(selectMethod(customClassLoader.loadClass(testClassName), testMethodName));
-                    } catch (ClassNotFoundException e) {
-                        throw new RuntimeException(e);
+        if (testMethodNames.isEmpty()) {
+            try {
+                requestBuilder.selectors(selectClass(customClassLoader.loadClass(testClassName)));
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            testMethodNames.forEach(testMethodName -> {
+                        try {
+                            requestBuilder.selectors(selectMethod(customClassLoader.loadClass(testClassName), testMethodName));
+                        } catch (ClassNotFoundException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
-                }
-        );
+            );
+        }
         final LauncherDiscoveryRequest request = requestBuilder.build();
         final Launcher launcher = LauncherFactory.create();
         launcher.registerTestExecutionListeners(listener);

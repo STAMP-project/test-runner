@@ -1,9 +1,10 @@
 package eu.stamp_project.testrunner.runner.coverage;
 
 import eu.stamp_project.testrunner.EntryPoint;
-import eu.stamp_project.testrunner.listener.junit4.CoveragePerJUnit4TestMethod;
+import eu.stamp_project.testrunner.listener.junit5.CoveragePerJUnit5TestMethod;
 import eu.stamp_project.testrunner.runner.Failure;
 import eu.stamp_project.testrunner.runner.JUnit4Runner;
+import eu.stamp_project.testrunner.runner.JUnit5Runner;
 import org.apache.commons.io.IOUtils;
 import org.jacoco.core.runtime.RuntimeData;
 
@@ -21,7 +22,7 @@ import static java.util.ResourceBundle.clearCache;
  * benjamin.danglot@inria.fr
  * on 06/04/18
  */
-public class JUnit4JacocoRunnerPerTestMethod extends JUnit4JacocoRunner {
+public class JUnit5JacocoRunnerPerTestMethod extends JUnit4JacocoRunner {
 
     /**
      * The entry method to compute the instruction coverage per test method.
@@ -35,7 +36,7 @@ public class JUnit4JacocoRunnerPerTestMethod extends JUnit4JacocoRunner {
         // inputs: classes:test-classes, fullqualifiednameoftest, method1:method2....
         final String classesDirectory = args[0].split(JUnit4Runner.PATH_SEPARATOR)[0];
         final String testClassesDirectory = args[0].split(JUnit4Runner.PATH_SEPARATOR)[1];
-        final JUnit4JacocoRunnerPerTestMethod jacocoRunner = new JUnit4JacocoRunnerPerTestMethod(classesDirectory, testClassesDirectory);
+        final JUnit5JacocoRunnerPerTestMethod jacocoRunner = new JUnit5JacocoRunnerPerTestMethod(classesDirectory, testClassesDirectory);
         jacocoRunner.run(classesDirectory,
                     testClassesDirectory,
                     args[1],
@@ -43,7 +44,7 @@ public class JUnit4JacocoRunnerPerTestMethod extends JUnit4JacocoRunner {
         ).save();
     }
 
-    private CoveragePerJUnit4TestMethod run(String classesDirectory,
+    private CoveragePerJUnit5TestMethod run(String classesDirectory,
                                             String testClassesDirectory,
                                             String fullQualifiedNameOfTestClass,
                                             String... testMethodNames) {
@@ -62,8 +63,8 @@ public class JUnit4JacocoRunnerPerTestMethod extends JUnit4JacocoRunner {
                     IOUtils.toByteArray(classLoader.getResourceAsStream(resource))
             );
             this.runtime.startup(data);
-            final CoveragePerJUnit4TestMethod listener = new CoveragePerJUnit4TestMethod(data, classesDirectory);
-            JUnit4Runner.run(fullQualifiedNameOfTestClass, Arrays.asList(testMethodNames), listener, this.instrumentedClassLoader);
+            final CoveragePerJUnit5TestMethod listener = new CoveragePerJUnit5TestMethod(data, classesDirectory);
+            JUnit5Runner.run(fullQualifiedNameOfTestClass, Arrays.asList(testMethodNames), listener, this.instrumentedClassLoader);
             if (!listener.getFailingTests().isEmpty()) {
                 System.err.println("Some test(s) failed during computation of coverage:\n" +
                         listener.getFailingTests()
@@ -80,7 +81,7 @@ public class JUnit4JacocoRunnerPerTestMethod extends JUnit4JacocoRunner {
         }
     }
 
-    private JUnit4JacocoRunnerPerTestMethod(String classesDirectory, String testClassesDirectory) {
+    private JUnit5JacocoRunnerPerTestMethod(String classesDirectory, String testClassesDirectory) {
         super(classesDirectory, testClassesDirectory);
     }
 

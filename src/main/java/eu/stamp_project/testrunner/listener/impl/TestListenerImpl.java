@@ -1,5 +1,6 @@
-package eu.stamp_project.testrunner.listener;
+package eu.stamp_project.testrunner.listener.impl;
 
+import eu.stamp_project.testrunner.listener.TestListener;
 import eu.stamp_project.testrunner.runner.Failure;
 import eu.stamp_project.testrunner.runner.Loader;
 

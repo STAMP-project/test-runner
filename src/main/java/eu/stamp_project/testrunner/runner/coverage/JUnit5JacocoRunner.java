@@ -3,9 +3,10 @@ package eu.stamp_project.testrunner.runner.coverage;
 import eu.stamp_project.testrunner.EntryPoint;
 import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.TestListener;
-import eu.stamp_project.testrunner.listener.junit4.JUnit4Coverage;
-import eu.stamp_project.testrunner.runner.JUnit4Runner;
+import eu.stamp_project.testrunner.listener.junit5.JUnit5Coverage;
 import eu.stamp_project.testrunner.runner.Failure;
+import eu.stamp_project.testrunner.runner.JUnit4Runner;
+import eu.stamp_project.testrunner.runner.JUnit5Runner;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.jacoco.core.data.ExecutionDataStore;
@@ -33,7 +34,7 @@ import static java.util.ResourceBundle.clearCache;
  * benjamin.danglot@inria.fr
  * on 18/12/17
  */
-public class JUnit4JacocoRunner {
+public class JUnit5JacocoRunner {
 
     /**
      * The entry method to compute the instruction coverage.
@@ -47,16 +48,16 @@ public class JUnit4JacocoRunner {
      *             You can pass the --junit5 to enable the junit5 mode, otherwise it will run in JUnit4
      *             Each method name is separated with the system path separator.
      */
-    public static void main(String[] args) throws ClassNotFoundException {
+    public static void main(String[] args) {
         // inputs: classes:test-classes, fullqualifiednameoftest, method1:method2....
         final String[] splittedArgs0 = args[0].split(JUnit4Runner.PATH_SEPARATOR);
         final String classesDirectory = splittedArgs0[0];
         final String testClassesDirectory = splittedArgs0[1];
-        final JUnit4JacocoRunner jacocoRunner;
+        final JUnit5JacocoRunner jacocoRunner;
         if (args.length > 3 && args[2].equals(JUnit4Runner.BLACK_LIST_OPTION)) {
-            jacocoRunner = new JUnit4JacocoRunner(classesDirectory, testClassesDirectory, Arrays.asList(args[3].split(JUnit4Runner.PATH_SEPARATOR)));
+            jacocoRunner = new JUnit5JacocoRunner(classesDirectory, testClassesDirectory, Arrays.asList(args[3].split(JUnit4Runner.PATH_SEPARATOR)));
         } else {
-            jacocoRunner = new JUnit4JacocoRunner(classesDirectory, testClassesDirectory);
+            jacocoRunner = new JUnit5JacocoRunner(classesDirectory, testClassesDirectory);
         }
         if (args[1].contains(JUnit4Runner.PATH_SEPARATOR)) { // multiple test classes
             jacocoRunner.run(classesDirectory,
@@ -88,11 +89,11 @@ public class JUnit4JacocoRunner {
 
     protected List<String> blackList;
 
-    public JUnit4JacocoRunner(String classesDirectory, String testClassesDirectory) {
+    public JUnit5JacocoRunner(String classesDirectory, String testClassesDirectory) {
         this(classesDirectory, testClassesDirectory, Collections.emptyList());
     }
 
-    public JUnit4JacocoRunner(String classesDirectory, String testClassesDirectory, List<String> blackList) {
+    public JUnit5JacocoRunner(String classesDirectory, String testClassesDirectory, List<String> blackList) {
         try {
             this.instrumentedClassLoader = new MemoryClassLoader(
                     new URL[]{
@@ -132,11 +133,11 @@ public class JUnit4JacocoRunner {
                     IOUtils.toByteArray(classLoader.getResourceAsStream(resource))
             );
             runtime.startup(data);
-            final JUnit4Coverage listener = new JUnit4Coverage();
-            JUnit4Runner.run(fullQualifiedNameOfTestClass, Arrays.asList(testMethodNames), listener, this.instrumentedClassLoader);
-            if (!((TestListener) listener).getFailingTests().isEmpty()) {
+            final JUnit5Coverage listener = new JUnit5Coverage();
+            JUnit5Runner.run(fullQualifiedNameOfTestClass, Arrays.asList(testMethodNames), listener, this.instrumentedClassLoader);
+            if (!((TestListener)listener).getFailingTests().isEmpty()) {
                 System.err.println("Some test(s) failed during computation of coverage:\n" +
-                        ((TestListener) listener).getFailingTests()
+                        ((TestListener)listener).getFailingTests()
                                 .stream()
                                 .map(Failure::toString)
                                 .collect(Collectors.joining("\n"))
@@ -153,8 +154,8 @@ public class JUnit4JacocoRunner {
     }
 
     private Coverage run(String classesDirectory,
-                         String testClassesDirectory,
-                         String... fullQualifiedNameOfTestClasses) {
+                               String testClassesDirectory,
+                               String... fullQualifiedNameOfTestClasses) {
         final RuntimeData data = new RuntimeData();
         final ExecutionDataStore executionData = new ExecutionDataStore();
         final SessionInfoStore sessionInfos = new SessionInfoStore();
@@ -177,11 +178,11 @@ public class JUnit4JacocoRunner {
         });
         try {
             runtime.startup(data);
-            final JUnit4Coverage listener = new JUnit4Coverage();
-            JUnit4Runner.run(Arrays.asList(fullQualifiedNameOfTestClasses), this.blackList, listener, this.instrumentedClassLoader);
-            if (!((TestListener) listener).getFailingTests().isEmpty()) {
+            final JUnit5Coverage listener = new JUnit5Coverage();
+            JUnit5Runner.run(Arrays.asList(fullQualifiedNameOfTestClasses), this.blackList, listener, this.instrumentedClassLoader);
+            if (!((TestListener)listener).getFailingTests().isEmpty()) {
                 System.err.println("Some test(s) failed during computation of coverage:\n" +
-                        ((TestListener) listener).getFailingTests()
+                        ((TestListener)listener).getFailingTests()
                                 .stream()
                                 .map(Failure::toString)
                                 .collect(Collectors.joining("\n"))

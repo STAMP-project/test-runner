@@ -1,6 +1,6 @@
-package eu.stamp_project.testrunner.listener;
+package eu.stamp_project.testrunner.listener.junit5;
 
-import eu.stamp_project.testrunner.TestListenerImpl;
+import eu.stamp_project.testrunner.listener.impl.TestListenerImpl;
 import eu.stamp_project.testrunner.runner.Failure;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.reporting.ReportEntry;
@@ -20,10 +20,10 @@ public class JUnit5TestListener extends TestListenerImpl implements TestExecutio
 
     private static final long serialVersionUID = -7818892670028055637L;
 
-    private transient final Function<TestIdentifier, String> toString = testIdentifier ->
+    protected transient final Function<TestIdentifier, String> toString = testIdentifier ->
             ((MethodSource) testIdentifier.getSource().get()).getMethodName();
 
-    private transient final Function<TestIdentifier, String> toClassName = testIdentifier ->
+    protected transient final Function<TestIdentifier, String> toClassName = testIdentifier ->
             ((MethodSource) testIdentifier.getSource().get()).getClassName();
 
 

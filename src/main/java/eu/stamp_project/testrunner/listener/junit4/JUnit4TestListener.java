@@ -1,7 +1,7 @@
-package eu.stamp_project.testrunner.listener;
+package eu.stamp_project.testrunner.listener.junit4;
 
-import eu.stamp_project.testrunner.TestListener;
-import eu.stamp_project.testrunner.TestListenerImpl;
+import eu.stamp_project.testrunner.listener.TestListener;
+import eu.stamp_project.testrunner.listener.impl.TestListenerImpl;
 import eu.stamp_project.testrunner.runner.Failure;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunListener;
@@ -100,6 +100,7 @@ public class JUnit4TestListener extends RunListener implements TestListener, Ser
                 .orElseThrow(() -> new IllegalArgumentException(String.format("Could not find %s in failing test", testMethodName)));
     }
 
+    @Override
     public void save() {
         this.internalTestListener.save();
     }

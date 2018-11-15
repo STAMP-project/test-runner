@@ -1,7 +1,6 @@
 package eu.stamp_project.testrunner.maven;
 
-import eu.stamp_project.testrunner.TestListener;
-import eu.stamp_project.testrunner.runner.test.JUnit4TestListener;
+import eu.stamp_project.testrunner.listener.TestListener;
 import org.apache.maven.shared.invoker.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

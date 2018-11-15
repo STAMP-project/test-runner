@@ -1,7 +1,7 @@
 package eu.stamp_project.testrunner.runner;
 
 import eu.stamp_project.testrunner.EntryPoint;
-import eu.stamp_project.testrunner.listener.JUnit4TestListener;
+import eu.stamp_project.testrunner.listener.junit4.JUnit4TestListener;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
@@ -16,7 +16,7 @@ import java.util.function.Function;
  * benjamin.danglot@inria.fr
  * on 14/12/17
  */
-public class TestRunner {
+public class JUnit4Runner {
 
     public static final String BLACK_LIST_OPTION = "--blacklist";
 
@@ -26,19 +26,19 @@ public class TestRunner {
 
     public static final transient Function<String, String> pathToFullQualifiedName = string ->
     {
-        if (TestRunner.FILE_SEPARATOR.equals("\\")) {
+        if (JUnit4Runner.FILE_SEPARATOR.equals("\\")) {
             return string.replace("\\", ".");
         } else {
-            return string.replace(TestRunner.FILE_SEPARATOR, ".");
+            return string.replace(JUnit4Runner.FILE_SEPARATOR, ".");
         }
     };
 
     public static final transient Function<String, String> fullQualifiedNameToPath = (String string) ->
     {
-        if (TestRunner.FILE_SEPARATOR.equals("\\")) {
+        if (JUnit4Runner.FILE_SEPARATOR.equals("\\")) {
             return string.replace(".", "\\\\");
         } else {
-            return string.replace(".", TestRunner.FILE_SEPARATOR);
+            return string.replace(".", JUnit4Runner.FILE_SEPARATOR);
         }
     };
 
@@ -55,16 +55,16 @@ public class TestRunner {
     public static void main(String[] args) {
         final JUnit4TestListener jUnit4TestListener = new JUnit4TestListener();
         if (args[0].contains(PATH_SEPARATOR )) {
-            TestRunner.run(Arrays.asList(args[0].split(PATH_SEPARATOR)), Collections.emptyList(), jUnit4TestListener);
+            JUnit4Runner.run(Arrays.asList(args[0].split(PATH_SEPARATOR)), Collections.emptyList(), jUnit4TestListener);
         } else {
             if (args.length > 1) {
                 if (args[1].startsWith(BLACK_LIST_OPTION)) {
-                    TestRunner.run(Collections.singletonList(args[0]), Arrays.asList(args[2].split(PATH_SEPARATOR )), jUnit4TestListener);
+                    JUnit4Runner.run(Collections.singletonList(args[0]), Arrays.asList(args[2].split(PATH_SEPARATOR )), jUnit4TestListener);
                 } else {
-                    TestRunner.run(args[0], Arrays.asList(args[1].split(PATH_SEPARATOR )), jUnit4TestListener);
+                    JUnit4Runner.run(args[0], Arrays.asList(args[1].split(PATH_SEPARATOR )), jUnit4TestListener);
                 }
             } else {
-                TestRunner.run(Collections.singletonList(args[0]), Collections.emptyList(), jUnit4TestListener);
+                JUnit4Runner.run(Collections.singletonList(args[0]), Collections.emptyList(), jUnit4TestListener);
             }
         }
         jUnit4TestListener.save();
@@ -78,7 +78,7 @@ public class TestRunner {
      * @param listener test listener to gather test result
      */
     public static void run(List<String> testClassNames, List<String> blackList, JUnit4TestListener listener) {
-        TestRunner.run(testClassNames, blackList, listener, TestRunner.class.getClassLoader());
+        JUnit4Runner.run(testClassNames, blackList, listener, JUnit4Runner.class.getClassLoader());
     }
 
     /**
@@ -107,17 +107,17 @@ public class TestRunner {
     }
 
     public static void run(String testClassName, JUnit4TestListener listener) {
-        TestRunner.run(testClassName, Collections.emptyList(), listener, TestRunner.class.getClassLoader());
+        JUnit4Runner.run(testClassName, Collections.emptyList(), listener, JUnit4Runner.class.getClassLoader());
     }
 
     public static void run(String testClassName, List<String> testMethodNames, JUnit4TestListener listener) {
-        TestRunner.run(testClassName, testMethodNames, listener, TestRunner.class.getClassLoader());
+        JUnit4Runner.run(testClassName, testMethodNames, listener, JUnit4Runner.class.getClassLoader());
     }
 
     public static void run(String testClassName,
                            JUnit4TestListener listener,
                            ClassLoader customClassLoader) {
-        TestRunner.run(testClassName, Collections.emptyList(), listener, customClassLoader);
+        JUnit4Runner.run(testClassName, Collections.emptyList(), listener, customClassLoader);
     }
 
     public static void run(String testClassName,

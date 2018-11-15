@@ -1,7 +1,7 @@
-package eu.stamp_project.testrunner.runner.test;
+package eu.stamp_project.testrunner.runner;
 
 import eu.stamp_project.testrunner.EntryPoint;
-import eu.stamp_project.testrunner.TestListenerImpl;
+import eu.stamp_project.testrunner.listener.impl.TestListenerImpl;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,7 +18,7 @@ public class Loader<T> {
     public T load(String name) {
         T object;
         String outputDirectoryPath = EntryPoint.workingDirectory != null ?
-                EntryPoint.workingDirectory.getAbsolutePath() + TestRunner.FILE_SEPARATOR : "";
+                EntryPoint.workingDirectory.getAbsolutePath() + JUnit4Runner.FILE_SEPARATOR : "";
         File f = new File(outputDirectoryPath + TestListenerImpl.OUTPUT_DIR + name + TestListenerImpl.EXTENSION);
         if (!f.exists()) {
             throw new RuntimeException(new FileNotFoundException(f.getAbsolutePath() + " does not exist."));

@@ -1,4 +1,4 @@
-package eu.stamp_project.testrunner.runner.test;
+package eu.stamp_project.testrunner.runner;
 
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;

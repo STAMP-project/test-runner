@@ -1,8 +1,8 @@
 package eu.stamp_project.testrunner.reader;
 
-import eu.stamp_project.testrunner.runner.test.Failure;
-import eu.stamp_project.testrunner.runner.test.Loader;
-import eu.stamp_project.testrunner.runner.test.JUnit4TestListener;
+import eu.stamp_project.testrunner.runner.Failure;
+import eu.stamp_project.testrunner.runner.Loader;
+import eu.stamp_project.testrunner.listener.junit4.JUnit4TestListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

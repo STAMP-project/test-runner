@@ -1,4 +1,4 @@
-package eu.stamp_project.testrunner.runner.test;
+package eu.stamp_project.testrunner.runner;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
