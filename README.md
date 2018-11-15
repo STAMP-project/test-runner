@@ -15,7 +15,7 @@ This project provides a framework to run JUnit test in a new JVM. It allows to r
 * timeout: can specify a custom time out in milli second.
 * blacklist: can discard test methods by their name among test classes.
 * maven execution: can now executes the test using **Maven**. This allows users to have a complex build configured in their `pom.xml`.
-* the test runner support JUnit3, JUnit4, and JUnit5. By default it runs JUnit3 or JUnit4. If you need to execute JUnit5 test methods, use the boolean in [EntryPoint](https://github.com/STAMP-project/testrunner/blob/master/src/main/java/eu/stamp_project/testrunner/EntryPoint.java#L69).
+* the test runner supports JUnit3, JUnit4, and JUnit5. By default it runs JUnit3 or JUnit4. If you need to execute JUnit5 test methods, use the boolean in [EntryPoint](https://github.com/STAMP-project/testrunner/blob/master/src/main/java/eu/stamp_project/testrunner/EntryPoint.java#L69).
 
 /!\ WARNING The coverage per test method for JUnit5 is unstable.
 
@@ -27,7 +27,7 @@ You can add to your `pom.xml`:
 <dependency>
     <groupId>eu.stamp-project</groupId>
     <artifactId>test-runner</artifactId>
-    <version>1.1.1</version>
+    <version>2.0.0</version>
     <classifier>jar-with-dependencies</classifier>
 </dependency>
 ```
