@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
  * benjamin.danglot@inria.fr
  * on 19/12/17
  */
-public class JacocoRunnerTest extends AbstractTest {
+public class JUnit5JacocoRunnerTest extends AbstractTest {
 
     @Test
     public void testWithoutNewJvmOnTestClass() throws Exception {
@@ -22,8 +22,8 @@ public class JacocoRunnerTest extends AbstractTest {
             Using the api to compute the coverage on a test class
          */
 
-        JUnit4JacocoRunner.main(new String[]{
-                        TEST_PROJECT_CLASSES, "example.TestSuiteExample"
+        JUnit5JacocoRunner.main(new String[]{
+                        TEST_PROJECT_CLASSES, "junit5.TestSuiteExample"
                 }
         );
         final Coverage load = CoverageImpl.load();
@@ -39,9 +39,9 @@ public class JacocoRunnerTest extends AbstractTest {
             Using the api to compute the coverage on test cases
          */
 
-        JUnit4JacocoRunner.main(new String[]{
+        JUnit5JacocoRunner.main(new String[]{
                         TEST_PROJECT_CLASSES,
-                        "example.TestSuiteExample",
+                        "junit5.TestSuiteExample",
                         "test8:test2"
                 }
         );
@@ -103,7 +103,7 @@ public class JacocoRunnerTest extends AbstractTest {
     private final String commandLine = "java -cp " +
             classpath + JUnit4Runner.PATH_SEPARATOR + TEST_PROJECT_CLASSES +
             JUnit4Runner.PATH_SEPARATOR + PATH_TO_RUNNER_CLASSES +
-            " eu.stamp_project.testrunner.runner.coverage.JUnit4JacocoRunner " +
+            " eu.stamp_project.testrunner.runner.coverage.JUnit5JacocoRunner " +
             TEST_PROJECT_CLASSES +
-            " example.TestSuiteExample";
+            " junit5.TestSuiteExample";
 }

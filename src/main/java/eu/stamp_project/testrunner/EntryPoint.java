@@ -1,10 +1,13 @@
 package eu.stamp_project.testrunner;
 
-import eu.stamp_project.testrunner.runner.coverage.Coverage;
-import eu.stamp_project.testrunner.runner.coverage.CoveragePerTestMethod;
-import eu.stamp_project.testrunner.runner.test.TestListener;
-import eu.stamp_project.testrunner.runner.coverage.JacocoRunner;
-import eu.stamp_project.testrunner.runner.test.TestRunner;
+import eu.stamp_project.testrunner.listener.*;
+import eu.stamp_project.testrunner.listener.impl.CoverageImpl;
+import eu.stamp_project.testrunner.listener.impl.CoveragePerTestMethodImpl;
+import eu.stamp_project.testrunner.listener.impl.TestListenerImpl;
+import eu.stamp_project.testrunner.listener.junit4.CoveragePerJUnit4TestMethod;
+import eu.stamp_project.testrunner.listener.junit4.JUnit4Coverage;
+import eu.stamp_project.testrunner.runner.JUnit4Runner;
+import eu.stamp_project.testrunner.runner.coverage.JUnit4JacocoRunner;
 import org.apache.commons.io.FileUtils;
 import org.jacoco.core.runtime.IRuntime;
 import org.objectweb.asm.xml.Processor;
@@ -20,11 +23,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -46,7 +45,7 @@ import java.util.stream.Stream;
  * <li>{@link EntryPoint#runTests(String, String, String...)} to compute the coverage of the test methods of the given test classes</li>
  * </ul>
  * <p>
- * This class relies on {@link TestRunner} and {@link JacocoRunner}
+ * This class relies on {@link JUnit4Runner} and {@link JUnit4JacocoRunner}
  * to respectively execute tests and compute the coverage.
  * This class creates a new JVM by calling the command "java" with proper arguments.
  * <p>
@@ -63,6 +62,11 @@ import java.util.stream.Stream;
  * </ul>
  */
 public class EntryPoint {
+
+    /**
+     * enable the JUnit 5 test runner
+     */
+    public static boolean jUnit5Mode = false;
 
     /**
      * enable traces to track the progress
@@ -128,20 +132,20 @@ public class EntryPoint {
      *
      * @param classpath                      the classpath required to run the given test classes.
      * @param fullQualifiedNameOfTestClasses test classes to be run.
-     * @return an instance of TestListener {@link TestListener} containing result of the exeuction of test methods.
+     * @return an instance of TestListener  {@link TestListener } containing result of the exeuction of test methods.
      * @throws TimeoutException when the execution takes longer than timeoutInMs
      */
     public static TestListener runTestClasses(String classpath,
-                                              String... fullQualifiedNameOfTestClasses) throws TimeoutException {
+                                                    String... fullQualifiedNameOfTestClasses) throws TimeoutException {
         return runTests(Arrays.stream(new String[]{
                         getJavaCommand(),
                         classpath + PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES,
-                        TEST_RUNNER_QUALIFIED_NAME,
+                        jUnit5Mode ? TEST_RUNNER_JUNIT5_QUALIFIED_NAME : TEST_RUNNER_QUALIFIED_NAME,
                         Arrays.stream(fullQualifiedNameOfTestClasses)
-                                .collect(Collectors.joining(TestRunner.PATH_SEPARATOR)),
+                                .collect(Collectors.joining(JUnit4Runner.PATH_SEPARATOR)),
                         blackList.isEmpty() ? "" :
-                                TestRunner.BLACK_LIST_OPTION + " " +
-                                        blackList.stream().collect(Collectors.joining(TestRunner.PATH_SEPARATOR))
+                                JUnit4Runner.BLACK_LIST_OPTION + " " +
+                                        blackList.stream().collect(Collectors.joining(JUnit4Runner.PATH_SEPARATOR))
                 }).collect(Collectors.joining(WHITE_SPACE))
         );
     }
@@ -161,15 +165,15 @@ public class EntryPoint {
      * @throws TimeoutException when the execution takes longer than timeoutInMs
      */
     public static TestListener runTests(String classpath,
-                                        String fullQualifiedNameOfTestClass,
-                                        String... testMethods) throws TimeoutException {
+                                              String fullQualifiedNameOfTestClass,
+                                              String... testMethods) throws TimeoutException {
         return runTests(Arrays.stream(new String[]{
                         getJavaCommand(),
                         classpath + PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES,
-                        TEST_RUNNER_QUALIFIED_NAME,
+                        jUnit5Mode ? TEST_RUNNER_JUNIT5_QUALIFIED_NAME : TEST_RUNNER_QUALIFIED_NAME,
                         fullQualifiedNameOfTestClass,
                         Arrays.stream(testMethods)
-                                .collect(Collectors.joining(TestRunner.PATH_SEPARATOR))
+                                .collect(Collectors.joining(JUnit4Runner.PATH_SEPARATOR))
                 }).collect(Collectors.joining(WHITE_SPACE))
         );
     }
@@ -181,7 +185,7 @@ public class EntryPoint {
             LOGGER.warn("Timeout when running {}", commandLine);
             throw e;
         }
-        final TestListener load = TestListener.load();
+        final TestListener load = TestListenerImpl.load();
         if (EntryPoint.verbose) {
             LOGGER.info("Test has been run: {}",
                     Stream.concat(load.getPassingTests().stream().map(Object::toString),
@@ -207,20 +211,20 @@ public class EntryPoint {
      * @throws TimeoutException when the execution takes longer than timeoutInMs
      */
     public static Coverage runCoverageOnTestClasses(String classpath,
-                                                    String targetProjectClasses,
-                                                    String... fullQualifiedNameOfTestClasses) throws TimeoutException {
+                                                          String targetProjectClasses,
+                                                          String... fullQualifiedNameOfTestClasses) throws TimeoutException {
         return EntryPoint.runCoverage(Arrays.stream(new String[]{
                         getJavaCommand(),
                         classpath +
                                 PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES +
                                 PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES,
-                        JACOCO_RUNNER_QUALIFIED_NAME,
+                        EntryPoint.jUnit5Mode ? JACOCO_RUNNER_JUNIT5_QUALIFIED_NAME :JACOCO_RUNNER_QUALIFIED_NAME,
                         targetProjectClasses,
                         Arrays.stream(fullQualifiedNameOfTestClasses)
-                                .collect(Collectors.joining(TestRunner.PATH_SEPARATOR)),
+                                .collect(Collectors.joining(JUnit4Runner.PATH_SEPARATOR)),
                         blackList.isEmpty() ? "" :
-                                TestRunner.BLACK_LIST_OPTION + " " +
-                                        blackList.stream().collect(Collectors.joining(TestRunner.PATH_SEPARATOR))
+                                JUnit4Runner.BLACK_LIST_OPTION + " " +
+                                        blackList.stream().collect(Collectors.joining(JUnit4Runner.PATH_SEPARATOR))
                 }).collect(Collectors.joining(WHITE_SPACE))
         );
     }
@@ -242,19 +246,19 @@ public class EntryPoint {
      * @throws TimeoutException when the execution takes longer than timeoutInMs
      */
     public static Coverage runCoverageOnTests(String classpath,
-                                              String targetProjectClasses,
-                                              String fullQualifiedNameOfTestClass,
-                                              String... methodNames) throws TimeoutException {
+                                                    String targetProjectClasses,
+                                                    String fullQualifiedNameOfTestClass,
+                                                    String... methodNames) throws TimeoutException {
         return EntryPoint.runCoverage(Arrays.stream(new String[]{
                         getJavaCommand(),
                         classpath +
                                 PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES +
                                 PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES,
-                        JACOCO_RUNNER_QUALIFIED_NAME,
+                        EntryPoint.jUnit5Mode ? JACOCO_RUNNER_JUNIT5_QUALIFIED_NAME :JACOCO_RUNNER_QUALIFIED_NAME,
                         targetProjectClasses,
                         fullQualifiedNameOfTestClass,
                         Arrays.stream(methodNames)
-                                .collect(Collectors.joining(TestRunner.PATH_SEPARATOR))
+                                .collect(Collectors.joining(JUnit4Runner.PATH_SEPARATOR))
                 }).collect(Collectors.joining(WHITE_SPACE))
         );
     }
@@ -272,23 +276,23 @@ public class EntryPoint {
      * @param targetProjectClasses         path to the folder that contains binaries, i.e. .class, on which Jacoco computes the coverage.
      * @param fullQualifiedNameOfTestClass test classes to be run.
      * @param methodNames                  test methods to be run.
-     * @return a Map that associate each test method name to its instruction coverage, as an instance of Coverage {@link Coverage} of test classes.
+     * @return a Map that associate each test method name to its instruction coverage, as an instance of JUnit4Coverage {@link JUnit4Coverage} of test classes.
      * @throws TimeoutException when the execution takes longer than timeoutInMs
      */
     public static CoveragePerTestMethod runCoveragePerTestMethods(String classpath,
-                                                                  String targetProjectClasses,
-                                                                  String fullQualifiedNameOfTestClass,
-                                                                  String... methodNames) throws TimeoutException {
+                                                                        String targetProjectClasses,
+                                                                        String fullQualifiedNameOfTestClass,
+                                                                        String... methodNames) throws TimeoutException {
         final String commandLine = Arrays.stream(new String[]{
                 getJavaCommand(),
                 classpath +
                         PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES +
                         PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES,
-                JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME,
+                EntryPoint.jUnit5Mode ? JACOCO_RUNNER_PER_TEST_JUNIT5_QUALIFIED_NAME : JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME,
                 targetProjectClasses,
                 fullQualifiedNameOfTestClass,
                 Arrays.stream(methodNames)
-                        .collect(Collectors.joining(TestRunner.PATH_SEPARATOR))
+                        .collect(Collectors.joining(JUnit4Runner.PATH_SEPARATOR))
         }).collect(Collectors.joining(WHITE_SPACE));
         try {
             EntryPoint.runGivenCommandLine(commandLine);
@@ -296,9 +300,9 @@ public class EntryPoint {
             LOGGER.warn("Timeout when running {}", commandLine);
             throw e;
         }
-        final CoveragePerTestMethod load = CoveragePerTestMethod.load();
+        final CoveragePerTestMethod load = CoveragePerTestMethodImpl.load();
         if (EntryPoint.verbose) {
-            LOGGER.info("Global Coverage has been computed {}", load.toString());
+            LOGGER.info("Global JUnit4Coverage has been computed {}", load.toString());
         }
         return load;
     }
@@ -310,9 +314,9 @@ public class EntryPoint {
             LOGGER.warn("Timeout when running {}", commandLine);
             throw e;
         }
-        final Coverage load = Coverage.load();
+        final Coverage load = CoverageImpl.load();
         if (EntryPoint.verbose) {
-            LOGGER.info("Global Coverage has been computed {}", load.toString());
+            LOGGER.info("Global coverage has been computed {}", load.toString());
         }
         return load;
     }
@@ -429,11 +433,17 @@ public class EntryPoint {
 
     static final String CLASSPATH_OPT = "-classpath";
 
-    static final String TEST_RUNNER_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.test.TestRunner";
+    static final String TEST_RUNNER_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.JUnit4Runner";
 
-    static final String JACOCO_RUNNER_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JacocoRunner";
+    static final String TEST_RUNNER_JUNIT5_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.JUnit5Runner";
 
-    static final String JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JacocoRunnerPerTestMethods";
+    static final String JACOCO_RUNNER_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JUnit4JacocoRunner";
+
+    static final String JACOCO_RUNNER_JUNIT5_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JUnit5JacocoRunner";
+
+    static final String JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JUnit4JacocoRunnerPerTestMethod";
+
+    static final String JACOCO_RUNNER_PER_TEST_JUNIT5_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JUnit5JacocoRunnerPerTestMethod";
 
     static final String PATH_SEPARATOR = System.getProperty("path.separator");
 
@@ -450,7 +460,7 @@ public class EntryPoint {
     }
 
     private static String RemoveWinFileSeparator(String string) {
-        if (!"/".equals(TestRunner.FILE_SEPARATOR) && string.startsWith(TestRunner.FILE_SEPARATOR)) {
+        if (!"/".equals(JUnit4Runner.FILE_SEPARATOR) && string.startsWith(JUnit4Runner.FILE_SEPARATOR)) {
             return string.substring(1);
         } else {
             return string;
@@ -463,7 +473,7 @@ public class EntryPoint {
                     .map(URL::getPath)
                     .map(path -> path.startsWith("file:") ? path.substring("file:".length()) : path)
                     .map(path -> path.split("!")[0])
-                    .map(path -> path.replace("/", TestRunner.FILE_SEPARATOR))
+                    .map(path -> path.replace("/", JUnit4Runner.FILE_SEPARATOR))
                     .map(EntryPoint::RemoveWinFileSeparator)
                     .map(path -> {
                         LOGGER.info("{}", path);
@@ -506,7 +516,7 @@ public class EntryPoint {
         if (path.contains("!") && path.startsWith("file:")) {
             path = path.substring("file:".length()).split("!")[0];
         }
-        path = RemoveWinFileSeparator(path.replace("/", TestRunner.FILE_SEPARATOR));
+        path = RemoveWinFileSeparator(path.replace("/", JUnit4Runner.FILE_SEPARATOR));
         LOGGER.info("Path to runner Classes: {}", path);
         return path;
     }
