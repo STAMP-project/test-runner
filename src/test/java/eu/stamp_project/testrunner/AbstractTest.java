@@ -52,7 +52,8 @@ public class AbstractTest {
                 " src/test/resources/test-projects/src/test/java/example/TestSuiteExample2.java" +
                 " src/test/resources/test-projects/src/test/java/easymock/LoginControllerIntegrationTest.java" +
                 " src/test/resources/test-projects/src/test/java/junit5/TestSuiteExample.java" +
-                " src/test/resources/test-projects/src/test/java/junit5/FailingTestClass.java";
+                " src/test/resources/test-projects/src/test/java/junit5/FailingTestClass.java" +
+                " src/test/resources/test-projects/src/test/java/junit5/TestSuiteExample2.java";
         System.out.println(command);
         if (Runtime.getRuntime().exec(command).waitFor() != 0) {
             throw new RuntimeException("Problem when compiling test sources.");

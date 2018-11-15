@@ -1,9 +1,9 @@
 package eu.stamp_project.testrunner.runner.junit5;
 
 import eu.stamp_project.testrunner.AbstractTest;
-import eu.stamp_project.testrunner.TestListener;
-import eu.stamp_project.testrunner.TestListenerImpl;
-import eu.stamp_project.testrunner.runner.test.TestRunner;
+import eu.stamp_project.testrunner.listener.TestListener;
+import eu.stamp_project.testrunner.listener.impl.TestListenerImpl;
+import eu.stamp_project.testrunner.runner.JUnit4Runner;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -27,7 +27,7 @@ public class TestJUnit5RunnerTest extends AbstractTest {
                     TODO the black list is not supported for now in JUNIT 5
          */
 
-        final String blacklistOption = " " + TestRunner.BLACK_LIST_OPTION + " test8:test2";
+        final String blacklistOption = " " + JUnit4Runner.BLACK_LIST_OPTION + " test8:test2";
 
         Process p;
         try {
@@ -88,8 +88,8 @@ public class TestJUnit5RunnerTest extends AbstractTest {
 
 
     private final String commandLine = "java -cp " + JUNIT_CP +
-            TestRunner.PATH_SEPARATOR + JUNIT5_CP +
-            TestRunner.PATH_SEPARATOR + PATH_TO_RUNNER_CLASSES +
-            TestRunner.PATH_SEPARATOR + TEST_PROJECT_CLASSES +
-            " eu.stamp_project.testrunner.runner.junit5.JUnit5Runner junit5.TestSuiteExample";
+            JUnit4Runner.PATH_SEPARATOR + JUNIT5_CP +
+            JUnit4Runner.PATH_SEPARATOR + PATH_TO_RUNNER_CLASSES +
+            JUnit4Runner.PATH_SEPARATOR + TEST_PROJECT_CLASSES +
+            " eu.stamp_project.testrunner.runner.JUnit5Runner junit5.TestSuiteExample";
 }

@@ -1,9 +1,9 @@
 package eu.stamp_project.testrunner.runner.test;
 
 import eu.stamp_project.testrunner.AbstractTest;
-import eu.stamp_project.testrunner.TestListener;
-import eu.stamp_project.testrunner.TestListenerImpl;
-import eu.stamp_project.testrunner.runner.TestRunner;
+import eu.stamp_project.testrunner.listener.TestListener;
+import eu.stamp_project.testrunner.listener.impl.TestListenerImpl;
+import eu.stamp_project.testrunner.runner.JUnit4Runner;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -14,7 +14,7 @@ import static org.junit.Assert.assertTrue;
  * benjamin.danglot@inria.fr
  * on 19/12/17
  */
-public class TestRunnerTest extends AbstractTest {
+public class TestRunnerJUnit4 extends AbstractTest {
 
     @Test
     public void testExecutionTestClassWithBlackList() {
@@ -25,7 +25,7 @@ public class TestRunnerTest extends AbstractTest {
                     - test2 is in the blacklist and should be executed.
          */
 
-        final String blacklistOption = " " + TestRunner.BLACK_LIST_OPTION + " test8:test2";
+        final String blacklistOption = " " + JUnit4Runner.BLACK_LIST_OPTION + " test8:test2";
 
         Process p;
         try {
@@ -85,7 +85,7 @@ public class TestRunnerTest extends AbstractTest {
 
 
     private final String commandLine = "java -cp " +
-            JUNIT_CP + TestRunner.PATH_SEPARATOR + TEST_PROJECT_CLASSES +
-            TestRunner.PATH_SEPARATOR + PATH_TO_RUNNER_CLASSES +
-            " eu.stamp_project.testrunner.runner.TestRunner example.TestSuiteExample";
+            JUNIT_CP + JUnit4Runner.PATH_SEPARATOR + TEST_PROJECT_CLASSES +
+            JUnit4Runner.PATH_SEPARATOR + PATH_TO_RUNNER_CLASSES +
+            " eu.stamp_project.testrunner.runner.JUnit4Runner example.TestSuiteExample";
 }
