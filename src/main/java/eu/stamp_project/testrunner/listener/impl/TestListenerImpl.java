@@ -1,8 +1,7 @@
-package eu.stamp_project.testrunner;
+package eu.stamp_project.testrunner.listener;
 
-import eu.stamp_project.testrunner.runner.test.Failure;
-import eu.stamp_project.testrunner.runner.test.Loader;
-import eu.stamp_project.testrunner.runner.test.TestRunner;
+import eu.stamp_project.testrunner.runner.Failure;
+import eu.stamp_project.testrunner.runner.Loader;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,7 +24,6 @@ public class TestListenerImpl implements TestListener, Serializable {
     private List<Failure> failingTests;
     private List<Failure> assumptionFailingTests;
     private List<String> ignoredTests;
-
 
     public TestListenerImpl() {
         this.runningTests = new ArrayList<>();

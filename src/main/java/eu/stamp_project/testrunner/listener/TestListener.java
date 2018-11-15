@@ -1,7 +1,7 @@
 package eu.stamp_project.testrunner;
 
-import eu.stamp_project.testrunner.runner.test.Failure;
-import eu.stamp_project.testrunner.runner.test.TestRunner;
+import eu.stamp_project.testrunner.runner.Failure;
+import eu.stamp_project.testrunner.runner.TestRunner;
 
 import java.io.Serializable;
 import java.util.List;

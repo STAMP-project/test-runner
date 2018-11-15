@@ -3,6 +3,7 @@ package eu.stamp_project.testrunner.runner.test;
 import eu.stamp_project.testrunner.AbstractTest;
 import eu.stamp_project.testrunner.TestListener;
 import eu.stamp_project.testrunner.TestListenerImpl;
+import eu.stamp_project.testrunner.runner.TestRunner;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -86,5 +87,5 @@ public class TestRunnerTest extends AbstractTest {
     private final String commandLine = "java -cp " +
             JUNIT_CP + TestRunner.PATH_SEPARATOR + TEST_PROJECT_CLASSES +
             TestRunner.PATH_SEPARATOR + PATH_TO_RUNNER_CLASSES +
-            " eu.stamp_project.testrunner.runner.test.TestRunner example.TestSuiteExample";
+            " eu.stamp_project.testrunner.runner.TestRunner example.TestSuiteExample";
 }

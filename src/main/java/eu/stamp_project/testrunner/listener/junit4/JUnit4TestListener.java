@@ -1,17 +1,13 @@
-package eu.stamp_project.testrunner.runner.test;
+package eu.stamp_project.testrunner.listener;
 
 import eu.stamp_project.testrunner.TestListener;
 import eu.stamp_project.testrunner.TestListenerImpl;
+import eu.stamp_project.testrunner.runner.Failure;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunListener;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by Benjamin DANGLOT

@@ -1,7 +1,7 @@
-package eu.stamp_project.testrunner.runner.test;
+package eu.stamp_project.testrunner.runner;
 
 import eu.stamp_project.testrunner.EntryPoint;
-import eu.stamp_project.testrunner.TestListener;
+import eu.stamp_project.testrunner.listener.JUnit4TestListener;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;

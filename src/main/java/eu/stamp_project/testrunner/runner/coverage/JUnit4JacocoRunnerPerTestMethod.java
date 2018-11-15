@@ -1,8 +1,9 @@
 package eu.stamp_project.testrunner.runner.coverage;
 
 import eu.stamp_project.testrunner.EntryPoint;
-import eu.stamp_project.testrunner.runner.test.Failure;
-import eu.stamp_project.testrunner.runner.test.TestRunner;
+import eu.stamp_project.testrunner.listener.junit4.CoveragePerJUnit4TestMethod;
+import eu.stamp_project.testrunner.runner.Failure;
+import eu.stamp_project.testrunner.runner.JUnit4Runner;
 import org.apache.commons.io.IOUtils;
 import org.jacoco.core.runtime.RuntimeData;
 
@@ -20,7 +21,7 @@ import static java.util.ResourceBundle.clearCache;
  * benjamin.danglot@inria.fr
  * on 06/04/18
  */
-public class JacocoRunnerPerTestMethods extends JacocoRunner {
+public class JUnit4JacocoRunnerPerTestMethods extends JUnit4JacocoRunner {
 
     /**
      * The entry method to compute the instruction coverage per test method.
@@ -29,17 +30,16 @@ public class JacocoRunnerPerTestMethods extends JacocoRunner {
      *             the first argument is the path to classes and test classes separated by the system path separator. <i>e.g. target/classes:target/test-classes</i> for a typical maven project.
      *             the second argument is the full qualified name of the test class
      *             the third argument is optionally the list of the test method name separated by the system path separator.
-     * @throws ClassNotFoundException in case of the supplied classpath is wrong
      */
-    public static void main(String[] args) throws ClassNotFoundException {
+    public static void main(String[] args) {
         // inputs: classes:test-classes, fullqualifiednameoftest, method1:method2....
-        final String classesDirectory = args[0].split(TestRunner.PATH_SEPARATOR)[0];
-        final String testClassesDirectory = args[0].split(TestRunner.PATH_SEPARATOR)[1];
-        final JacocoRunnerPerTestMethods jacocoRunner = new JacocoRunnerPerTestMethods(classesDirectory, testClassesDirectory);
+        final String classesDirectory = args[0].split(JUnit4Runner.PATH_SEPARATOR)[0];
+        final String testClassesDirectory = args[0].split(JUnit4Runner.PATH_SEPARATOR)[1];
+        final JUnit4JacocoRunnerPerTestMethods jacocoRunner = new JUnit4JacocoRunnerPerTestMethods(classesDirectory, testClassesDirectory);
         jacocoRunner.run(classesDirectory,
                     testClassesDirectory,
                     args[1],
-                    args.length > 2 ? args[2].split(TestRunner.PATH_SEPARATOR) : new String[]{}
+                    args.length > 2 ? args[2].split(JUnit4Runner.PATH_SEPARATOR) : new String[]{}
         ).save();
     }
 
@@ -55,7 +55,7 @@ public class JacocoRunnerPerTestMethods extends JacocoRunner {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
-        final String resource = TestRunner.fullQualifiedNameToPath.apply(fullQualifiedNameOfTestClass) + ".class";
+        final String resource = JUnit4Runner.fullQualifiedNameToPath.apply(fullQualifiedNameOfTestClass) + ".class";
         try {
             this.instrumentedClassLoader.addDefinition(
                     fullQualifiedNameOfTestClass,
@@ -63,7 +63,7 @@ public class JacocoRunnerPerTestMethods extends JacocoRunner {
             );
             this.runtime.startup(data);
             final CoveragePerJUnit4TestMethod listener = new CoveragePerJUnit4TestMethod(data, classesDirectory);
-            TestRunner.run(fullQualifiedNameOfTestClass, Arrays.asList(testMethodNames), listener, this.instrumentedClassLoader);
+            JUnit4Runner.run(fullQualifiedNameOfTestClass, Arrays.asList(testMethodNames), listener, this.instrumentedClassLoader);
             if (!listener.getFailingTests().isEmpty()) {
                 System.err.println("Some test(s) failed during computation of coverage:\n" +
                         listener.getFailingTests()
@@ -80,7 +80,7 @@ public class JacocoRunnerPerTestMethods extends JacocoRunner {
         }
     }
 
-    private JacocoRunnerPerTestMethods(String classesDirectory, String testClassesDirectory) {
+    private JUnit4JacocoRunnerPerTestMethods(String classesDirectory, String testClassesDirectory) {
         super(classesDirectory, testClassesDirectory);
     }
 

@@ -1,7 +1,7 @@
-package eu.stamp_project.testrunner.runner.junit5;
+package eu.stamp_project.testrunner.listener;
 
 import eu.stamp_project.testrunner.TestListenerImpl;
-import eu.stamp_project.testrunner.runner.test.Failure;
+import eu.stamp_project.testrunner.runner.Failure;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.reporting.ReportEntry;
 import org.junit.platform.engine.support.descriptor.MethodSource;
