@@ -48,6 +48,7 @@ public class AbstractTest {
                 EASYMOCK_CP + EntryPoint.PATH_SEPARATOR +
                 JUNIT5_CP +
                 " src/test/resources/test-projects/src/test/java/example/TestSuiteExample.java" +
+                " src/test/resources/test-projects/src/test/java/example/ParametrizedTestSuiteExample.java" +
                 " src/test/resources/test-projects/src/test/java/failing/FailingTestClass.java" +
                 " src/test/resources/test-projects/src/test/java/example/TestSuiteExample2.java" +
                 " src/test/resources/test-projects/src/test/java/easymock/LoginControllerIntegrationTest.java" +

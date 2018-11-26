@@ -2,7 +2,6 @@ package eu.stamp_project.testrunner;
 
 import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
-import eu.stamp_project.testrunner.listener.junit4.CoveragePerJUnit4TestMethod;
 import eu.stamp_project.testrunner.listener.TestListener;
 import eu.stamp_project.testrunner.runner.Failure;
 import eu.stamp_project.testrunner.runner.JUnit4Runner;
@@ -13,6 +12,7 @@ import org.junit.Ignore;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.concurrent.TimeoutException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -28,14 +28,14 @@ import static org.junit.Assert.fail;
 public class EntryPointTest extends AbstractTest {
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         EntryPoint.persistence = true;
         EntryPoint.outPrintStream = null;
         EntryPoint.errPrintStream = null;
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         EntryPoint.blackList.clear();
     }
 
@@ -348,5 +348,20 @@ public class EntryPointTest extends AbstractTest {
         assertEquals(118, coveragePerTestMethod.getCoverageOf("test3").getInstructionsTotal());
         assertEquals(23, coveragePerTestMethod.getCoverageOf("test8").getInstructionsCovered());
         assertEquals(118, coveragePerTestMethod.getCoverageOf("test8").getInstructionsTotal());
+    }
+
+    @Test
+    public void testOnParametrized() throws TimeoutException {
+
+        /*
+            Test the execution of Parametrized test
+         */
+
+        final TestListener testListener = EntryPoint.runTestClasses(
+                JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                "example.ParametrizedTestSuiteExample"
+        );
+        assertEquals(5, testListener.getPassingTests().size());
+        assertEquals(0, testListener.getFailingTests().size());
     }
 }
