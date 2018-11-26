@@ -361,7 +361,7 @@ public class EntryPointTest extends AbstractTest {
                 JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "example.ParametrizedTestSuiteExample"
         );
-        assertEquals(5, testListener.getPassingTests().size());
+        assertEquals(10, testListener.getPassingTests().size());
         assertEquals(0, testListener.getFailingTests().size());
     }
 
@@ -377,7 +377,7 @@ public class EntryPointTest extends AbstractTest {
                 "example.ParametrizedTestSuiteExample",
                 "test3"
         );
-        assertEquals(1, testListener.getPassingTests().size());
+        assertEquals(2, testListener.getPassingTests().size());
         assertEquals(0, testListener.getFailingTests().size());
     }
 }

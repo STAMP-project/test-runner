@@ -27,12 +27,12 @@ public class ParametrizedTestSuiteExample {
     @Parameterized.Parameters
     public static Collection<Object[]> strategies() {
         return Arrays.asList(
-                new Object[][]{
-                        new Object[]{
-                                "abcd"
-                        }
-                }
-        );
+                new Object[]{
+                        "abcd",
+                },
+                new Object[]{
+                        "abcd",
+                });
     }
 
     @Test

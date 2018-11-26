@@ -29,9 +29,9 @@ class MethodFilter extends Filter {
         return !this.blackList.contains(description.getMethodName()) &&
                 (
                         (description.isTest() &&
-                        this.anyTestMethodNamesMatch.test(description) ||
-                        testMethodNames.isEmpty()) ||
-                        this.anyChildrenMatch.test(description)
+                                this.anyTestMethodNamesMatch.test(description) ||
+                                testMethodNames.isEmpty()) ||
+                                this.anyChildrenMatch.test(description)
                 );
     }
 
@@ -41,11 +41,12 @@ class MethodFilter extends Filter {
                     .reduce(Boolean.FALSE, Boolean::logicalOr);
 
     private final Predicate<Description> anyTestMethodNamesMatch = description ->
-            this.testMethodNames.stream().anyMatch(testMethodName ->
-                    Pattern.compile(testMethodName + "\\[\\d:(.*?)\\]")
-                            .matcher(description.getMethodName())
-                            .find()
-            ) || this.testMethodNames.contains(description.getMethodName());
+            this.testMethodNames.stream()
+                    .anyMatch(testMethodName ->
+                            Pattern.compile(testMethodName + "\\[(\\d+)\\]")
+                                    .matcher(description.getMethodName())
+                                    .find()
+                    ) || this.testMethodNames.contains(description.getMethodName());
 
     @Override
     public String describe() {
