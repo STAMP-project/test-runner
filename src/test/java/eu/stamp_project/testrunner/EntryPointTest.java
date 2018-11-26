@@ -354,7 +354,7 @@ public class EntryPointTest extends AbstractTest {
     public void testOnParametrized() throws TimeoutException {
 
         /*
-            Test the execution of Parametrized test
+            Test the execution of Parametrized test class
          */
 
         final TestListener testListener = EntryPoint.runTestClasses(
@@ -362,6 +362,22 @@ public class EntryPointTest extends AbstractTest {
                 "example.ParametrizedTestSuiteExample"
         );
         assertEquals(5, testListener.getPassingTests().size());
+        assertEquals(0, testListener.getFailingTests().size());
+    }
+
+    @Test
+    public void testOnParametrizedForOneTestMethod() throws TimeoutException {
+
+        /*
+            Test the execution of Parametrized test
+         */
+
+        final TestListener testListener = EntryPoint.runTests(
+                JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                "example.ParametrizedTestSuiteExample",
+                "test3"
+        );
+        assertEquals(1, testListener.getPassingTests().size());
         assertEquals(0, testListener.getFailingTests().size());
     }
 }
