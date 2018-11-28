@@ -8,11 +8,8 @@ import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import static eu.stamp_project.testrunner.runner.JUnit4Runner.PATH_SEPARATOR;
-import static eu.stamp_project.testrunner.runner.JUnit4Runner.BLACK_LIST_OPTION;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectMethod;
 
@@ -36,89 +33,46 @@ public class JUnit5Runner {
      */
     public static void main(String args[]) throws ClassNotFoundException {
         final JUnit5TestListener jUnit5TestListener = new JUnit5TestListener();
-        if (args[0].contains(PATH_SEPARATOR)) {
-            JUnit5Runner.run(Arrays.asList(args[0].split(PATH_SEPARATOR)), Collections.emptyList(), jUnit5TestListener);
-        } else {
-            if (args.length > 1) {
-                if (args[1].startsWith(BLACK_LIST_OPTION)) {
-                    JUnit5Runner.run(Collections.singletonList(args[0]), Arrays.asList(args[2].split(PATH_SEPARATOR)), jUnit5TestListener);
-                } else {
-                    JUnit5Runner.run(args[0], Arrays.asList(args[1].split(PATH_SEPARATOR)), jUnit5TestListener);
-                }
-            } else {
-                JUnit5Runner.run(Collections.singletonList(args[0]), Collections.emptyList(), jUnit5TestListener);
-            }
-        }
+        final ParserOptions options = ParserOptions.parse(args);
+        JUnit5Runner.run(
+                options.getFullQualifiedNameOfTestClassesToRun(),
+                options.getTestMethodNamesToRun(),
+                options.getBlackList(),
+                jUnit5TestListener,
+                JUnit5Runner.class.getClassLoader()
+        );
         jUnit5TestListener.save();
     }
 
-    /**
-     * Run all test methods of testClassNames
-     *
-     * @param testClassNames list of full qualified name of test classes
-     * @param blackList      list of test methods name to not execute
-     * @param listener       test listener to gather test result
-     */
-    public static void run(List<String> testClassNames, List<String> blackList, JUnit5TestListener listener) {
-        run(testClassNames, blackList, listener, JUnit5Runner.class.getClassLoader());
-    }
-
-    /**
-     * Run all test methods of testClassNames using custom class loader
-     *
-     * @param testClassNames    list of full qualified name of test classes
-     * @param blackList         list of test methods name to not execute
-     * @param listener          test listener to gather test result
-     * @param customClassLoader this class loader should contains the .class to be executed and all the dependencies
-     */
-    // TODO the black list is not implemented
-    public static void run(List<String> testClassNames, List<String> blackList, JUnit5TestListener listener, ClassLoader customClassLoader) {
+    public static void run(String[] testClassNames,
+                           String[] testMethodNames,
+                           List<String> blackList, // TODO the blacklist is not yet implemented
+                           JUnit5TestListener listener,
+                           ClassLoader customClassLoader) {
         final LauncherDiscoveryRequestBuilder requestBuilder = LauncherDiscoveryRequestBuilder.request();
-        testClassNames.forEach(testClassName -> {
-                    try {
-                        requestBuilder.selectors(
-                                selectClass(customClassLoader.loadClass(testClassName))
-                        );
-                    } catch (ClassNotFoundException e) {
-                        throw new RuntimeException(e);
-                    }
+        if (testMethodNames.length == 0) {
+            if (testClassNames.length > 0) {
+                Arrays.asList(testClassNames).forEach(testClassName -> {
+                            try {
+                                requestBuilder.selectors(
+                                        selectClass(customClassLoader.loadClass(testClassName))
+                                );
+                            } catch (ClassNotFoundException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                );
+            } else {
+                try {
+                    requestBuilder.selectors(selectClass(customClassLoader.loadClass(testClassNames[0])));
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
                 }
-        );
-        final LauncherDiscoveryRequest request = requestBuilder.build();
-        final Launcher launcher = LauncherFactory.create();
-        launcher.registerTestExecutionListeners(listener);
-        launcher.execute(request);
-    }
-
-    public static void run(String testClassName, JUnit5TestListener listener) {
-        JUnit5Runner.run(testClassName, Collections.emptyList(), listener, JUnit4Runner.class.getClassLoader());
-    }
-
-    public static void run(String testClassName, List<String> testMethodNames, JUnit5TestListener listener) {
-        JUnit5Runner.run(testClassName, testMethodNames, listener, JUnit4Runner.class.getClassLoader());
-    }
-
-    public static void run(String testClassName,
-                           JUnit5TestListener listener,
-                           ClassLoader customClassLoader) {
-        JUnit5Runner.run(testClassName, Collections.emptyList(), listener, customClassLoader);
-    }
-
-    public static void run(String testClassName,
-                           List<String> testMethodNames,
-                           JUnit5TestListener listener,
-                           ClassLoader customClassLoader) {
-        final LauncherDiscoveryRequestBuilder requestBuilder = LauncherDiscoveryRequestBuilder.request();
-        if (testMethodNames.isEmpty()) {
-            try {
-                requestBuilder.selectors(selectClass(customClassLoader.loadClass(testClassName)));
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
             }
         } else {
-            testMethodNames.forEach(testMethodName -> {
+            Arrays.asList(testMethodNames).forEach(testMethodName -> {
                         try {
-                            requestBuilder.selectors(selectMethod(customClassLoader.loadClass(testClassName), testMethodName));
+                            requestBuilder.selectors(selectMethod(customClassLoader.loadClass(testClassNames[0]), testMethodName));
                         } catch (ClassNotFoundException e) {
                             throw new RuntimeException(e);
                         }

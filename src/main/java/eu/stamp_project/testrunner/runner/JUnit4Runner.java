@@ -54,88 +54,34 @@ public class JUnit4Runner {
      */
     public static void main(String[] args) {
         final JUnit4TestListener jUnit4TestListener = new JUnit4TestListener();
-        if (args[0].contains(PATH_SEPARATOR )) {
-            JUnit4Runner.run(Arrays.asList(args[0].split(PATH_SEPARATOR)), Collections.emptyList(), jUnit4TestListener);
-        } else {
-            if (args.length > 1) {
-                if (args[1].startsWith(BLACK_LIST_OPTION)) {
-                    JUnit4Runner.run(Collections.singletonList(args[0]), Arrays.asList(args[2].split(PATH_SEPARATOR )), jUnit4TestListener);
-                } else {
-                    JUnit4Runner.run(args[0], Arrays.asList(args[1].split(PATH_SEPARATOR )), jUnit4TestListener);
-                }
-            } else {
-                JUnit4Runner.run(Collections.singletonList(args[0]), Collections.emptyList(), jUnit4TestListener);
-            }
-        }
-        jUnit4TestListener.save();
+        final ParserOptions options = ParserOptions.parse(args);
+        JUnit4Runner.run(
+                options.getFullQualifiedNameOfTestClassesToRun(),
+                options.getTestMethodNamesToRun(),
+                options.getBlackList(),
+                jUnit4TestListener,
+                JUnit4Runner.class.getClassLoader()
+        );
     }
 
-    /**
-     * Run all test methods of testClassNames
-     *
-     * @param testClassNames list of full qualified name of test classes
-     * @param blackList list of test methods name to not execute
-     * @param listener test listener to gather test result
-     */
-    public static void run(List<String> testClassNames, List<String> blackList, JUnit4TestListener listener) {
-        JUnit4Runner.run(testClassNames, blackList, listener, JUnit4Runner.class.getClassLoader());
-    }
-
-    /**
-     * Run all test methods of testClassNames using custom class loader
-     *
-     * @param testClassNames list of full qualified name of test classes
-     * @param blackList list of test methods name to not execute
-     * @param listener test listener to gather test result
-     * @param customClassLoader this class loader should contains the .class to be executed and all the dependencies
-     */
-    public static void run(List<String> testClassNames, List<String> blackList, JUnit4TestListener listener, ClassLoader customClassLoader) {
+    public static void run(String[] testClassNames,
+                           String[] testMethodNames,
+                           List<String> blackList,
+                           JUnit4TestListener listener,
+                           ClassLoader customClassLoader) {
         Request request;
-        request = Request.classes(testClassNames.stream().map(testClassName -> {
+        request = Request.classes(Arrays.stream(testClassNames).map(testClassName -> {
             try {
                 return customClassLoader.loadClass(testClassName);
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         }).toArray(Class[]::new));
-        final MethodFilter filter = new MethodFilter(Collections.emptyList(), blackList);
+        final MethodFilter filter = new MethodFilter(Arrays.asList(testMethodNames), blackList);
         request = request.filterWith(filter);
         final Runner runner = request.getRunner();
         final RunNotifier runNotifier = new RunNotifier();
         runNotifier.addFirstListener(listener);
         runner.run(runNotifier);
     }
-
-    public static void run(String testClassName, JUnit4TestListener listener) {
-        JUnit4Runner.run(testClassName, Collections.emptyList(), listener, JUnit4Runner.class.getClassLoader());
-    }
-
-    public static void run(String testClassName, List<String> testMethodNames, JUnit4TestListener listener) {
-        JUnit4Runner.run(testClassName, testMethodNames, listener, JUnit4Runner.class.getClassLoader());
-    }
-
-    public static void run(String testClassName,
-                           JUnit4TestListener listener,
-                           ClassLoader customClassLoader) {
-        JUnit4Runner.run(testClassName, Collections.emptyList(), listener, customClassLoader);
-    }
-
-    public static void run(String testClassName,
-                           List<String> testMethodNames,
-                           JUnit4TestListener listener,
-                           ClassLoader customClassLoader) {
-        Request request;
-        try {
-            request = Request.aClass(customClassLoader.loadClass(testClassName));
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        final MethodFilter filter = new MethodFilter(testMethodNames);
-        request = request.filterWith(filter);
-        final Runner runner = request.getRunner();
-        final RunNotifier runNotifier = new RunNotifier();
-        runNotifier.addFirstListener(listener);
-        runner.run(runNotifier);
-    }
-
 }
