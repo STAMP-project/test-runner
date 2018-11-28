@@ -23,15 +23,9 @@ public class JUnit5Runner {
     /**
      * The entry method to execute junit tests.
      * This method is not meant to be used directly, but rather using {@link EntryPoint}
-     *
-     * @param args this array should be build by {@link EntryPoint}.
-     *             the first argument is the full qualified name of the test class
-     *             the second argument is optionally the list of the test method name separated by the path separator of the system, <i>e.g.</i> ':' on Linux.
-     *             You can pass the --blacklist flag, following by a list of test method name to be blacklisted.
-     *             Each method name is separated with the path separator of the system, <i>e.g.</i> ':' on Linux.
-     * @throws ClassNotFoundException in case of the supplied classpath is wrong
+     * For the expected arguments, see {@link ParserOptions}
      */
-    public static void main(String args[]) throws ClassNotFoundException {
+    public static void main(String args[]) {
         final JUnit5TestListener jUnit5TestListener = new JUnit5TestListener();
         final ParserOptions options = ParserOptions.parse(args);
         JUnit5Runner.run(
@@ -44,6 +38,14 @@ public class JUnit5Runner {
         jUnit5TestListener.save();
     }
 
+    /**
+     * Execute the test
+     * @param testClassNames full qualified names of the test classes to be run
+     * @param testMethodNames simple names of the test methods to be run
+     * @param blackList simple names of the test methods to NOT be run
+     * @param listener JUnit5 listener to record the result of the execution
+     * @param customClassLoader the classloader that contains the classes to execute
+     */
     public static void run(String[] testClassNames,
                            String[] testMethodNames,
                            List<String> blackList, // TODO the blacklist is not yet implemented

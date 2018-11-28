@@ -1,5 +1,6 @@
 package eu.stamp_project.testrunner.runner;
 
+import eu.stamp_project.testrunner.EntryPoint;
 import eu.stamp_project.testrunner.listener.junit4.JUnit4TestListener;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
@@ -15,6 +16,11 @@ import java.util.List;
  */
 public class JUnit4Runner {
 
+    /**
+     * The entry method to execute junit tests.
+     * This method is not meant to be used directly, but rather using {@link EntryPoint}
+     * For the expected arguments, see {@link ParserOptions}
+     */
     public static void main(String[] args) {
         final JUnit4TestListener jUnit4TestListener = new JUnit4TestListener();
         final ParserOptions options = ParserOptions.parse(args);
@@ -28,6 +34,14 @@ public class JUnit4Runner {
         jUnit4TestListener.save();
     }
 
+    /**
+     * Execute the test
+     * @param testClassNames full qualified names of the test classes to be run
+     * @param testMethodNames simple names of the test methods to be run
+     * @param blackList simple names of the test methods to NOT be run
+     * @param listener the listener to record the result of the execution
+     * @param customClassLoader the classloader that contains the classes to execute
+     */
     public static void run(String[] testClassNames,
                            String[] testMethodNames,
                            List<String> blackList,

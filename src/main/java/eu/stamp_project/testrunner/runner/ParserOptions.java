@@ -42,10 +42,32 @@ public class ParserOptions {
                     break;
                 default:
                     System.err.println(String.format("[ERROR]: %s is not a supported command line options", args[i]));
-                    //TODO implement usage()
+                    usage();
             }
         }
         return parserOptions;
+    }
+
+    private static void usage() {
+        final StringBuilder usage = new StringBuilder();
+        usage.append("Usage:").append(ConstantsHelper.LINE_SEPARATOR);
+
+        usage.append(FLAG_pathToCompiledClassesOfTheProject).append(ConstantsHelper.WHITE_SPACE)
+                .append(FLAG_HELP_pathToCompiledClassesOfTheProject).append(ConstantsHelper.LINE_SEPARATOR);
+
+        usage.append(FLAG_fullQualifiedNameOfTestClassToRun).append(ConstantsHelper.WHITE_SPACE)
+                .append(FLAG_HELP_fullQualifiedNameOfTestClassToRun).append(ConstantsHelper.LINE_SEPARATOR);
+
+        usage.append(FLAG_testMethodNamesToRun).append(ConstantsHelper.WHITE_SPACE)
+                .append(FLAG_HELP_testMethodNamesToRun).append(ConstantsHelper.LINE_SEPARATOR);
+
+        usage.append(FLAG_blackList).append(ConstantsHelper.WHITE_SPACE)
+                .append(FLAG_HELP_blackList).append(ConstantsHelper.LINE_SEPARATOR);
+
+        usage.append(FLAG_isJUnit5).append(ConstantsHelper.WHITE_SPACE)
+                .append(FLAG_HELP_isJUnit5).append(ConstantsHelper.LINE_SEPARATOR);
+
+        System.out.println(usage.toString());
     }
 
     /**
@@ -56,6 +78,8 @@ public class ParserOptions {
 
     public static final String FLAG_pathToCompiledClassesOfTheProject = "--binaries";
 
+    private static final String FLAG_HELP_pathToCompiledClassesOfTheProject = "This flag must be followed by the path of both directories of sources and test binaries. Both paths must be separated by the system path separator, e.g. ':' on Linux";
+
     /**
      * This list the full qualified names of the test classes to run.
      * For example, eu.stamp_project.my.project.MyClassTest:eu.stamp_project.my.project.MySecondClassTest
@@ -63,6 +87,8 @@ public class ParserOptions {
     private String[] fullQualifiedNameOfTestClassesToRun;
 
     public static final String FLAG_fullQualifiedNameOfTestClassToRun = "--class";
+
+    public static final String FLAG_HELP_fullQualifiedNameOfTestClassToRun = "This flag must be followed by the full qualified names of test classes to be run. Names must be separated by the system path separator, e.g. ':' on Linux";
 
     /**
      * This list is the simple names of test method to run.
@@ -72,6 +98,8 @@ public class ParserOptions {
 
     public static final String FLAG_testMethodNamesToRun = "--tests";
 
+    public static final String FLAG_HELP_testMethodNamesToRun = "This flag must be followed by the list of simple names of test methods to be run. Names must be separated by the system path separator, e.g. ':' on Linux";
+
     /**
      * This list is the simple names of test method to NOT run
      * Simples names must be separated by the system path separator, e.g. ':' on Linux.
@@ -80,12 +108,16 @@ public class ParserOptions {
 
     public static final String FLAG_blackList = "--blacklist";
 
+    public static final String FLAG_HELP_blackList = "This flag must be followed by the list of simple names of test methods to NOT be run. Names must be separated by the system path separator, e.g. ':' on Linux";
+
     /**
      * If this boolean is true, it enables the JUnit5 mode of the test runner, otherwise, it executes JUnit4.
      */
     private boolean isJUnit5;
 
     public static final String FLAG_isJUnit5 = "--junit5";
+
+    public static final String FLAG_HELP_isJUnit5 = "This flag enable the JUnit5 mode of the test-runner. If you use JUnit5, you must use this flag, otherwise, don't.";
 
     private ParserOptions() {
         this.pathToCompiledClassesOfTheProject = "";

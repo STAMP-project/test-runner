@@ -32,13 +32,9 @@ public class JacocoRunnerPerTestMethod extends JacocoRunner {
 
 
     /**
-     * The entry method to compute the instruction coverage per test method.
+     * The entry method to execute junit tests.
      * This method is not meant to be used directly, but rather using {@link EntryPoint}
-     *
-     * @param args this array should be build by {@link EntryPoint}
-     *             the first argument is the path to classes and test classes separated by the system path separator. <i>e.g. target/classes:target/test-classes</i> for a typical maven project.
-     *             the second argument is the full qualified name of the test class
-     *             the third argument is optionally the list of the test method name separated by the system path separator.
+     * For the expected arguments, see {@link ParserOptions}
      */
     public static void main(String[] args) {
         final ParserOptions options = ParserOptions.parse(args);
@@ -52,14 +48,24 @@ public class JacocoRunnerPerTestMethod extends JacocoRunner {
                         testClassesDirectory,
                         options.getBlackList()
                 );
-        jacocoRunner.run(classesDirectory,
+        jacocoRunner.runCoveragePerTestMethod(classesDirectory,
                 testClassesDirectory,
                 options.getFullQualifiedNameOfTestClassesToRun()[0],
                 options.getTestMethodNamesToRun()
-        ).save();
+        );
     }
 
-    private CoveragePerTestMethod run(String classesDirectory,
+    /**
+     * Compute the instruction coverage of the given tests per test methods
+     * Using directly this method is discouraged, since it won't avoid class loading conflict. Use {@link EntryPoint#runCoverage(String, String, String[], String[])} instead.
+     *
+     * @param classesDirectory             the path to the directory that contains the .class file of sources
+     * @param testClassesDirectory         the path to the directory that contains the .class file of test sources
+     * @param fullQualifiedNameOfTestClass the full qualified name of the test class to execute
+     * @param testMethodNames              the simple names of the test methods to exeecute
+     * @return a {@link CoveragePerTestMethod} instance that contains the instruction coverage of the given tests.
+     */
+    public CoveragePerTestMethod runCoveragePerTestMethod(String classesDirectory,
                                       String testClassesDirectory,
                                       String fullQualifiedNameOfTestClass,
                                       String[] testMethodNames) {
@@ -102,10 +108,21 @@ public class JacocoRunnerPerTestMethod extends JacocoRunner {
         }
     }
 
+    /**
+     * @param isJUnit5             tell if the given tests are JUnit5 or not
+     * @param classesDirectory     the path to the directory that contains the .class file of sources
+     * @param testClassesDirectory the path to the directory that contains the .class file of test sources
+     */
     public JacocoRunnerPerTestMethod(boolean isJUnit5, String classesDirectory, String testClassesDirectory) {
         super(isJUnit5, classesDirectory, testClassesDirectory);
     }
 
+    /**
+     * @param isJUnit5             tell if the given tests are JUnit5 or not
+     * @param classesDirectory     the path to the directory that contains the .class file of sources
+     * @param testClassesDirectory the path to the directory that contains the .class file of test sources
+     * @param blackList            the names of the test methods to NOT be run.
+     */
     public JacocoRunnerPerTestMethod(boolean isJUnit5, String classesDirectory, String testClassesDirectory, List<String> blackList) {
         super(isJUnit5, classesDirectory, testClassesDirectory, blackList);
     }
