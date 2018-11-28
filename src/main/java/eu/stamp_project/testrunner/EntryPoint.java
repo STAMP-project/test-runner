@@ -7,6 +7,7 @@ import eu.stamp_project.testrunner.listener.impl.TestListenerImpl;
 import eu.stamp_project.testrunner.listener.junit4.JUnit4Coverage;
 import eu.stamp_project.testrunner.runner.JUnit4Runner;
 import eu.stamp_project.testrunner.runner.ParserOptions;
+import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.apache.commons.io.FileUtils;
 import org.jacoco.core.runtime.IRuntime;
 import org.objectweb.asm.xml.Processor;
@@ -121,6 +122,10 @@ public class EntryPoint {
      */
     public static List<String> blackList = new ArrayList<>();
 
+
+    /* EXECUTION OF TEST API */
+
+
     public static TestListener runTests(String classpath,
                                         String fullQualifiedNameOfTestClass) throws TimeoutException {
         return EntryPoint.runTests(classpath, new String[]{fullQualifiedNameOfTestClass}, new String[0]);
@@ -160,16 +165,16 @@ public class EntryPoint {
     public static TestListener runTests(String classpath,
                                         String[] fullQualifiedNameOfTestClasses,
                                         String[] methodNames) throws TimeoutException {
-        final String javaCommand = String.join(WHITE_SPACE, new String[]{
+        final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE, new String[]{
                         getJavaCommand(),
                         classpath +
-                                PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES,
+                                ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES,
                         EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_TEST_RUNNER_QUALIFIED_NAME : EntryPoint.JUNIT4_TEST_RUNNER_QUALIFIED_NAME,
-                        ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, String.join(JUnit4Runner.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
+                        ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, String.join(ConstantsHelper.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
                         methodNames.length == 0 ?  "" :
-                                ParserOptions.FLAG_testMethodNamesToRun + WHITE_SPACE + String.join(JUnit4Runner.PATH_SEPARATOR, methodNames),
+                                ParserOptions.FLAG_testMethodNamesToRun + ConstantsHelper.WHITE_SPACE + String.join(ConstantsHelper.PATH_SEPARATOR, methodNames),
                         EntryPoint.blackList.isEmpty() ? "" :
-                                (ParserOptions.FLAG_blackList + WHITE_SPACE + String.join(JUnit4Runner.PATH_SEPARATOR, EntryPoint.blackList))
+                                (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList))
                 }
         );
         return EntryPoint.runTests(javaCommand);
@@ -191,6 +196,8 @@ public class EntryPoint {
         }
         return load;
     }
+
+    /* COMPUTE COVERAGE API */
 
     public static Coverage runCoverage(String classpath,
                                        String targetProjectClasses,
@@ -231,24 +238,25 @@ public class EntryPoint {
                                        String targetProjectClasses,
                                        String[] fullQualifiedNameOfTestClasses,
                                        String[] methodNames) throws TimeoutException {
-        final String javaCommand = String.join(WHITE_SPACE, new String[]{
+        final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE, new String[]{
                         getJavaCommand(),
                         classpath +
-                                PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES +
-                                PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES,
+                                ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES +
+                                ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES,
                         EntryPoint.JACOCO_RUNNER_QUALIFIED_NAME,
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject, targetProjectClasses,
-                        ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, String.join(JUnit4Runner.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
+                        ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, String.join(ConstantsHelper.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
                         methodNames.length == 0 ? "" :
-                                ParserOptions.FLAG_testMethodNamesToRun, String.join(JUnit4Runner.PATH_SEPARATOR, methodNames),
+                                ParserOptions.FLAG_testMethodNamesToRun, String.join(ConstantsHelper.PATH_SEPARATOR, methodNames),
                         EntryPoint.blackList.isEmpty() ? "" :
-                                (ParserOptions.FLAG_blackList + WHITE_SPACE + String.join(JUnit4Runner.PATH_SEPARATOR, EntryPoint.blackList)),
+                                (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
                         EntryPoint.jUnit5Mode ? ParserOptions.FLAG_isJUnit5 : ""
                 }
         );
         return EntryPoint.runCoverage(javaCommand);
     }
 
+    /* COMPUTE COVERAGE PER TEST METHOD API */
 
     public static CoveragePerTestMethod runCoveragePerTestMethods(String classpath,
                                                                   String targetProjectClasses,
@@ -289,18 +297,18 @@ public class EntryPoint {
                                                                   String targetProjectClasses,
                                                                   String[] fullQualifiedNameOfTestClasses,
                                                                   String[] methodNames) throws TimeoutException {
-        final String javaCommand = String.join(WHITE_SPACE, new String[]{
+        final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE, new String[]{
                         getJavaCommand(),
                         classpath +
-                                PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES +
-                                PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES,
+                                ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES +
+                                ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES,
                         EntryPoint.JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME,
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject, targetProjectClasses,
-                        ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, String.join(JUnit4Runner.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
+                        ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, String.join(ConstantsHelper.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
                         methodNames.length == 0 ? "" :
-                                ParserOptions.FLAG_testMethodNamesToRun, String.join(JUnit4Runner.PATH_SEPARATOR, methodNames),
+                                ParserOptions.FLAG_testMethodNamesToRun, String.join(ConstantsHelper.PATH_SEPARATOR, methodNames),
                         EntryPoint.blackList.isEmpty() ? "" :
-                                (ParserOptions.FLAG_blackList + WHITE_SPACE + String.join(JUnit4Runner.PATH_SEPARATOR, EntryPoint.blackList)),
+                                (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
                         EntryPoint.jUnit5Mode ? ParserOptions.FLAG_isJUnit5 : ""
                 }
         );
@@ -446,36 +454,32 @@ public class EntryPoint {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EntryPoint.class);
 
-    public static final String WHITE_SPACE = " ";
+    private static final String JAVA_COMMAND = "java";
 
-    static final String JAVA_COMMAND = "java";
+    private static final String CLASSPATH_OPT = "-classpath";
 
-    static final String CLASSPATH_OPT = "-classpath";
+    private static final String JUNIT4_TEST_RUNNER_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.JUnit4Runner";
 
-    static final String JUNIT4_TEST_RUNNER_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.JUnit4Runner";
+    private static final String JUNIT5_TEST_RUNNER_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.JUnit5Runner";
 
-    static final String JUNIT5_TEST_RUNNER_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.JUnit5Runner";
+    private static final String JACOCO_RUNNER_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JacocoRunner";
 
-    static final String JACOCO_RUNNER_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JacocoRunner";
+    private static final String JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JacocoRunnerPerTestMethod";
 
-    static final String JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JacocoRunnerPerTestMethod";
+    private static final String ABSOLUTE_PATH_TO_RUNNER_CLASSES = initAbsolutePathToRunnerClasses();
 
-    static final String PATH_SEPARATOR = System.getProperty("path.separator");
-
-    static final String ABSOLUTE_PATH_TO_RUNNER_CLASSES = initAbsolutePathToRunnerClasses();
-
-    static final int DEFAULT_TIMEOUT = 10000;
+    private static final int DEFAULT_TIMEOUT = 10000;
 
     static String getJavaCommand() {
         if (EntryPoint.JVMArgs != null) {
-            return JAVA_COMMAND + WHITE_SPACE + EntryPoint.JVMArgs + WHITE_SPACE + CLASSPATH_OPT;
+            return JAVA_COMMAND + ConstantsHelper.WHITE_SPACE + EntryPoint.JVMArgs + ConstantsHelper.WHITE_SPACE + CLASSPATH_OPT;
         } else {
-            return JAVA_COMMAND + WHITE_SPACE + CLASSPATH_OPT;
+            return JAVA_COMMAND + ConstantsHelper.WHITE_SPACE + CLASSPATH_OPT;
         }
     }
 
     private static String RemoveWinFileSeparator(String string) {
-        if (!"/".equals(JUnit4Runner.FILE_SEPARATOR) && string.startsWith(JUnit4Runner.FILE_SEPARATOR)) {
+        if (!"/".equals(ConstantsHelper.FILE_SEPARATOR) && string.startsWith(ConstantsHelper.FILE_SEPARATOR)) {
             return string.substring(1);
         } else {
             return string;
@@ -488,13 +492,13 @@ public class EntryPoint {
                     .map(URL::getPath)
                     .map(path -> path.startsWith("file:") ? path.substring("file:".length()) : path)
                     .map(path -> path.split("!")[0])
-                    .map(path -> path.replace("/", JUnit4Runner.FILE_SEPARATOR))
+                    .map(path -> path.replace("/", ConstantsHelper.FILE_SEPARATOR))
                     .map(EntryPoint::RemoveWinFileSeparator)
                     .map(path -> {
                         LOGGER.info("{}", path);
                         return path;
                     })
-                    .collect(Collectors.joining(PATH_SEPARATOR));
+                    .collect(Collectors.joining(ConstantsHelper.PATH_SEPARATOR));
 
     private static final List<Class<?>> JACOCO_DEPENDENCIES = Arrays.asList(
             IRuntime.class,
@@ -531,7 +535,7 @@ public class EntryPoint {
         if (path.contains("!") && path.startsWith("file:")) {
             path = path.substring("file:".length()).split("!")[0];
         }
-        path = RemoveWinFileSeparator(path.replace("/", JUnit4Runner.FILE_SEPARATOR));
+        path = RemoveWinFileSeparator(path.replace("/", ConstantsHelper.FILE_SEPARATOR));
         LOGGER.info("Path to runner Classes: {}", path);
         return path;
     }

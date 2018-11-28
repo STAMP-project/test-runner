@@ -3,7 +3,7 @@ package eu.stamp_project.testrunner.listener.impl;
 import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.TestListener;
 import eu.stamp_project.testrunner.runner.Loader;
-import eu.stamp_project.testrunner.runner.JUnit4Runner;
+import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.jacoco.core.analysis.*;
 import org.jacoco.core.data.ExecutionDataStore;
 
@@ -46,7 +46,7 @@ public class CoverageImpl implements Coverage, Serializable {
             coverageBuilder.getClasses()
                     .stream()
                     .map(iClassCoverage ->
-                            JUnit4Runner.pathToFullQualifiedName.apply(iClassCoverage.getName()) + JUnit4Runner.PATH_SEPARATOR  +
+                            ConstantsHelper.pathToFullQualifiedName.apply(iClassCoverage.getName()) + ConstantsHelper.PATH_SEPARATOR  +
                                     IntStream.range(iClassCoverage.getFirstLine(), iClassCoverage.getLastLine())
                                             .mapToObj(iClassCoverage::getLine)
                                             .map(ILine::getInstructionCounter)

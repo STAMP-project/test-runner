@@ -1,15 +1,12 @@
 package eu.stamp_project.testrunner.runner;
 
-import eu.stamp_project.testrunner.EntryPoint;
 import eu.stamp_project.testrunner.listener.junit4.JUnit4TestListener;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * Created by Benjamin DANGLOT
@@ -17,30 +14,6 @@ import java.util.function.Function;
  * on 14/12/17
  */
 public class JUnit4Runner {
-
-    public static final String BLACK_LIST_OPTION = "--blacklist";
-
-    public static final String PATH_SEPARATOR = System.getProperty("path.separator");
-
-    public static final String FILE_SEPARATOR = System.getProperty("file.separator");
-
-    public static final transient Function<String, String> pathToFullQualifiedName = string ->
-    {
-        if (JUnit4Runner.FILE_SEPARATOR.equals("\\")) {
-            return string.replace("\\", ".");
-        } else {
-            return string.replace(JUnit4Runner.FILE_SEPARATOR, ".");
-        }
-    };
-
-    public static final transient Function<String, String> fullQualifiedNameToPath = (String string) ->
-    {
-        if (JUnit4Runner.FILE_SEPARATOR.equals("\\")) {
-            return string.replace(".", "\\\\");
-        } else {
-            return string.replace(".", JUnit4Runner.FILE_SEPARATOR);
-        }
-    };
 
     public static void main(String[] args) {
         final JUnit4TestListener jUnit4TestListener = new JUnit4TestListener();

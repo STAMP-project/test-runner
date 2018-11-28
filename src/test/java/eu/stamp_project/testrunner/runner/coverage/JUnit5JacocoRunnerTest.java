@@ -5,6 +5,7 @@ import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.impl.CoverageImpl;
 import eu.stamp_project.testrunner.runner.JUnit4Runner;
 import eu.stamp_project.testrunner.runner.ParserOptions;
+import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -57,12 +58,5 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
     private final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar:" +
             MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar:" +
             MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar:" +
-            JUNIT_CP + JUnit4Runner.PATH_SEPARATOR + JUNIT5_CP;
-
-    private final String commandLine = "java -cp " +
-            classpath + JUnit4Runner.PATH_SEPARATOR + TEST_PROJECT_CLASSES +
-            JUnit4Runner.PATH_SEPARATOR + PATH_TO_RUNNER_CLASSES +
-            " eu.stamp_project.testrunner.runner.coverage.JUnit5JacocoRunner " +
-            TEST_PROJECT_CLASSES +
-            " junit5.TestSuiteExample";
+            JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP;
 }

@@ -9,6 +9,7 @@ import eu.stamp_project.testrunner.runner.Failure;
 import eu.stamp_project.testrunner.runner.JUnit4Runner;
 import eu.stamp_project.testrunner.runner.JUnit5Runner;
 import eu.stamp_project.testrunner.runner.ParserOptions;
+import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.apache.commons.io.IOUtils;
 import org.jacoco.core.runtime.RuntimeData;
 
@@ -41,7 +42,7 @@ public class JacocoRunnerPerTestMethod extends JacocoRunner {
      */
     public static void main(String[] args) {
         final ParserOptions options = ParserOptions.parse(args);
-        final String[] splittedArgs0 = options.getPathToCompiledClassesOfTheProject().split(JUnit4Runner.PATH_SEPARATOR);
+        final String[] splittedArgs0 = options.getPathToCompiledClassesOfTheProject().split(ConstantsHelper.PATH_SEPARATOR);
         final String classesDirectory = splittedArgs0[0];
         final String testClassesDirectory = splittedArgs0[1];
         final boolean isJUnit5 = options.isJUnit5();
@@ -70,7 +71,7 @@ public class JacocoRunnerPerTestMethod extends JacocoRunner {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
-        final String resource = JUnit4Runner.fullQualifiedNameToPath.apply(fullQualifiedNameOfTestClass) + ".class";
+        final String resource = ConstantsHelper.fullQualifiedNameToPath.apply(fullQualifiedNameOfTestClass) + ".class";
         try {
             this.instrumentedClassLoader.addDefinition(
                     fullQualifiedNameOfTestClass,

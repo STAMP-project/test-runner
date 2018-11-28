@@ -1,5 +1,7 @@
 package eu.stamp_project.testrunner.runner;
 
+import eu.stamp_project.testrunner.utils.ConstantsHelper;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,7 +18,7 @@ import java.util.function.Function;
 public class ParserOptions {
 
     private static final Function<String, List<String>> convertArrayToList =
-            value -> Arrays.asList(value.split(JUnit4Runner.PATH_SEPARATOR));
+            value -> Arrays.asList(value.split(ConstantsHelper.PATH_SEPARATOR));
 
     public static ParserOptions parse(String[] args) {
         System.out.println(String.format("Parsing %s", String.join(" ", args)));
@@ -27,10 +29,10 @@ public class ParserOptions {
                     parserOptions.pathToCompiledClassesOfTheProject = args[++i];
                     break;
                 case FLAG_fullQualifiedNameOfTestClassToRun:
-                    parserOptions.fullQualifiedNameOfTestClassesToRun = args[++i].split(JUnit4Runner.PATH_SEPARATOR);
+                    parserOptions.fullQualifiedNameOfTestClassesToRun = args[++i].split(ConstantsHelper.PATH_SEPARATOR);
                     break;
                 case FLAG_testMethodNamesToRun:
-                    parserOptions.testMethodNamesToRun = args[++i].split(JUnit4Runner.PATH_SEPARATOR);
+                    parserOptions.testMethodNamesToRun = args[++i].split(ConstantsHelper.PATH_SEPARATOR);
                     break;
                 case FLAG_blackList:
                     parserOptions.blackList = convertArrayToList.apply(args[++i]);

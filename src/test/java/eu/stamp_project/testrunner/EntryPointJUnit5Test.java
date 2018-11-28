@@ -2,15 +2,14 @@ package eu.stamp_project.testrunner;
 
 import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
-import eu.stamp_project.testrunner.listener.junit4.CoveragePerJUnit4TestMethod;
 import eu.stamp_project.testrunner.listener.TestListener;
 import eu.stamp_project.testrunner.runner.Failure;
 import eu.stamp_project.testrunner.runner.JUnit4Runner;
+import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.experimental.categories.Categories;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -49,7 +48,7 @@ public class EntryPointJUnit5Test extends AbstractTest {
         EntryPoint.blackList.add("testFailing");
 
         final TestListener testListener = EntryPoint.runTests(
-                JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 new String[]{"failing.FailingTestClass"},
                 new String[0]
         );
@@ -88,8 +87,8 @@ public class EntryPointJUnit5Test extends AbstractTest {
         assertNotNull(EntryPoint.JVMArgs);
 
         final TestListener testListener = EntryPoint.runTests(
-                JUNIT5_CP + EntryPoint.PATH_SEPARATOR +
-                        JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                JUNIT5_CP + ConstantsHelper.PATH_SEPARATOR +
+                        JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 new String[]{"junit5.TestSuiteExample"},
                 new String[0]
         );
@@ -115,8 +114,8 @@ public class EntryPointJUnit5Test extends AbstractTest {
         assertNotNull(EntryPoint.JVMArgs);
 
         TestListener testListener = EntryPoint.runTests(
-                JUNIT5_CP + EntryPoint.PATH_SEPARATOR +
-                        JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                JUNIT5_CP + ConstantsHelper.PATH_SEPARATOR +
+                        JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "junit5.TestSuiteExample"
         );
 
@@ -129,8 +128,8 @@ public class EntryPointJUnit5Test extends AbstractTest {
         assertNotNull(EntryPoint.JVMArgs);
 
         testListener = EntryPoint.runTests(
-                JUNIT5_CP + EntryPoint.PATH_SEPARATOR +
-                        JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                JUNIT5_CP + ConstantsHelper.PATH_SEPARATOR +
+                        JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "junit5.TestSuiteExample"
         );
 
@@ -152,8 +151,8 @@ public class EntryPointJUnit5Test extends AbstractTest {
          */
 
         final TestListener testListener = EntryPoint.runTests(
-                JUNIT5_CP + EntryPoint.PATH_SEPARATOR +
-                        JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                JUNIT5_CP + ConstantsHelper.PATH_SEPARATOR +
+                        JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "junit5.FailingTestClass"
         );
 
@@ -179,8 +178,8 @@ public class EntryPointJUnit5Test extends AbstractTest {
         EntryPoint.timeoutInMs = 1;
         try {
             EntryPoint.runTests(
-                    JUNIT5_CP + EntryPoint.PATH_SEPARATOR +
-                            JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                    JUNIT5_CP + ConstantsHelper.PATH_SEPARATOR +
+                            JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                     new String[]{"junit5.TestSuiteExample", "junit5.TestSuiteExample2"}
             );
             fail("Should have thrown a Time out Exception");
@@ -199,8 +198,8 @@ public class EntryPointJUnit5Test extends AbstractTest {
          */
 
         final TestListener testListener = EntryPoint.runTests(
-                JUNIT5_CP + EntryPoint.PATH_SEPARATOR +
-                        JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                JUNIT5_CP + ConstantsHelper.PATH_SEPARATOR +
+                        JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 new String[]{"junit5.TestSuiteExample", "junit5.TestSuiteExample2"}
         );
         assertEquals(12, testListener.getPassingTests().size());
@@ -216,8 +215,8 @@ public class EntryPointJUnit5Test extends AbstractTest {
          */
 
         final TestListener testListener = EntryPoint.runTests(
-                JUNIT5_CP + EntryPoint.PATH_SEPARATOR +
-                        JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                JUNIT5_CP + ConstantsHelper.PATH_SEPARATOR +
+                        JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "junit5.TestSuiteExample"
         );
         assertEquals(6, testListener.getPassingTests().size());
@@ -236,8 +235,8 @@ public class EntryPointJUnit5Test extends AbstractTest {
         EntryPoint.verbose = true;
 
         final TestListener testListener = EntryPoint.runTests(
-                JUNIT5_CP + EntryPoint.PATH_SEPARATOR +
-                        JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                JUNIT5_CP + ConstantsHelper.PATH_SEPARATOR +
+                        JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "junit5.TestSuiteExample",
                 new String[]{"test4", "test9"}
         );
@@ -254,14 +253,14 @@ public class EntryPointJUnit5Test extends AbstractTest {
             Test the runCoverage() of EntryPoint.
                 It should return the CoverageResult with the instruction jUnit4Coverage computed by Jacoco.
          */
-        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + JUnit4Runner.PATH_SEPARATOR +
-                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + JUnit4Runner.PATH_SEPARATOR +
-                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + JUnit4Runner.PATH_SEPARATOR +
-                JUNIT_CP + JUnit4Runner.PATH_SEPARATOR +
+        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + ConstantsHelper.PATH_SEPARATOR +
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR +
                 JUNIT5_CP;
 
         final Coverage coverage = EntryPoint.runCoverage(
-                classpath + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                classpath + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 TEST_PROJECT_CLASSES,
                 "junit5.TestSuiteExample",
                 new String[]{"test8", "test3"}
@@ -277,14 +276,14 @@ public class EntryPointJUnit5Test extends AbstractTest {
             Test the runCoverage() of EntryPoint.
                 It should return the CoverageResult with the instruction coverage computed by Jacoco.
          */
-        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + JUnit4Runner.PATH_SEPARATOR +
-                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + JUnit4Runner.PATH_SEPARATOR +
-                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + JUnit4Runner.PATH_SEPARATOR +
-                JUNIT_CP + JUnit4Runner.PATH_SEPARATOR +
+        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + ConstantsHelper.PATH_SEPARATOR +
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR +
                 JUNIT5_CP;
 
         final Coverage coverage = EntryPoint.runCoverage(
-                classpath + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                classpath + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 TEST_PROJECT_CLASSES,
                 "junit5.TestSuiteExample"
         );
@@ -300,10 +299,10 @@ public class EntryPointJUnit5Test extends AbstractTest {
         /*
             Test the runCoverage() of EntryPoint with blacklisted test methods.
          */
-        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + JUnit4Runner.PATH_SEPARATOR +
-                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + JUnit4Runner.PATH_SEPARATOR +
-                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + JUnit4Runner.PATH_SEPARATOR +
-                JUNIT_CP + JUnit4Runner.PATH_SEPARATOR +
+        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + ConstantsHelper.PATH_SEPARATOR +
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR +
                 JUNIT5_CP;
 
         EntryPoint.blackList.add("test8");
@@ -314,7 +313,7 @@ public class EntryPointJUnit5Test extends AbstractTest {
         EntryPoint.blackList.add("test9");
 
         final Coverage coverage = EntryPoint.runCoverage(
-                classpath + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                classpath + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 TEST_PROJECT_CLASSES,
                 "junit5.TestSuiteExample"
         );
@@ -330,13 +329,13 @@ public class EntryPointJUnit5Test extends AbstractTest {
             Test the runCoveragePerTestMethods() of EntryPoint.
                 It should return the CoverageResult with the instruction coverage computed by Jacoco.
          */
-        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + JUnit4Runner.PATH_SEPARATOR +
-                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + JUnit4Runner.PATH_SEPARATOR +
-                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + JUnit4Runner.PATH_SEPARATOR +
-                JUNIT_CP + JUnit4Runner.PATH_SEPARATOR + JUNIT5_CP;
+        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + ConstantsHelper.PATH_SEPARATOR +
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP;
 
         final CoveragePerTestMethod coveragePerTestMethod = EntryPoint.runCoveragePerTestMethods(
-                classpath + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                classpath + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 TEST_PROJECT_CLASSES,
                 "junit5.TestSuiteExample",
                 new String[]{"test8", "test3"}

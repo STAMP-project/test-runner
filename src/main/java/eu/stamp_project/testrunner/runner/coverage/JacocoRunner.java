@@ -9,6 +9,7 @@ import eu.stamp_project.testrunner.runner.JUnit4Runner;
 import eu.stamp_project.testrunner.runner.Failure;
 import eu.stamp_project.testrunner.runner.JUnit5Runner;
 import eu.stamp_project.testrunner.runner.ParserOptions;
+import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.jacoco.core.data.ExecutionDataStore;
@@ -52,7 +53,7 @@ public class JacocoRunner {
      */
     public static void main(String[] args) throws ClassNotFoundException {
         final ParserOptions options = ParserOptions.parse(args);
-        final String[] splittedArgs0 = options.getPathToCompiledClassesOfTheProject().split(JUnit4Runner.PATH_SEPARATOR);
+        final String[] splittedArgs0 = options.getPathToCompiledClassesOfTheProject().split(ConstantsHelper.PATH_SEPARATOR);
         final String classesDirectory = splittedArgs0[0];
         final String testClassesDirectory = splittedArgs0[1];
         final boolean isJUnit5 = options.isJUnit5();
@@ -131,7 +132,7 @@ public class JacocoRunner {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
-        final String resource = JUnit4Runner.fullQualifiedNameToPath.apply(fullQualifiedNameOfTestClass) + ".class";
+        final String resource = ConstantsHelper.fullQualifiedNameToPath.apply(fullQualifiedNameOfTestClass) + ".class";
         System.out.println(resource);
         try {
             this.instrumentedClassLoader.addDefinition(
@@ -179,7 +180,7 @@ public class JacocoRunner {
             throw new RuntimeException(e);
         }
         Arrays.stream(fullQualifiedNameOfTestClasses).forEach(fullQualifiedNameOfTestClass -> {
-            final String resource = JUnit4Runner.fullQualifiedNameToPath.apply(fullQualifiedNameOfTestClass) + ".class";
+            final String resource = ConstantsHelper.fullQualifiedNameToPath.apply(fullQualifiedNameOfTestClass) + ".class";
             try {
                 this.instrumentedClassLoader.addDefinition(
                         fullQualifiedNameOfTestClass,
@@ -221,8 +222,8 @@ public class JacocoRunner {
         final Iterator<File> iterator = FileUtils.iterateFiles(new File(classesDirectory), new String[]{"class"}, true);
         while (iterator.hasNext()) {
             final File next = iterator.next();
-            final String fileName = next.getPath().substring(classesDirectory.length() + (classesDirectory.endsWith(JUnit4Runner.FILE_SEPARATOR) ? 0 : 1));
-            final String fullQualifiedName = JUnit4Runner.pathToFullQualifiedName.apply(fileName).substring(0, fileName.length() - ".class".length());
+            final String fileName = next.getPath().substring(classesDirectory.length() + (classesDirectory.endsWith(ConstantsHelper.FILE_SEPARATOR) ? 0 : 1));
+            final String fullQualifiedName = ConstantsHelper.pathToFullQualifiedName.apply(fileName).substring(0, fileName.length() - ".class".length());
             try {
                 instrumentedClassLoader.addDefinition(fullQualifiedName,
                         instrumenter.instrument(instrumentedClassLoader.getResourceAsStream(fileName), fullQualifiedName));

@@ -1,7 +1,7 @@
 package eu.stamp_project.testrunner.listener;
 
 import eu.stamp_project.testrunner.runner.Failure;
-import eu.stamp_project.testrunner.runner.JUnit4Runner;
+import eu.stamp_project.testrunner.utils.ConstantsHelper;
 
 import java.io.Serializable;
 import java.util.List;
@@ -15,7 +15,7 @@ public interface TestListener extends Serializable {
 
     public static final String SERIALIZE_NAME = "TestListener";
 
-    public static final String OUTPUT_DIR = "target" + JUnit4Runner.FILE_SEPARATOR + "dspot" + JUnit4Runner.FILE_SEPARATOR;
+    public static final String OUTPUT_DIR = "target" + ConstantsHelper.FILE_SEPARATOR + "dspot" + ConstantsHelper.FILE_SEPARATOR;
 
     public static final String EXTENSION = ".ser";
 
