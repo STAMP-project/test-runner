@@ -1,5 +1,6 @@
 package eu.stamp_project.testrunner;
 
+import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -43,9 +44,9 @@ public class AbstractTest {
             throw new RuntimeException("Problem when compiling sources.");
         }
         command = "javac -d src/test/resources/test-projects/target/test-classes" +
-                " -cp src/test/resources/test-projects/target/classes/" + EntryPoint.PATH_SEPARATOR +
-                JUNIT_CP + EntryPoint.PATH_SEPARATOR +
-                EASYMOCK_CP + EntryPoint.PATH_SEPARATOR +
+                " -cp src/test/resources/test-projects/target/classes/" + ConstantsHelper.PATH_SEPARATOR +
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR +
+                EASYMOCK_CP + ConstantsHelper.PATH_SEPARATOR +
                 JUNIT5_CP +
                 " src/test/resources/test-projects/src/test/java/example/TestSuiteExample.java" +
                 " src/test/resources/test-projects/src/test/java/example/ParametrizedTestSuiteExample.java" +
@@ -76,21 +77,21 @@ public class AbstractTest {
             .map(s -> s.substring(0, s.indexOf("/.m2/repository/") + "/.m2/repository/".length()))
             .get();
 
-    public static final String TEST_PROJECT_CLASSES = "src/test/resources/test-projects/target/classes/" + EntryPoint.PATH_SEPARATOR +
+    public static final String TEST_PROJECT_CLASSES = "src/test/resources/test-projects/target/classes/" + ConstantsHelper.PATH_SEPARATOR +
             "src/test/resources/test-projects/target/test-classes/";
 
-    public static final String JUNIT_CP = MAVEN_HOME + "junit/junit/4.12/junit-4.12.jar" + EntryPoint.PATH_SEPARATOR
+    public static final String JUNIT_CP = MAVEN_HOME + "junit/junit/4.12/junit-4.12.jar" + ConstantsHelper.PATH_SEPARATOR
             + MAVEN_HOME + "org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar";
 
-    public static final String EASYMOCK_CP = MAVEN_HOME + "org/easymock/easymock/3.4/easymock-3.4.jar" + EntryPoint.PATH_SEPARATOR
+    public static final String EASYMOCK_CP = MAVEN_HOME + "org/easymock/easymock/3.4/easymock-3.4.jar" + ConstantsHelper.PATH_SEPARATOR
             + MAVEN_HOME + "org/objenesis/objenesis/2.2/objenesis-2.2.jar";
 
-    public static final String JUNIT5_CP = MAVEN_HOME + "org/junit/jupiter/junit-jupiter-api/5.1.0/junit-jupiter-api-5.1.0.jar" + EntryPoint.PATH_SEPARATOR
-            + MAVEN_HOME + "org/apiguardian/apiguardian-api/1.0.0/apiguardian-api-1.0.0.jar" + EntryPoint.PATH_SEPARATOR
-            + MAVEN_HOME + "org/opentest4j/opentest4j/1.0.0/opentest4j-1.0.0.jar" + EntryPoint.PATH_SEPARATOR
-            + MAVEN_HOME + "org/junit/platform/junit-platform-commons/1.1.0/junit-platform-commons-1.1.0.jar" + EntryPoint.PATH_SEPARATOR
-            + MAVEN_HOME + "org/junit/jupiter/junit-jupiter-engine/5.1.0/junit-jupiter-engine-5.1.0.jar" + EntryPoint.PATH_SEPARATOR
-            + MAVEN_HOME + "org/junit/platform/junit-platform-engine/1.1.0/junit-platform-engine-1.1.0.jar" + EntryPoint.PATH_SEPARATOR
+    public static final String JUNIT5_CP = MAVEN_HOME + "org/junit/jupiter/junit-jupiter-api/5.1.0/junit-jupiter-api-5.1.0.jar" + ConstantsHelper.PATH_SEPARATOR
+            + MAVEN_HOME + "org/apiguardian/apiguardian-api/1.0.0/apiguardian-api-1.0.0.jar" + ConstantsHelper.PATH_SEPARATOR
+            + MAVEN_HOME + "org/opentest4j/opentest4j/1.0.0/opentest4j-1.0.0.jar" + ConstantsHelper.PATH_SEPARATOR
+            + MAVEN_HOME + "org/junit/platform/junit-platform-commons/1.1.0/junit-platform-commons-1.1.0.jar" + ConstantsHelper.PATH_SEPARATOR
+            + MAVEN_HOME + "org/junit/jupiter/junit-jupiter-engine/5.1.0/junit-jupiter-engine-5.1.0.jar" + ConstantsHelper.PATH_SEPARATOR
+            + MAVEN_HOME + "org/junit/platform/junit-platform-engine/1.1.0/junit-platform-engine-1.1.0.jar" + ConstantsHelper.PATH_SEPARATOR
             + MAVEN_HOME + "org/junit/platform/junit-platform-launcher/1.2.0/junit-platform-launcher-1.2.0.jar";
 
     public static final String PATH_TO_RUNNER_CLASSES = "src/main/resources/runner-classes/";

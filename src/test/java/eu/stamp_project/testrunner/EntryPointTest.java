@@ -5,6 +5,7 @@ import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
 import eu.stamp_project.testrunner.listener.TestListener;
 import eu.stamp_project.testrunner.runner.Failure;
 import eu.stamp_project.testrunner.runner.JUnit4Runner;
+import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +33,7 @@ public class EntryPointTest extends AbstractTest {
         EntryPoint.persistence = true;
         EntryPoint.outPrintStream = null;
         EntryPoint.errPrintStream = null;
+        EntryPoint.verbose = true;
     }
 
     @After
@@ -47,8 +49,8 @@ public class EntryPointTest extends AbstractTest {
 
         EntryPoint.blackList.add("testFailing");
 
-        final TestListener testListener = EntryPoint.runTestClasses(
-                JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+        final TestListener testListener = EntryPoint.runTests(
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "failing.FailingTestClass"
         );
 
@@ -85,8 +87,8 @@ public class EntryPointTest extends AbstractTest {
         EntryPoint.JVMArgs = "-XX:+PrintGCDetails";
         assertNotNull(EntryPoint.JVMArgs);
 
-        final TestListener testListener = EntryPoint.runTestClasses(
-                JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+        final TestListener testListener = EntryPoint.runTests(
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "example.TestSuiteExample"
         );
 
@@ -110,8 +112,8 @@ public class EntryPointTest extends AbstractTest {
         EntryPoint.JVMArgs = "-XX:+PrintGCDetails";
         assertNotNull(EntryPoint.JVMArgs);
 
-        TestListener testListener = EntryPoint.runTestClasses(
-                JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+        TestListener testListener = EntryPoint.runTests(
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "example.TestSuiteExample"
         );
 
@@ -123,8 +125,8 @@ public class EntryPointTest extends AbstractTest {
         EntryPoint.JVMArgs = "-XX:+PrintGCDetails";
         assertNotNull(EntryPoint.JVMArgs);
 
-        testListener = EntryPoint.runTestClasses(
-                JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+        testListener = EntryPoint.runTests(
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "example.TestSuiteExample"
         );
 
@@ -140,9 +142,9 @@ public class EntryPointTest extends AbstractTest {
             Test to run test class that use easymock framework
          */
 
-        final TestListener testListener = EntryPoint.runTestClasses(
-                JUNIT_CP + EntryPoint.PATH_SEPARATOR + EASYMOCK_CP +
-                        EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+        final TestListener testListener = EntryPoint.runTests(
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + EASYMOCK_CP +
+                        ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "easymock.LoginControllerIntegrationTest"
         );
         assertEquals(7, testListener.getRunningTests().size());
@@ -162,8 +164,8 @@ public class EntryPointTest extends AbstractTest {
                 - one ignored test
          */
 
-        final TestListener testListener = EntryPoint.runTestClasses(
-                JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+        final TestListener testListener = EntryPoint.runTests(
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "failing.FailingTestClass"
         );
 
@@ -188,9 +190,9 @@ public class EntryPointTest extends AbstractTest {
     public void testTimeOut() {
         EntryPoint.timeoutInMs = 1;
         try {
-            EntryPoint.runTestClasses(
-                    JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
-                    "example.TestSuiteExample", "example.TestSuiteExample2"
+            EntryPoint.runTests(
+                    JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                    new String[]{"example.TestSuiteExample", "example.TestSuiteExample2"}
             );
             fail("Should have thrown a Time out Exception");
         } catch (Exception e) {
@@ -207,9 +209,9 @@ public class EntryPointTest extends AbstractTest {
                 It should return the testListener with the result of the execution of the list of test classes.
          */
 
-        final TestListener testListener = EntryPoint.runTestClasses(
-                JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
-                "example.TestSuiteExample", "example.TestSuiteExample2"
+        final TestListener testListener = EntryPoint.runTests(
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                new String[]{"example.TestSuiteExample", "example.TestSuiteExample2"}
         );
         assertEquals(12, testListener.getPassingTests().size());
         assertEquals(0, testListener.getFailingTests().size());
@@ -223,8 +225,8 @@ public class EntryPointTest extends AbstractTest {
                 It should return the testListener with the result of the execution of the test class.
          */
 
-        final TestListener testListener = EntryPoint.runTestClasses(
-                JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+        final TestListener testListener = EntryPoint.runTests(
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "example.TestSuiteExample"
         );
         assertEquals(6, testListener.getPassingTests().size());
@@ -243,9 +245,9 @@ public class EntryPointTest extends AbstractTest {
         EntryPoint.verbose = true;
 
         final TestListener testListener = EntryPoint.runTests(
-                JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "example.TestSuiteExample",
-                "test4", "test9"
+                new String[]{"test4", "test9"}
         );
         assertEquals(2, testListener.getPassingTests().size());
         assertEquals(0, testListener.getFailingTests().size());
@@ -260,16 +262,17 @@ public class EntryPointTest extends AbstractTest {
             Test the runCoverage() of EntryPoint.
                 It should return the CoverageResult with the instruction jUnit4Coverage computed by Jacoco.
          */
-        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + JUnit4Runner.PATH_SEPARATOR +
-                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + JUnit4Runner.PATH_SEPARATOR +
-                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + JUnit4Runner.PATH_SEPARATOR +
-                JUNIT_CP;
+        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + ConstantsHelper.PATH_SEPARATOR +
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP;
+        ;
 
-        final Coverage coverage = EntryPoint.runCoverageOnTests(
-                classpath + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+        final Coverage coverage = EntryPoint.runCoverage(
+                classpath + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 TEST_PROJECT_CLASSES,
                 "example.TestSuiteExample",
-                "test8", "test3"
+                new String[]{"test8", "test3"}
         );
         assertEquals(26, coverage.getInstructionsCovered());
         assertEquals(118, coverage.getInstructionsTotal());
@@ -282,13 +285,13 @@ public class EntryPointTest extends AbstractTest {
             Test the runCoverage() of EntryPoint.
                 It should return the CoverageResult with the instruction coverage computed by Jacoco.
          */
-        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + JUnit4Runner.PATH_SEPARATOR +
-                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + JUnit4Runner.PATH_SEPARATOR +
-                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + JUnit4Runner.PATH_SEPARATOR +
-                JUNIT_CP;
+        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + ConstantsHelper.PATH_SEPARATOR +
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP;
 
-        final Coverage coverage = EntryPoint.runCoverageOnTestClasses(
-                classpath + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+        final Coverage coverage = EntryPoint.runCoverage(
+                classpath + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 TEST_PROJECT_CLASSES,
                 "example.TestSuiteExample"
         );
@@ -303,10 +306,11 @@ public class EntryPointTest extends AbstractTest {
         /*
             Test the runCoverage() of EntryPoint with blacklisted test methods.
          */
-        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + JUnit4Runner.PATH_SEPARATOR+
-                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + JUnit4Runner.PATH_SEPARATOR+
-                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + JUnit4Runner.PATH_SEPARATOR+
-                JUNIT_CP;
+        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + ConstantsHelper.PATH_SEPARATOR +
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP;
+        ;
 
         EntryPoint.blackList.add("test8");
         EntryPoint.blackList.add("test6");
@@ -315,8 +319,8 @@ public class EntryPointTest extends AbstractTest {
         EntryPoint.blackList.add("test7");
         EntryPoint.blackList.add("test9");
 
-        final Coverage coverage = EntryPoint.runCoverageOnTestClasses(
-                classpath + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+        final Coverage coverage = EntryPoint.runCoverage(
+                classpath + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 TEST_PROJECT_CLASSES,
                 "example.TestSuiteExample"
         );
@@ -332,16 +336,16 @@ public class EntryPointTest extends AbstractTest {
             Test the runCoveragePerTestMethods() of EntryPoint.
                 It should return the CoverageResult with the instruction coverage computed by Jacoco.
          */
-        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + JUnit4Runner.PATH_SEPARATOR+
-                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + JUnit4Runner.PATH_SEPARATOR+
-                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + JUnit4Runner.PATH_SEPARATOR+
-                JUNIT_CP;
+        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + ConstantsHelper.PATH_SEPARATOR +
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP;
 
         final CoveragePerTestMethod coveragePerTestMethod = EntryPoint.runCoveragePerTestMethods(
-                classpath + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                classpath + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 TEST_PROJECT_CLASSES,
                 "example.TestSuiteExample",
-                "test8", "test3"
+                new String[]{"test8", "test3"}
         );
 
         assertEquals(26, coveragePerTestMethod.getCoverageOf("test3").getInstructionsCovered());
@@ -357,8 +361,8 @@ public class EntryPointTest extends AbstractTest {
             Test the execution of Parametrized test class
          */
 
-        final TestListener testListener = EntryPoint.runTestClasses(
-                JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+        final TestListener testListener = EntryPoint.runTests(
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "example.ParametrizedTestSuiteExample"
         );
         assertEquals(10, testListener.getPassingTests().size());
@@ -373,7 +377,7 @@ public class EntryPointTest extends AbstractTest {
          */
 
         final TestListener testListener = EntryPoint.runTests(
-                JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "example.ParametrizedTestSuiteExample",
                 "test3"
         );

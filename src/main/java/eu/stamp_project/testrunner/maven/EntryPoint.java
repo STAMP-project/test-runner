@@ -1,6 +1,7 @@
 package eu.stamp_project.testrunner.maven;
 
 import eu.stamp_project.testrunner.listener.TestListener;
+import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.apache.maven.shared.invoker.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +75,7 @@ public class EntryPoint {
     }
 
     static int runMavenGoal(String absolutePathToPomFile, String... goals) {
-        LOGGER.info("run mvn {}", String.join(eu.stamp_project.testrunner.EntryPoint.WHITE_SPACE, goals));
+        LOGGER.info("run mvn {}", String.join(ConstantsHelper.WHITE_SPACE, goals));
         InvocationRequest request = new DefaultInvocationRequest();
         request.setGoals(Arrays.asList(goals));
         request.setPomFile(new File(absolutePathToPomFile + "/" + POM_FILE));

@@ -1,6 +1,6 @@
 package eu.stamp_project.testrunner.listener;
 
-import eu.stamp_project.testrunner.runner.JUnit4Runner;
+import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.jacoco.core.data.ExecutionDataStore;
 
 /**
@@ -12,7 +12,7 @@ public interface Coverage {
 
     public static final String SERIALIZE_NAME = "Coverage";
 
-    public static final String OUTPUT_DIR = "target" + JUnit4Runner.FILE_SEPARATOR + "dspot" + JUnit4Runner.FILE_SEPARATOR;
+    public static final String OUTPUT_DIR = "target" + ConstantsHelper.FILE_SEPARATOR + "dspot" + ConstantsHelper.FILE_SEPARATOR;
 
     public static final String EXTENSION = ".ser";
 
