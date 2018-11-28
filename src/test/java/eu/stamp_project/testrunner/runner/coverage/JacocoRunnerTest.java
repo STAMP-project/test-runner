@@ -22,7 +22,7 @@ public class JacocoRunnerTest extends AbstractTest {
             Using the api to compute the coverage on a test class
          */
 
-        JUnit4JacocoRunner.main(new String[]{
+        JacocoRunner.main(new String[]{
                         TEST_PROJECT_CLASSES, "example.TestSuiteExample"
                 }
         );
@@ -39,7 +39,7 @@ public class JacocoRunnerTest extends AbstractTest {
             Using the api to compute the coverage on test cases
          */
 
-        JUnit4JacocoRunner.main(new String[]{
+        JacocoRunner.main(new String[]{
                         TEST_PROJECT_CLASSES,
                         "example.TestSuiteExample",
                         "test8:test2"

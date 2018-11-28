@@ -48,9 +48,10 @@ public class EntryPointJUnit5Test extends AbstractTest {
 
         EntryPoint.blackList.add("testFailing");
 
-        final TestListener testListener = EntryPoint.runTestClasses(
+        final TestListener testListener = EntryPoint.runTests(
                 JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
-                "failing.FailingTestClass"
+                new String[]{"failing.FailingTestClass"},
+                new String[0]
         );
 
         assertEquals(2, testListener.getRunningTests().size());
@@ -86,10 +87,11 @@ public class EntryPointJUnit5Test extends AbstractTest {
         EntryPoint.JVMArgs = "-XX:+PrintGCDetails";
         assertNotNull(EntryPoint.JVMArgs);
 
-        final TestListener testListener = EntryPoint.runTestClasses(
+        final TestListener testListener = EntryPoint.runTests(
                 JUNIT5_CP + EntryPoint.PATH_SEPARATOR +
                         JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
-                "junit5.TestSuiteExample"
+                new String[]{"junit5.TestSuiteExample"},
+                new String[0]
         );
 
         final String GCdetail = outStream.toString();
@@ -112,7 +114,7 @@ public class EntryPointJUnit5Test extends AbstractTest {
         EntryPoint.JVMArgs = "-XX:+PrintGCDetails";
         assertNotNull(EntryPoint.JVMArgs);
 
-        TestListener testListener = EntryPoint.runTestClasses(
+        TestListener testListener = EntryPoint.runTests(
                 JUNIT5_CP + EntryPoint.PATH_SEPARATOR +
                         JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "junit5.TestSuiteExample"
@@ -126,7 +128,7 @@ public class EntryPointJUnit5Test extends AbstractTest {
         EntryPoint.JVMArgs = "-XX:+PrintGCDetails";
         assertNotNull(EntryPoint.JVMArgs);
 
-        testListener = EntryPoint.runTestClasses(
+        testListener = EntryPoint.runTests(
                 JUNIT5_CP + EntryPoint.PATH_SEPARATOR +
                         JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "junit5.TestSuiteExample"
@@ -149,7 +151,7 @@ public class EntryPointJUnit5Test extends AbstractTest {
                 - one ignored test
          */
 
-        final TestListener testListener = EntryPoint.runTestClasses(
+        final TestListener testListener = EntryPoint.runTests(
                 JUNIT5_CP + EntryPoint.PATH_SEPARATOR +
                         JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "junit5.FailingTestClass"
@@ -176,10 +178,10 @@ public class EntryPointJUnit5Test extends AbstractTest {
     public void testTimeOut() {
         EntryPoint.timeoutInMs = 1;
         try {
-            EntryPoint.runTestClasses(
+            EntryPoint.runTests(
                     JUNIT5_CP + EntryPoint.PATH_SEPARATOR +
                             JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
-                    "junit5.TestSuiteExample", "junit5.TestSuiteExample2"
+                    new String[]{"junit5.TestSuiteExample", "junit5.TestSuiteExample2"}
             );
             fail("Should have thrown a Time out Exception");
         } catch (Exception e) {
@@ -196,10 +198,10 @@ public class EntryPointJUnit5Test extends AbstractTest {
                 It should return the testListener with the result of the execution of the list of test classes.
          */
 
-        final TestListener testListener = EntryPoint.runTestClasses(
+        final TestListener testListener = EntryPoint.runTests(
                 JUNIT5_CP + EntryPoint.PATH_SEPARATOR +
                         JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
-                "junit5.TestSuiteExample", "junit5.TestSuiteExample2"
+                new String[]{"junit5.TestSuiteExample", "junit5.TestSuiteExample2"}
         );
         assertEquals(12, testListener.getPassingTests().size());
         assertEquals(0, testListener.getFailingTests().size());
@@ -213,7 +215,7 @@ public class EntryPointJUnit5Test extends AbstractTest {
                 It should return the testListener with the result of the execution of the test class.
          */
 
-        final TestListener testListener = EntryPoint.runTestClasses(
+        final TestListener testListener = EntryPoint.runTests(
                 JUNIT5_CP + EntryPoint.PATH_SEPARATOR +
                         JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "junit5.TestSuiteExample"
@@ -237,7 +239,7 @@ public class EntryPointJUnit5Test extends AbstractTest {
                 JUNIT5_CP + EntryPoint.PATH_SEPARATOR +
                         JUNIT_CP + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "junit5.TestSuiteExample",
-                "test4", "test9"
+                new String[]{"test4", "test9"}
         );
         assertEquals(2, testListener.getPassingTests().size());
         assertEquals(0, testListener.getFailingTests().size());
@@ -258,11 +260,11 @@ public class EntryPointJUnit5Test extends AbstractTest {
                 JUNIT_CP + JUnit4Runner.PATH_SEPARATOR +
                 JUNIT5_CP;
 
-        final Coverage coverage = EntryPoint.runCoverageOnTests(
+        final Coverage coverage = EntryPoint.runCoverage(
                 classpath + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 TEST_PROJECT_CLASSES,
                 "junit5.TestSuiteExample",
-                "test8", "test3"
+                new String[]{"test8", "test3"}
         );
         assertEquals(26, coverage.getInstructionsCovered());
         assertEquals(118, coverage.getInstructionsTotal());
@@ -281,7 +283,7 @@ public class EntryPointJUnit5Test extends AbstractTest {
                 JUNIT_CP + JUnit4Runner.PATH_SEPARATOR +
                 JUNIT5_CP;
 
-        final Coverage coverage = EntryPoint.runCoverageOnTestClasses(
+        final Coverage coverage = EntryPoint.runCoverage(
                 classpath + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 TEST_PROJECT_CLASSES,
                 "junit5.TestSuiteExample"
@@ -311,7 +313,7 @@ public class EntryPointJUnit5Test extends AbstractTest {
         EntryPoint.blackList.add("test7");
         EntryPoint.blackList.add("test9");
 
-        final Coverage coverage = EntryPoint.runCoverageOnTestClasses(
+        final Coverage coverage = EntryPoint.runCoverage(
                 classpath + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 TEST_PROJECT_CLASSES,
                 "junit5.TestSuiteExample"
@@ -337,7 +339,7 @@ public class EntryPointJUnit5Test extends AbstractTest {
                 classpath + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 TEST_PROJECT_CLASSES,
                 "junit5.TestSuiteExample",
-                "test8", "test3"
+                new String[]{"test8", "test3"}
         );
 
         assertEquals(23, coveragePerTestMethod.getCoverageOf("test3").getInstructionsCovered()); // TODO something may be wrong here. The instruction coverage of test 3 is 26

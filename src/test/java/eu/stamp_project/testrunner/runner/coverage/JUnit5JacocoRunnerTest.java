@@ -22,8 +22,8 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
             Using the api to compute the coverage on a test class
          */
 
-        JUnit5JacocoRunner.main(new String[]{
-                        TEST_PROJECT_CLASSES, "junit5.TestSuiteExample"
+        JacocoRunner.main(new String[]{
+                        TEST_PROJECT_CLASSES, "junit5.TestSuiteExample", "--junit5"
                 }
         );
         final Coverage load = CoverageImpl.load();
@@ -39,10 +39,11 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
             Using the api to compute the coverage on test cases
          */
 
-        JUnit5JacocoRunner.main(new String[]{
+        JacocoRunner.main(new String[]{
                         TEST_PROJECT_CLASSES,
                         "junit5.TestSuiteExample",
-                        "test8:test2"
+                        "test8:test2",
+                        "--junit5"
                 }
         );
         final Coverage load = CoverageImpl.load();
@@ -83,7 +84,7 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
             p.waitFor();
             int current = 0;
             while (-1 != (current = p.getErrorStream().read())) {
-                System.out.print((char)current);
+                System.out.print((char) current);
             }
             assertEquals(0, p.exitValue());
         } catch (Exception e) {
