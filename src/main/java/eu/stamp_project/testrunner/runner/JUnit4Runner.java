@@ -42,16 +42,6 @@ public class JUnit4Runner {
         }
     };
 
-    /**
-     * The entry method to execute junit tests.
-     * This method is not meant to be used directly, but rather using {@link EntryPoint}
-     *
-     * @param args this array should be build by {@link EntryPoint}.
-     *             the first argument is the full qualified name of the test class
-     *             the second argument is optionally the list of the test method name separated by the path separator of the system, <i>e.g.</i> ':' on Linux.
-     *             You can pass the --blacklist flag, following by a list of test method name to be blacklisted.
-     *             Each method name is separated with the path separator of the system, <i>e.g.</i> ':' on Linux.
-     */
     public static void main(String[] args) {
         final JUnit4TestListener jUnit4TestListener = new JUnit4TestListener();
         final ParserOptions options = ParserOptions.parse(args);
@@ -62,6 +52,7 @@ public class JUnit4Runner {
                 jUnit4TestListener,
                 JUnit4Runner.class.getClassLoader()
         );
+        jUnit4TestListener.save();
     }
 
     public static void run(String[] testClassNames,

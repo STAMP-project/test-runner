@@ -32,6 +32,7 @@ public class EntryPointTest extends AbstractTest {
         EntryPoint.persistence = true;
         EntryPoint.outPrintStream = null;
         EntryPoint.errPrintStream = null;
+        EntryPoint.verbose = true;
     }
 
     @After
@@ -263,7 +264,8 @@ public class EntryPointTest extends AbstractTest {
         final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + JUnit4Runner.PATH_SEPARATOR +
                 MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + JUnit4Runner.PATH_SEPARATOR +
                 MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + JUnit4Runner.PATH_SEPARATOR +
-                JUNIT_CP;
+                JUNIT_CP + JUnit4Runner.PATH_SEPARATOR + JUNIT5_CP;
+        ;
 
         final Coverage coverage = EntryPoint.runCoverage(
                 classpath + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
@@ -285,7 +287,7 @@ public class EntryPointTest extends AbstractTest {
         final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + JUnit4Runner.PATH_SEPARATOR +
                 MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + JUnit4Runner.PATH_SEPARATOR +
                 MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + JUnit4Runner.PATH_SEPARATOR +
-                JUNIT_CP;
+                JUNIT_CP + JUnit4Runner.PATH_SEPARATOR + JUNIT5_CP;
 
         final Coverage coverage = EntryPoint.runCoverage(
                 classpath + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
@@ -306,7 +308,8 @@ public class EntryPointTest extends AbstractTest {
         final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + JUnit4Runner.PATH_SEPARATOR +
                 MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + JUnit4Runner.PATH_SEPARATOR +
                 MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + JUnit4Runner.PATH_SEPARATOR +
-                JUNIT_CP;
+                JUNIT_CP + JUnit4Runner.PATH_SEPARATOR + JUNIT5_CP;
+        ;
 
         EntryPoint.blackList.add("test8");
         EntryPoint.blackList.add("test6");
@@ -335,7 +338,8 @@ public class EntryPointTest extends AbstractTest {
         final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + JUnit4Runner.PATH_SEPARATOR +
                 MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + JUnit4Runner.PATH_SEPARATOR +
                 MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + JUnit4Runner.PATH_SEPARATOR +
-                JUNIT_CP;
+                JUNIT_CP + JUnit4Runner.PATH_SEPARATOR + JUNIT5_CP;
+        ;
 
         final CoveragePerTestMethod coveragePerTestMethod = EntryPoint.runCoveragePerTestMethods(
                 classpath + EntryPoint.PATH_SEPARATOR + TEST_PROJECT_CLASSES,

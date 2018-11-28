@@ -19,6 +19,7 @@ public class ParserOptions {
             value -> Arrays.asList(value.split(JUnit4Runner.PATH_SEPARATOR));
 
     public static ParserOptions parse(String[] args) {
+        System.out.println(String.format("Parsing %s", String.join(" ", args)));
         final ParserOptions parserOptions = new ParserOptions();
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
@@ -37,6 +38,9 @@ public class ParserOptions {
                 case FLAG_isJUnit5:
                     parserOptions.isJUnit5 = true;
                     break;
+                default:
+                    System.err.println(String.format("[ERROR]: %s is not a supported command line options", args[i]));
+                    //TODO implement usage()
             }
         }
         return parserOptions;

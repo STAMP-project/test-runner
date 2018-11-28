@@ -163,13 +163,13 @@ public class EntryPoint {
         final String javaCommand = String.join(WHITE_SPACE, new String[]{
                         getJavaCommand(),
                         classpath +
-                                PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES +
-                                PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES,
+                                PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES,
                         EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_TEST_RUNNER_QUALIFIED_NAME : EntryPoint.JUNIT4_TEST_RUNNER_QUALIFIED_NAME,
                         ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, String.join(JUnit4Runner.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
-                        ParserOptions.FLAG_testMethodNamesToRun, String.join(JUnit4Runner.PATH_SEPARATOR, methodNames),
-                        EntryPoint.blackList.isEmpty() ?
-                                (ParserOptions.FLAG_blackList + WHITE_SPACE + String.join(JUnit4Runner.PATH_SEPARATOR, EntryPoint.blackList)) : ""
+                        methodNames.length == 0 ?  "" :
+                                ParserOptions.FLAG_testMethodNamesToRun + WHITE_SPACE + String.join(JUnit4Runner.PATH_SEPARATOR, methodNames),
+                        EntryPoint.blackList.isEmpty() ? "" :
+                                (ParserOptions.FLAG_blackList + WHITE_SPACE + String.join(JUnit4Runner.PATH_SEPARATOR, EntryPoint.blackList))
                 }
         );
         return EntryPoint.runTests(javaCommand);
@@ -239,9 +239,10 @@ public class EntryPoint {
                         EntryPoint.JACOCO_RUNNER_QUALIFIED_NAME,
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject, targetProjectClasses,
                         ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, String.join(JUnit4Runner.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
-                        ParserOptions.FLAG_testMethodNamesToRun, String.join(JUnit4Runner.PATH_SEPARATOR, methodNames),
-                        EntryPoint.blackList.isEmpty() ?
-                                (ParserOptions.FLAG_blackList + WHITE_SPACE + String.join(JUnit4Runner.PATH_SEPARATOR, EntryPoint.blackList)) : "",
+                        methodNames.length == 0 ? "" :
+                                ParserOptions.FLAG_testMethodNamesToRun, String.join(JUnit4Runner.PATH_SEPARATOR, methodNames),
+                        EntryPoint.blackList.isEmpty() ? "" :
+                                (ParserOptions.FLAG_blackList + WHITE_SPACE + String.join(JUnit4Runner.PATH_SEPARATOR, EntryPoint.blackList)),
                         EntryPoint.jUnit5Mode ? ParserOptions.FLAG_isJUnit5 : ""
                 }
         );
@@ -296,9 +297,10 @@ public class EntryPoint {
                         EntryPoint.JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME,
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject, targetProjectClasses,
                         ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, String.join(JUnit4Runner.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
-                        ParserOptions.FLAG_testMethodNamesToRun, String.join(JUnit4Runner.PATH_SEPARATOR, methodNames),
-                        EntryPoint.blackList.isEmpty() ?
-                                (ParserOptions.FLAG_blackList + WHITE_SPACE + String.join(JUnit4Runner.PATH_SEPARATOR, EntryPoint.blackList)) : "",
+                        methodNames.length == 0 ? "" :
+                                ParserOptions.FLAG_testMethodNamesToRun, String.join(JUnit4Runner.PATH_SEPARATOR, methodNames),
+                        EntryPoint.blackList.isEmpty() ? "" :
+                                (ParserOptions.FLAG_blackList + WHITE_SPACE + String.join(JUnit4Runner.PATH_SEPARATOR, EntryPoint.blackList)),
                         EntryPoint.jUnit5Mode ? ParserOptions.FLAG_isJUnit5 : ""
                 }
         );
@@ -452,7 +454,7 @@ public class EntryPoint {
 
     static final String JUNIT4_TEST_RUNNER_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.JUnit4Runner";
 
-    static final String JUNIT5_TEST_RUNNER_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.JUnit4Runner";
+    static final String JUNIT5_TEST_RUNNER_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.JUnit5Runner";
 
     static final String JACOCO_RUNNER_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JacocoRunner";
 
