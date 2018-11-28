@@ -340,7 +340,6 @@ public class EntryPointTest extends AbstractTest {
                 MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + ConstantsHelper.PATH_SEPARATOR +
                 MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + ConstantsHelper.PATH_SEPARATOR +
                 JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP;
-        ;
 
         final CoveragePerTestMethod coveragePerTestMethod = EntryPoint.runCoveragePerTestMethods(
                 classpath + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,

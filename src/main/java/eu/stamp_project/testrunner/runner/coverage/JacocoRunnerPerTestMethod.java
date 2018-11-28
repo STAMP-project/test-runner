@@ -42,17 +42,15 @@ public class JacocoRunnerPerTestMethod extends JacocoRunner {
         final String classesDirectory = splittedArgs0[0];
         final String testClassesDirectory = splittedArgs0[1];
         final boolean isJUnit5 = options.isJUnit5();
-        final JacocoRunnerPerTestMethod jacocoRunner =
-                new JacocoRunnerPerTestMethod(isJUnit5,
-                        classesDirectory,
-                        testClassesDirectory,
-                        options.getBlackList()
-                );
-        jacocoRunner.runCoveragePerTestMethod(classesDirectory,
+        new JacocoRunnerPerTestMethod(isJUnit5,
+                classesDirectory,
+                testClassesDirectory,
+                options.getBlackList()
+        ).runCoveragePerTestMethod(classesDirectory,
                 testClassesDirectory,
                 options.getFullQualifiedNameOfTestClassesToRun()[0],
                 options.getTestMethodNamesToRun()
-        );
+        ).save();
     }
 
     /**
@@ -66,9 +64,9 @@ public class JacocoRunnerPerTestMethod extends JacocoRunner {
      * @return a {@link CoveragePerTestMethod} instance that contains the instruction coverage of the given tests.
      */
     public CoveragePerTestMethod runCoveragePerTestMethod(String classesDirectory,
-                                      String testClassesDirectory,
-                                      String fullQualifiedNameOfTestClass,
-                                      String[] testMethodNames) {
+                                                          String testClassesDirectory,
+                                                          String fullQualifiedNameOfTestClass,
+                                                          String[] testMethodNames) {
         final RuntimeData data = new RuntimeData();
         URLClassLoader classLoader;
         try {

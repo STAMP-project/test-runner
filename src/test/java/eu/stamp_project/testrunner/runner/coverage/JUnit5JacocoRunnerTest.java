@@ -26,7 +26,7 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
 
         JacocoRunner.main(new String[]{
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject, TEST_PROJECT_CLASSES,
-                        ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, "example.TestSuiteExample",
+                        ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, "junit5.TestSuiteExample",
                         ParserOptions.FLAG_isJUnit5
                 }
         );
@@ -45,7 +45,7 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
 
         JacocoRunner.main(new String[]{
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject, TEST_PROJECT_CLASSES,
-                        ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, "example.TestSuiteExample",
+                        ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, "junit5.TestSuiteExample",
                         ParserOptions.FLAG_testMethodNamesToRun, "test8:test2",
                         ParserOptions.FLAG_isJUnit5
                 }
