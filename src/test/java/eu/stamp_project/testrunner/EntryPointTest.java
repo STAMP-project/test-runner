@@ -384,4 +384,20 @@ public class EntryPointTest extends AbstractTest {
         assertEquals(2, testListener.getPassingTests().size());
         assertEquals(0, testListener.getFailingTests().size());
     }
+
+    @Test
+    public void testOnParametrizedForOneTestMethodCoveragePerTestMethod() throws TimeoutException {
+
+        /*
+            Test the execution of Parametrized test
+         */
+
+        EntryPoint.runCoveragePerTestMethods(
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES
+                + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP,
+                TEST_PROJECT_CLASSES,
+                "example.ParametrizedTestSuiteExample",
+                "test3:test4:test7"
+        );
+    }
 }

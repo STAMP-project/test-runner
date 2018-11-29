@@ -267,6 +267,13 @@ public class EntryPoint {
     public static CoveragePerTestMethod runCoveragePerTestMethods(String classpath,
                                                                   String targetProjectClasses,
                                                                   String fullQualifiedNameOfTestClass,
+                                                                  String testMethodName) throws TimeoutException {
+        return EntryPoint.runCoveragePerTestMethods(classpath, targetProjectClasses, new String[]{fullQualifiedNameOfTestClass}, new String[]{testMethodName});
+    }
+
+    public static CoveragePerTestMethod runCoveragePerTestMethods(String classpath,
+                                                                  String targetProjectClasses,
+                                                                  String fullQualifiedNameOfTestClass,
                                                                   String[] testMethodNames) throws TimeoutException {
         return EntryPoint.runCoveragePerTestMethods(classpath, targetProjectClasses, new String[]{fullQualifiedNameOfTestClass}, testMethodNames);
     }

@@ -48,4 +48,16 @@ public class JUnit4Coverage extends JUnit4TestListener implements Coverage, Seri
     public void save() {
         this.internalCoverage.save();
     }
+
+    @Override
+    public String toString() {
+        return this.internalCoverage.toString();
+    }
+
+     @Override
+    public boolean equals(Object that) {
+        return that instanceof JUnit4Coverage &&
+                ((JUnit4Coverage) that).getInstructionsCovered() == this.getInstructionsCovered() &&
+                ((JUnit4Coverage) that).getInstructionsTotal() == this.getInstructionsTotal();
+     }
 }

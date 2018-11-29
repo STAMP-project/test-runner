@@ -50,4 +50,9 @@ public class JUnit5Coverage extends JUnit5TestListener implements Coverage, Seri
     public void save() {
         this.internalCoverage.save();
     }
+
+    @Override
+    public String toString() {
+        return this.internalCoverage.toString();
+    }
 }

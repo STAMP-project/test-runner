@@ -52,9 +52,4 @@ public class JacocoRunnerTest extends AbstractTest {
         assertEquals(26, load.getInstructionsCovered());
         assertEquals(118, load.getInstructionsTotal());
     }
-
-    private final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar:" +
-            MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar:" +
-            MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar:" +
-            JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP;
 }

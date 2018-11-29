@@ -42,5 +42,11 @@ public class TestSuiteExample {
         example.Example ex = new example.Example();
         org.junit.Assert.assertEquals('d', ex.charAt("abcd", 3));
     }
+
+    @org.junit.Test
+    public void copyOftest2() {
+        example.Example ex = new example.Example();
+        org.junit.Assert.assertEquals('d', ex.charAt("abcd", 3));
+    }
 }
 

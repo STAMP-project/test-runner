@@ -3,18 +3,29 @@ package eu.stamp_project.testrunner.listener.junit4;
 import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
 import eu.stamp_project.testrunner.listener.impl.CoveragePerTestMethodImpl;
+import org.jacoco.core.analysis.*;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.SessionInfoStore;
 import org.jacoco.core.runtime.RuntimeData;
 import org.junit.runner.Description;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Created by Benjamin DANGLOT
  * benjamin.danglot@inria.fr
  * on 06/04/18
- *
+ * <p>
  * This class represents the instruction coverage per test method.
  */
 public class CoveragePerJUnit4TestMethod extends JUnit4TestListener implements CoveragePerTestMethod {
@@ -23,17 +34,30 @@ public class CoveragePerJUnit4TestMethod extends JUnit4TestListener implements C
 
     private CoveragePerTestMethodImpl internalCoverage;
 
-    private CoveragePerJUnit4TestMethod() {
-        this.internalCoverage = new CoveragePerTestMethodImpl();
-    }
+    /**
+     * This field is used to support parametrized test
+     * In fact, parametrized are reported as follow:
+     * - the test method is named "test"
+     * - it reports, for each parameter as follow: test[0], test[1].
+     * This field stores every coverage, i.e. for each input.
+     * Then, we are able to aggregate them to obtain the coverage of the test, for EVERY input.
+     */
+    private Map<String, List<IClassCoverage>> coveragesPerMethodName;
 
     public CoveragePerJUnit4TestMethod(RuntimeData data, String classesDirectory) {
         this.internalCoverage = new CoveragePerTestMethodImpl(data, classesDirectory);
+        this.coveragesPerMethodName = new HashMap<>();
     }
 
+    private static final Predicate<String> isParametrized = testMethodName ->
+            Pattern.compile(".+\\[\\d+\\]").matcher(testMethodName).matches();
+
+    private static final Function<String, String> fromParametrizedToSimpleName = parametrizedName ->
+            parametrizedName.contains("[") ? parametrizedName.split("\\[")[0] : parametrizedName;
 
     @Override
     public void testStarted(Description description) throws Exception {
+        System.out.println(description.getMethodName());
         this.internalCoverage.setExecutionData(new ExecutionDataStore());
         this.internalCoverage.setSessionInfos(new SessionInfoStore());
         this.internalCoverage.getData().setSessionId(description.getMethodName());
@@ -53,7 +77,35 @@ public class CoveragePerJUnit4TestMethod extends JUnit4TestListener implements C
         );
         final JUnit4Coverage jUnit4Coverage = new JUnit4Coverage();
         jUnit4Coverage.collectData(this.internalCoverage.getExecutionData(), this.internalCoverage.getClassesDirectory());
+        System.out.println(description.getMethodName() + ": " + jUnit4Coverage.toString());
         this.internalCoverage.getCoverageResultsMap().put(description.getMethodName(), jUnit4Coverage);
+        if (isParametrized.test(description.getMethodName())) {
+            //this.collectForParametrizedTest(fromParametrizedToSimpleName.apply(description.getMethodName()));
+        }
+    }
+
+    private void collectForParametrizedTest(String testMethodName) {
+        final CoverageBuilder coverageBuilder = new CoverageBuilder();
+        final Analyzer analyzer = new Analyzer(this.internalCoverage.getExecutionData(), coverageBuilder);
+        try {
+            analyzer.analyzeAll(new File(this.internalCoverage.getClassesDirectory()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        if (!this.coveragesPerMethodName.containsKey(testMethodName)) {
+            this.coveragesPerMethodName.put(testMethodName, new ArrayList<>());
+        }
+        coverageBuilder.getClasses()
+                .stream()
+                .map(ICoverageNode::getPlainCopy)
+                .forEach(classCoverage ->
+                        this.coveragesPerMethodName.get(testMethodName)
+                                .add((IClassCoverage) classCoverage)
+                );
+    }
+
+    public Map<String, List<IClassCoverage>> getCoveragesPerMethodName() {
+        return coveragesPerMethodName;
     }
 
     @Override
@@ -68,7 +120,68 @@ public class CoveragePerJUnit4TestMethod extends JUnit4TestListener implements C
 
     @Override
     public void save() {
+        if (!this.coveragesPerMethodName.isEmpty()) {
+           // this.aggregateParametrizedTestCoverage();
+        }
         this.internalCoverage.save();
     }
+
+    /*
+        This method will use the coveragesPerMethodName map to create a coverage for the test method.
+        This coverage is the aggregation of the coverages of each input for the same test method.
+     */
+    private void aggregateParametrizedTestCoverage() {
+        this.coveragesPerMethodName.keySet().forEach(testMethodName -> {
+                    int covered = 0;
+                    int total = 0;
+                    final ArrayList<IClassCoverage> classCoverages =
+                            new ArrayList<>(this.coveragesPerMethodName.get(testMethodName));
+                    while (!classCoverages.isEmpty()) {
+                        final IClassCoverage current = classCoverages.get(0);
+                        final List<IClassCoverage> subListOnSameClass =
+                                getSameClassCoverage(current.getName(), classCoverages);
+                        final int firstLine = subListOnSameClass.get(0).getFirstLine();
+                        final int lastLine = subListOnSameClass.get(0).getLastLine();
+                        if (!subListOnSameClass.stream()
+                                .allMatch(iClassCoverage ->
+                                        iClassCoverage.getFirstLine() == firstLine &&
+                                                iClassCoverage.getLastLine() == lastLine)) {
+                            throw new RuntimeException("Something wrong happened, not every IClassCoverages have the same number of line");
+                        }
+                        for (int i = firstLine; i < lastLine; i++) {
+                            final int currentCursor = i;
+                            final int bestCoverage = subListOnSameClass.stream()
+                                    .map(iClassCoverage -> iClassCoverage.getLine(currentCursor))
+                                    .map(ILine::getInstructionCounter)
+                                    .map(ICounter::getCoveredCount)
+                                    .peek(value -> {
+                                        if (value != 0) {
+                                            System.out.print(value + " ");
+                                        }
+                                    })
+                                    .max(Integer::compareTo)
+                                    .get();
+                            if (bestCoverage != 0) {
+                                System.out.println(subListOnSameClass.get(0).getName() + ":" + currentCursor + " > " + bestCoverage);
+                            }
+                            covered += bestCoverage;
+                        }
+                        total += subListOnSameClass.get(0).getInstructionCounter().getTotalCount();
+                        classCoverages.removeAll(subListOnSameClass);
+                    }
+                    System.out.println("\t\t-" + testMethodName + ": " + covered + " / " + total);
+                }
+        );
+    }
+
+    /*
+     * return the sublist of the given list which the coverage of the same class, pointed by the className
+     */
+    private List<IClassCoverage> getSameClassCoverage(String className, List<IClassCoverage> classCoverages) {
+        return classCoverages.stream()
+                .filter(iClassCoverage -> className.equals(iClassCoverage.getName()))
+                .collect(Collectors.toList());
+    }
+
 
 }
