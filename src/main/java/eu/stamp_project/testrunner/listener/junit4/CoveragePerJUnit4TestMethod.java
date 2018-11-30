@@ -77,10 +77,9 @@ public class CoveragePerJUnit4TestMethod extends JUnit4TestListener implements C
         );
         final JUnit4Coverage jUnit4Coverage = new JUnit4Coverage();
         jUnit4Coverage.collectData(this.internalCoverage.getExecutionData(), this.internalCoverage.getClassesDirectory());
-        System.out.println(description.getMethodName() + ": " + jUnit4Coverage.toString());
         this.internalCoverage.getCoverageResultsMap().put(description.getMethodName(), jUnit4Coverage);
         if (isParametrized.test(description.getMethodName())) {
-            //this.collectForParametrizedTest(fromParametrizedToSimpleName.apply(description.getMethodName()));
+            this.collectForParametrizedTest(fromParametrizedToSimpleName.apply(description.getMethodName()));
         }
     }
 
@@ -96,8 +95,6 @@ public class CoveragePerJUnit4TestMethod extends JUnit4TestListener implements C
             this.coveragesPerMethodName.put(testMethodName, new ArrayList<>());
         }
         coverageBuilder.getClasses()
-                .stream()
-                .map(ICoverageNode::getPlainCopy)
                 .forEach(classCoverage ->
                         this.coveragesPerMethodName.get(testMethodName)
                                 .add((IClassCoverage) classCoverage)
@@ -121,7 +118,7 @@ public class CoveragePerJUnit4TestMethod extends JUnit4TestListener implements C
     @Override
     public void save() {
         if (!this.coveragesPerMethodName.isEmpty()) {
-           // this.aggregateParametrizedTestCoverage();
+            this.aggregateParametrizedTestCoverage();
         }
         this.internalCoverage.save();
     }
@@ -154,23 +151,16 @@ public class CoveragePerJUnit4TestMethod extends JUnit4TestListener implements C
                                     .map(iClassCoverage -> iClassCoverage.getLine(currentCursor))
                                     .map(ILine::getInstructionCounter)
                                     .map(ICounter::getCoveredCount)
-                                    .peek(value -> {
-                                        if (value != 0) {
-                                            System.out.print(value + " ");
-                                        }
-                                    })
                                     .max(Integer::compareTo)
                                     .get();
-                            if (bestCoverage != 0) {
-                                System.out.println(subListOnSameClass.get(0).getName() + ":" + currentCursor + " > " + bestCoverage);
-                            }
                             covered += bestCoverage;
                         }
                         total += subListOnSameClass.get(0).getInstructionCounter().getTotalCount();
                         classCoverages.removeAll(subListOnSameClass);
                     }
-                    System.out.println("\t\t-" + testMethodName + ": " + covered + " / " + total);
+                    this.internalCoverage.getCoverageResultsMap().put(testMethodName, new JUnit4Coverage(covered, total));
                 }
+
         );
     }
 

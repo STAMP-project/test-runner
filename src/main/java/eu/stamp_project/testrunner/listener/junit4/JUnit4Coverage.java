@@ -19,6 +19,10 @@ public class JUnit4Coverage extends JUnit4TestListener implements Coverage, Seri
         this.internalCoverage = new CoverageImpl();
     }
 
+    public JUnit4Coverage(int covered, int total) {
+        this.internalCoverage = new CoverageImpl(covered, total);
+    }
+
     @Override
     public int getInstructionsCovered() {
         return this.internalCoverage.getInstructionsCovered();
