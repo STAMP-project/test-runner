@@ -25,18 +25,12 @@ public class JacocoRunnerPerTestMethodTest extends AbstractTest {
 
         JacocoRunnerPerTestMethod.main(new String[]{
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject, TEST_PROJECT_CLASSES,
-                        ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, "example.ParametrizedTestSuiteExample",
-                        ParserOptions.FLAG_testMethodNamesToRun, "test8:test2"
+                        ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, "example.ParametrizedTest",
+                        ParserOptions.FLAG_testMethodNamesToRun, "test"
                 }
         );
         final CoveragePerTestMethodImpl load = CoveragePerTestMethodImpl.load();
-        System.out.println(load);
-        //assertEquals(26, load.getCoverageResultsMap().get("test2").getInstructionsCovered());
-        assertEquals(26, load.getCoverageResultsMap().get("test2[0]").getInstructionsCovered());
-        assertEquals(26, load.getCoverageResultsMap().get("test2[1]").getInstructionsCovered());
-        //assertEquals(23, load.getCoverageResultsMap().get("test8").getInstructionsCovered());
-        assertEquals(23, load.getCoverageResultsMap().get("test8[0]").getInstructionsCovered());
-        assertEquals(23, load.getCoverageResultsMap().get("test8[0]").getInstructionsCovered());
+        assertEquals(31, load.getCoverageResultsMap().get("test").getInstructionsCovered());
     }
 
     @Test
@@ -54,8 +48,8 @@ public class JacocoRunnerPerTestMethodTest extends AbstractTest {
         );
         final CoveragePerTestMethodImpl load = CoveragePerTestMethodImpl.load();
         System.out.println(load);
-        assertEquals(26, load.getCoverageResultsMap().get("test2").getInstructionsCovered());
+        assertEquals(23, load.getCoverageResultsMap().get("test2").getInstructionsCovered());
         assertEquals(23, load.getCoverageResultsMap().get("test8").getInstructionsCovered());
-        assertEquals(26, load.getCoverageResultsMap().get("copyOftest2").getInstructionsCovered());
+        assertEquals(23, load.getCoverageResultsMap().get("copyOftest2").getInstructionsCovered());
     }
 }

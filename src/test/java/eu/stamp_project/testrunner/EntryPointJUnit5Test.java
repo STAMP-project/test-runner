@@ -265,8 +265,8 @@ public class EntryPointJUnit5Test extends AbstractTest {
                 "junit5.TestSuiteExample",
                 new String[]{"test8", "test3"}
         );
-        assertEquals(26, coverage.getInstructionsCovered());
-        assertEquals(118, coverage.getInstructionsTotal());
+        assertEquals(23, coverage.getInstructionsCovered());
+        assertEquals(115, coverage.getInstructionsTotal());
     }
 
     @Test
@@ -288,8 +288,8 @@ public class EntryPointJUnit5Test extends AbstractTest {
                 "junit5.TestSuiteExample"
         );
 
-        assertEquals(33, coverage.getInstructionsCovered());
-        assertEquals(118, coverage.getInstructionsTotal());
+        assertEquals(30, coverage.getInstructionsCovered());
+        assertEquals(115, coverage.getInstructionsTotal());
     }
 
     @Ignore
@@ -342,8 +342,8 @@ public class EntryPointJUnit5Test extends AbstractTest {
         );
 
         assertEquals(23, coveragePerTestMethod.getCoverageOf("test3").getInstructionsCovered()); // TODO something may be wrong here. The instruction coverage of test 3 is 26
-        assertEquals(118, coveragePerTestMethod.getCoverageOf("test3").getInstructionsTotal());
-        assertEquals(26, coveragePerTestMethod.getCoverageOf("test8").getInstructionsCovered());// TODO something may be wrong here. The instruction coverage of test 8 is 23
-        assertEquals(118, coveragePerTestMethod.getCoverageOf("test8").getInstructionsTotal());
+        assertEquals(115, coveragePerTestMethod.getCoverageOf("test3").getInstructionsTotal());
+        assertEquals(23, coveragePerTestMethod.getCoverageOf("test8").getInstructionsCovered());// TODO something may be wrong here. The instruction coverage of test 8 is 23
+        assertEquals(115, coveragePerTestMethod.getCoverageOf("test8").getInstructionsTotal());
     }
 }
