@@ -51,6 +51,7 @@ public class AbstractTest {
                 " src/test/resources/test-projects/src/test/java/example/TestSuiteExample.java" +
                 " src/test/resources/test-projects/src/test/java/example/ParametrizedTestSuiteExample.java" +
                 " src/test/resources/test-projects/src/test/java/example/ParametrizedTest.java" +
+                " src/test/resources/test-projects/src/test/java/junit5/ParametrizedTest.java" +
                 " src/test/resources/test-projects/src/test/java/failing/FailingTestClass.java" +
                 " src/test/resources/test-projects/src/test/java/example/TestSuiteExample2.java" +
                 " src/test/resources/test-projects/src/test/java/easymock/LoginControllerIntegrationTest.java" +
@@ -87,13 +88,15 @@ public class AbstractTest {
     public static final String EASYMOCK_CP = MAVEN_HOME + "org/easymock/easymock/3.4/easymock-3.4.jar" + ConstantsHelper.PATH_SEPARATOR
             + MAVEN_HOME + "org/objenesis/objenesis/2.2/objenesis-2.2.jar";
 
-    public static final String JUNIT5_CP = MAVEN_HOME + "org/junit/jupiter/junit-jupiter-api/5.1.0/junit-jupiter-api-5.1.0.jar" + ConstantsHelper.PATH_SEPARATOR
-            + MAVEN_HOME + "org/apiguardian/apiguardian-api/1.0.0/apiguardian-api-1.0.0.jar" + ConstantsHelper.PATH_SEPARATOR
-            + MAVEN_HOME + "org/opentest4j/opentest4j/1.0.0/opentest4j-1.0.0.jar" + ConstantsHelper.PATH_SEPARATOR
-            + MAVEN_HOME + "org/junit/platform/junit-platform-commons/1.1.0/junit-platform-commons-1.1.0.jar" + ConstantsHelper.PATH_SEPARATOR
-            + MAVEN_HOME + "org/junit/jupiter/junit-jupiter-engine/5.1.0/junit-jupiter-engine-5.1.0.jar" + ConstantsHelper.PATH_SEPARATOR
-            + MAVEN_HOME + "org/junit/platform/junit-platform-engine/1.1.0/junit-platform-engine-1.1.0.jar" + ConstantsHelper.PATH_SEPARATOR
-            + MAVEN_HOME + "org/junit/platform/junit-platform-launcher/1.2.0/junit-platform-launcher-1.2.0.jar";
+    public static final String JUNIT5_CP =
+            MAVEN_HOME + "org/junit/jupiter/junit-jupiter-api/5.3.2/junit-jupiter-api-5.3.2.jar" + ConstantsHelper.PATH_SEPARATOR
+                    + MAVEN_HOME + "org/apiguardian/apiguardian-api/1.0.0/apiguardian-api-1.0.0.jar" + ConstantsHelper.PATH_SEPARATOR
+                    + MAVEN_HOME + "org/opentest4j/opentest4j/1.1.1/opentest4j-1.1.1.jar" + ConstantsHelper.PATH_SEPARATOR
+                    + MAVEN_HOME + "org/junit/platform/junit-platform-commons/1.3.2/junit-platform-commons-1.3.2.jar" + ConstantsHelper.PATH_SEPARATOR
+                    + MAVEN_HOME + "org/junit/jupiter/junit-jupiter-engine/5.3.2/junit-jupiter-engine-5.3.2.jar" + ConstantsHelper.PATH_SEPARATOR
+                    + MAVEN_HOME + "org/junit/jupiter/junit-jupiter-params/5.3.2/junit-jupiter-params-5.3.2.jar" + ConstantsHelper.PATH_SEPARATOR
+                    + MAVEN_HOME + "org/junit/platform/junit-platform-engine/1.3.2/junit-platform-engine-1.3.2.jar" + ConstantsHelper.PATH_SEPARATOR
+                    + MAVEN_HOME + "org/junit/platform/junit-platform-launcher/1.3.2/junit-platform-launcher-1.3.2.jar";
 
     public static final String PATH_TO_RUNNER_CLASSES = "src/main/resources/runner-classes/";
 
