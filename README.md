@@ -16,8 +16,9 @@ This project provides a framework to run JUnit test in a new JVM. It allows to r
 * blacklist: can discard test methods by their name among test classes.
 * maven execution: can now executes the test using **Maven**. This allows users to have a complex build configured in their `pom.xml`.
 * the test runner supports JUnit3, JUnit4, and JUnit5. By default it runs JUnit3 or JUnit4. If you need to execute JUnit5 test methods, use the boolean in [EntryPoint](https://github.com/STAMP-project/testrunner/blob/master/src/main/java/eu/stamp_project/testrunner/EntryPoint.java#L69).
+* Parametrized JUnit 4 test methods.
 
-/!\ WARNING The coverage per test method for JUnit5 is unstable.
+/!\ WARNING the test runner is not able to run parametrized JUnit5 test methods.
 
 # Dependency:
 
