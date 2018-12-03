@@ -27,6 +27,16 @@ public class CoverageImpl implements Coverage, Serializable {
 
     protected String executionPath;
 
+    public CoverageImpl() {
+        // empty
+    }
+
+    public CoverageImpl(int covered, int total) {
+        this.instructionsCovered = covered;
+        this.instructionsTotal = total;
+        this.executionPath = "";
+    }
+
     @Override
     public int getInstructionsCovered() {
         return instructionsCovered;

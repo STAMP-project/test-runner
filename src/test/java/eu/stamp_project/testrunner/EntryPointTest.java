@@ -96,7 +96,7 @@ public class EntryPointTest extends AbstractTest {
         assertTrue(errStream.toString().isEmpty()); // no error occurs
 //        assertTrue(GCdetail + " should contain GC detail, e.g. the word \"Heap\".", GCdetail.contains("Heap")); // it print the GC Details TODO FIXME
 
-        assertEquals(6, testListener.getPassingTests().size());
+        assertEquals(7, testListener.getPassingTests().size());
         assertEquals(0, testListener.getFailingTests().size());
     }
 
@@ -118,7 +118,7 @@ public class EntryPointTest extends AbstractTest {
         );
 
         assertNotNull(EntryPoint.JVMArgs);
-        assertEquals(6, testListener.getPassingTests().size());
+        assertEquals(7, testListener.getPassingTests().size());
         assertEquals(0, testListener.getFailingTests().size());
 
         EntryPoint.persistence = false;
@@ -131,7 +131,7 @@ public class EntryPointTest extends AbstractTest {
         );
 
         assertNull(EntryPoint.JVMArgs);
-        assertEquals(6, testListener.getPassingTests().size());
+        assertEquals(7, testListener.getPassingTests().size());
         assertEquals(0, testListener.getFailingTests().size());
     }
 
@@ -213,7 +213,7 @@ public class EntryPointTest extends AbstractTest {
                 JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 new String[]{"example.TestSuiteExample", "example.TestSuiteExample2"}
         );
-        assertEquals(12, testListener.getPassingTests().size());
+        assertEquals(13, testListener.getPassingTests().size());
         assertEquals(0, testListener.getFailingTests().size());
     }
 
@@ -229,7 +229,7 @@ public class EntryPointTest extends AbstractTest {
                 JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "example.TestSuiteExample"
         );
-        assertEquals(6, testListener.getPassingTests().size());
+        assertEquals(7, testListener.getPassingTests().size());
         assertEquals(0, testListener.getFailingTests().size());
     }
 
@@ -274,8 +274,8 @@ public class EntryPointTest extends AbstractTest {
                 "example.TestSuiteExample",
                 new String[]{"test8", "test3"}
         );
-        assertEquals(26, coverage.getInstructionsCovered());
-        assertEquals(118, coverage.getInstructionsTotal());
+        assertEquals(23, coverage.getInstructionsCovered());
+        assertEquals(115, coverage.getInstructionsTotal());
     }
 
     @Test
@@ -296,8 +296,8 @@ public class EntryPointTest extends AbstractTest {
                 "example.TestSuiteExample"
         );
 
-        assertEquals(33, coverage.getInstructionsCovered());
-        assertEquals(118, coverage.getInstructionsTotal());
+        assertEquals(30, coverage.getInstructionsCovered());
+        assertEquals(115, coverage.getInstructionsTotal());
     }
 
     @Test
@@ -325,8 +325,8 @@ public class EntryPointTest extends AbstractTest {
                 "example.TestSuiteExample"
         );
 
-        assertEquals(26, coverage.getInstructionsCovered());
-        assertEquals(118, coverage.getInstructionsTotal());
+        assertEquals(23, coverage.getInstructionsCovered());
+        assertEquals(115, coverage.getInstructionsTotal());
     }
 
     @Test
@@ -348,10 +348,10 @@ public class EntryPointTest extends AbstractTest {
                 new String[]{"test8", "test3"}
         );
 
-        assertEquals(26, coveragePerTestMethod.getCoverageOf("test3").getInstructionsCovered());
-        assertEquals(118, coveragePerTestMethod.getCoverageOf("test3").getInstructionsTotal());
+        assertEquals(23, coveragePerTestMethod.getCoverageOf("test3").getInstructionsCovered());
+        assertEquals(115, coveragePerTestMethod.getCoverageOf("test3").getInstructionsTotal());
         assertEquals(23, coveragePerTestMethod.getCoverageOf("test8").getInstructionsCovered());
-        assertEquals(118, coveragePerTestMethod.getCoverageOf("test8").getInstructionsTotal());
+        assertEquals(115, coveragePerTestMethod.getCoverageOf("test8").getInstructionsTotal());
     }
 
     @Test
@@ -383,5 +383,21 @@ public class EntryPointTest extends AbstractTest {
         );
         assertEquals(2, testListener.getPassingTests().size());
         assertEquals(0, testListener.getFailingTests().size());
+    }
+
+    @Test
+    public void testOnParametrizedForOneTestMethodCoveragePerTestMethod() throws TimeoutException {
+
+        /*
+            Test the execution of Parametrized test
+         */
+
+        EntryPoint.runCoveragePerTestMethods(
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES
+                + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP,
+                TEST_PROJECT_CLASSES,
+                "example.ParametrizedTestSuiteExample",
+                "test3:test4:test7"
+        );
     }
 }

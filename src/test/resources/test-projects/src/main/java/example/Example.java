@@ -25,5 +25,4 @@ public class Example {
 	}
 	
 	private int index = 419382;
-	private static String s = "Overloading field name with parameter name";
 }

@@ -21,6 +21,10 @@ public class JUnit5Coverage extends JUnit5TestListener implements Coverage, Seri
         this.internalCoverage = new CoverageImpl();
     }
 
+    public JUnit5Coverage(int covered, int total) {
+        this.internalCoverage = new CoverageImpl(covered, total);
+    }
+
     @Override
     public int getInstructionsCovered() {
         return this.internalCoverage.getInstructionsCovered();
@@ -49,5 +53,10 @@ public class JUnit5Coverage extends JUnit5TestListener implements Coverage, Seri
     @Override
     public void save() {
         this.internalCoverage.save();
+    }
+
+    @Override
+    public String toString() {
+        return this.internalCoverage.toString();
     }
 }

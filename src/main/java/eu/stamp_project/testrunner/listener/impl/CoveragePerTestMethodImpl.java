@@ -4,6 +4,7 @@ import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
 import eu.stamp_project.testrunner.listener.TestListener;
 import eu.stamp_project.testrunner.runner.Loader;
+import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.SessionInfoStore;
 import org.jacoco.core.runtime.RuntimeData;
@@ -13,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * created by Benjamin DANGLOT
@@ -106,10 +108,19 @@ public class CoveragePerTestMethodImpl implements CoveragePerTestMethod {
 
     /**
      * Load from serialized object
+     *
      * @return an Instance of CoveragePerTestMethod loaded from a serialized file.
      */
     public static CoveragePerTestMethodImpl load() {
         return new Loader<CoveragePerTestMethodImpl>().load(SERIALIZE_NAME);
     }
 
+    @Override
+    public String toString() {
+        return "Coverage per test method: " + ConstantsHelper.LINE_SEPARATOR +
+                this.coverageResultsMap.keySet()
+                        .stream()
+                        .map(test -> "\t" + test + ": " + coverageResultsMap.get(test).toString())
+                        .collect(Collectors.joining(ConstantsHelper.LINE_SEPARATOR));
+    }
 }
