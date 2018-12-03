@@ -347,6 +347,7 @@ public class EntryPointJUnit5Test extends AbstractTest {
         assertEquals(115, coveragePerTestMethod.getCoverageOf("test8").getInstructionsTotal());
     }
 
+    @Ignore
     @Test
     public void testRunCoveragePerTestMethodsOnParametrizedTest() throws Exception {
 

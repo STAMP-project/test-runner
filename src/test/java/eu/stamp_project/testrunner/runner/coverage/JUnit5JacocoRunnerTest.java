@@ -6,6 +6,7 @@ import eu.stamp_project.testrunner.listener.impl.CoverageImpl;
 import eu.stamp_project.testrunner.runner.JUnit4Runner;
 import eu.stamp_project.testrunner.runner.ParserOptions;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -55,6 +56,7 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
         assertEquals(115, load.getInstructionsTotal());
     }
 
+    @Ignore
     @Test
     public void testWithoutNewJvmOnTestCasesOnParametrized() throws Exception {
 
