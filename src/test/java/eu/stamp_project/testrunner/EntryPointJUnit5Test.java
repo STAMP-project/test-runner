@@ -346,4 +346,31 @@ public class EntryPointJUnit5Test extends AbstractTest {
         assertEquals(23, coveragePerTestMethod.getCoverageOf("test8").getInstructionsCovered());// TODO something may be wrong here. The instruction coverage of test 8 is 23
         assertEquals(115, coveragePerTestMethod.getCoverageOf("test8").getInstructionsTotal());
     }
+
+    @Test
+    public void testRunCoveragePerTestMethodsOnParametrizedTest() throws Exception {
+
+        /*
+            Test the runCoveragePerTestMethods() of EntryPoint.
+                It should return the CoverageResult with the instruction coverage computed by Jacoco.
+         */
+        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + ConstantsHelper.PATH_SEPARATOR +
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP;
+
+        final CoveragePerTestMethod coveragePerTestMethod = EntryPoint.runCoveragePerTestMethods(
+                classpath + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                TEST_PROJECT_CLASSES,
+                "junit5.ParametrizedTest",
+                new String[]{"test"}
+        );
+
+        System.out.println(coveragePerTestMethod);
+
+        assertEquals(23, coveragePerTestMethod.getCoverageOf("test3").getInstructionsCovered()); // TODO something may be wrong here. The instruction coverage of test 3 is 26
+        assertEquals(115, coveragePerTestMethod.getCoverageOf("test3").getInstructionsTotal());
+        assertEquals(23, coveragePerTestMethod.getCoverageOf("test8").getInstructionsCovered());// TODO something may be wrong here. The instruction coverage of test 8 is 23
+        assertEquals(115, coveragePerTestMethod.getCoverageOf("test8").getInstructionsTotal());
+    }
 }

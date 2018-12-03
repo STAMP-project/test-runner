@@ -55,8 +55,23 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
         assertEquals(115, load.getInstructionsTotal());
     }
 
-    private final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar:" +
-            MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar:" +
-            MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar:" +
-            JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP;
+    @Test
+    public void testWithoutNewJvmOnTestCasesOnParametrized() throws Exception {
+
+        /*
+            Using the api to compute the coverage on test cases
+         */
+
+        JacocoRunner.main(new String[]{
+                        ParserOptions.FLAG_pathToCompiledClassesOfTheProject, TEST_PROJECT_CLASSES,
+                        ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, "junit5.ParametrizedTest",
+                        ParserOptions.FLAG_testMethodNamesToRun, "test",
+                        ParserOptions.FLAG_isJUnit5
+                }
+        );
+        final Coverage load = CoverageImpl.load();
+        assertEquals(23, load.getInstructionsCovered());
+        assertEquals(115, load.getInstructionsTotal());
+    }
+
 }
