@@ -57,7 +57,6 @@ public class CoveragePerJUnit4TestMethod extends JUnit4TestListener implements C
 
     @Override
     public void testStarted(Description description) throws Exception {
-        System.out.println(description.getMethodName());
         this.internalCoverage.setExecutionData(new ExecutionDataStore());
         this.internalCoverage.setSessionInfos(new SessionInfoStore());
         this.internalCoverage.getData().setSessionId(description.getMethodName());

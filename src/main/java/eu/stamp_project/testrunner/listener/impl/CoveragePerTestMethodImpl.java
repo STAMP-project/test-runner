@@ -117,8 +117,7 @@ public class CoveragePerTestMethodImpl implements CoveragePerTestMethod {
 
     @Override
     public String toString() {
-        return "Coverage per test method: " + ConstantsHelper.LINE_SEPARATOR +
-                this.coverageResultsMap.keySet()
+        return this.coverageResultsMap.keySet()
                         .stream()
                         .map(test -> "\t" + test + ": " + coverageResultsMap.get(test).toString())
                         .collect(Collectors.joining(ConstantsHelper.LINE_SEPARATOR));

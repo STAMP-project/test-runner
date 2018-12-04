@@ -284,6 +284,20 @@ public class EntryPoint {
         return EntryPoint.runCoveragePerTestMethods(classpath, targetProjectClasses, fullQualifiedNameOfTestClasses, new String[0]);
     }
 
+    private static Coverage runCoverage(String commandLine) throws TimeoutException {
+        try {
+            runGivenCommandLine(commandLine);
+        } catch (TimeoutException e) {
+            LOGGER.warn("Timeout when running {}", commandLine);
+            throw e;
+        }
+        final Coverage load = CoverageImpl.load();
+        if (EntryPoint.verbose) {
+            LOGGER.info("Global coverage has been computed {}", load.toString());
+        }
+        return load;
+    }
+
     /**
      * Compute of the instruction coverage using <a href=http://www.eclemma.org/jacoco/>JaCoCo</a> for various test methods inside the given test class.
      * <p>
@@ -327,21 +341,7 @@ public class EntryPoint {
         }
         final CoveragePerTestMethod load = CoveragePerTestMethodImpl.load();
         if (EntryPoint.verbose) {
-            LOGGER.info("Global JUnit4Coverage has been computed {}", load.toString());
-        }
-        return load;
-    }
-
-    private static Coverage runCoverage(String commandLine) throws TimeoutException {
-        try {
-            runGivenCommandLine(commandLine);
-        } catch (TimeoutException e) {
-            LOGGER.warn("Timeout when running {}", commandLine);
-            throw e;
-        }
-        final Coverage load = CoverageImpl.load();
-        if (EntryPoint.verbose) {
-            LOGGER.info("Global coverage has been computed {}", load.toString());
+            LOGGER.info("Coverage per test methods has been computed {}{}", ConstantsHelper.LINE_SEPARATOR, load.toString());
         }
         return load;
     }
