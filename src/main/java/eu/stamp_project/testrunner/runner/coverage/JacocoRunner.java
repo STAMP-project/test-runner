@@ -147,7 +147,6 @@ public class JacocoRunner {
             throw new RuntimeException(e);
         }
         final String resource = ConstantsHelper.fullQualifiedNameToPath.apply(fullQualifiedNameOfTestClass) + ".class";
-        System.out.println(resource);
         try {
             this.instrumentedClassLoader.addDefinition(
                     fullQualifiedNameOfTestClass,
