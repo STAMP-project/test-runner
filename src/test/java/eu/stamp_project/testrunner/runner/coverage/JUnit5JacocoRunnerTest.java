@@ -34,8 +34,10 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
         final Coverage load = CoverageImpl.load();
         assertEquals(30, load.getInstructionsCovered());
         assertEquals(107, load.getInstructionsTotal());
-        System.out.println(load.getExecutionPath());
+        assertEquals(expectedExecutionPath , load.getExecutionPath());
     }
+
+    private static final String expectedExecutionPath = "tobemocked.LoginDao:0,0,0,0;tobemocked.LoginController:0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;tobemocked.LoginService:0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;example.Example:2,0,0,4,4,0,7,0,0,2,0,2,5,1,0;tobemocked.UserForm:0,0,0,0,0,0,0,0,0";
 
     @Test
     public void testWithoutNewJvmOnTestCases() throws Exception {

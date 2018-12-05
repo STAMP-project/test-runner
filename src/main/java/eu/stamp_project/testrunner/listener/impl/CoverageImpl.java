@@ -40,6 +40,11 @@ public class CoverageImpl implements Coverage, Serializable {
     }
 
     @Override
+    public void setExecutionPath(String executionPath) {
+        this.executionPath = executionPath;
+    }
+
+    @Override
     public int getInstructionsCovered() {
         return instructionsCovered;
     }

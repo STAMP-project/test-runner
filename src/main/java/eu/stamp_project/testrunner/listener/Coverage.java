@@ -16,6 +16,8 @@ public interface Coverage {
 
     public static final String EXTENSION = ".ser";
 
+    public void setExecutionPath(String executionPath);
+
     public int getInstructionsCovered();
 
     public int getInstructionsTotal();

@@ -52,5 +52,7 @@ public class JacocoRunnerTest extends AbstractTest {
         final Coverage load = CoverageImpl.load();
         assertEquals(23, load.getInstructionsCovered());
         assertEquals(107, load.getInstructionsTotal());
+        assertEquals(115, load.getInstructionsTotal());
+        System.out.println(load.getExecutionPath());
     }
 }

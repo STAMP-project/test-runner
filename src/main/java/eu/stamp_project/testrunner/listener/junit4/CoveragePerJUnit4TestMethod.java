@@ -154,9 +154,10 @@ public class CoveragePerJUnit4TestMethod extends JUnit4TestListener implements C
                                 .sum();
                         classCoverages.removeAll(subListOnSameClass);
                     }
-                    this.internalCoverage.getCoverageResultsMap().put(testMethodName, new JUnit4Coverage(covered, total));
+                    final JUnit4Coverage value = new JUnit4Coverage(covered, total);
+                    value.setExecutionPath("");
+                    this.internalCoverage.getCoverageResultsMap().put(testMethodName, value);
                 }
-
         );
     }
 
