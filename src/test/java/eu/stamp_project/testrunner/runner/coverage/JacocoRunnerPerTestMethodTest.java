@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
 public class JacocoRunnerPerTestMethodTest extends AbstractTest {
 
     @Test
-    public void testWithoutNewJvmOnTestClass() throws Exception {
+    public void testWithoutNewJvmOnTestClassParametrized() throws Exception {
 
         /*
             Using the api to compute the coverage on a test class
@@ -30,7 +30,9 @@ public class JacocoRunnerPerTestMethodTest extends AbstractTest {
                 }
         );
         final CoveragePerTestMethodImpl load = CoveragePerTestMethodImpl.load();
-        assertEquals(31, load.getCoverageResultsMap().get("test").getInstructionsCovered());
+        System.out.println(load);
+        assertEquals(34, load.getCoverageResultsMap().get("test").getInstructionsCovered());
+        System.out.println(load.getCoverageResultsMap().get("test").getExecutionPath());
     }
 
     @Test
@@ -43,13 +45,37 @@ public class JacocoRunnerPerTestMethodTest extends AbstractTest {
         JacocoRunnerPerTestMethod.main(new String[]{
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject, TEST_PROJECT_CLASSES,
                         ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, "example.TestSuiteExample",
-                        ParserOptions.FLAG_testMethodNamesToRun, "test8:test2:copyOftest2"
+                        ParserOptions.FLAG_testMethodNamesToRun, "test3:test2:copyOftest2"
                 }
         );
         final CoveragePerTestMethodImpl load = CoveragePerTestMethodImpl.load();
         System.out.println(load);
         assertEquals(23, load.getCoverageResultsMap().get("test2").getInstructionsCovered());
-        assertEquals(23, load.getCoverageResultsMap().get("test8").getInstructionsCovered());
+        assertEquals(23, load.getCoverageResultsMap().get("test3").getInstructionsCovered());
         assertEquals(23, load.getCoverageResultsMap().get("copyOftest2").getInstructionsCovered());
+        System.out.println(load.getCoverageResultsMap().get("test2").getExecutionPath());
+        System.out.println(load.getCoverageResultsMap().get("copyOftest2").getExecutionPath());
+        System.out.println(load.getCoverageResultsMap().get("test3").getExecutionPath());
+    }
+
+    @Test
+    public void testWithoutNewJvmOnTestClassAll() throws Exception {
+
+        /*
+            Using the api to compute the coverage on test cases
+         */
+
+        JacocoRunnerPerTestMethod.main(new String[]{
+                        ParserOptions.FLAG_pathToCompiledClassesOfTheProject, TEST_PROJECT_CLASSES,
+                        ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, "example.TestSuiteExample",
+                }
+        );
+        final CoveragePerTestMethodImpl load = CoveragePerTestMethodImpl.load();
+        System.out.println(load);
+        load.getCoverageResultsMap()
+                .keySet()
+                .stream()
+                .map(s -> load.getCoverageResultsMap().get(s).getExecutionPath())
+                .forEach(System.out::println);
     }
 }

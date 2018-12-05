@@ -26,6 +26,11 @@ public class JUnit5Coverage extends JUnit5TestListener implements Coverage, Seri
     }
 
     @Override
+    public void setExecutionPath(String executionPath) {
+        this.internalCoverage.setExecutionPath(executionPath);
+    }
+
+    @Override
     public int getInstructionsCovered() {
         return this.internalCoverage.getInstructionsCovered();
     }

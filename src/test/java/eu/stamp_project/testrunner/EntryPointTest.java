@@ -275,7 +275,7 @@ public class EntryPointTest extends AbstractTest {
                 new String[]{"test8", "test3"}
         );
         assertEquals(23, coverage.getInstructionsCovered());
-        assertEquals(115, coverage.getInstructionsTotal());
+        assertEquals(107, coverage.getInstructionsTotal());
     }
 
     @Test
@@ -297,7 +297,7 @@ public class EntryPointTest extends AbstractTest {
         );
 
         assertEquals(30, coverage.getInstructionsCovered());
-        assertEquals(115, coverage.getInstructionsTotal());
+        assertEquals(107, coverage.getInstructionsTotal());
     }
 
     @Test
@@ -326,7 +326,7 @@ public class EntryPointTest extends AbstractTest {
         );
 
         assertEquals(23, coverage.getInstructionsCovered());
-        assertEquals(115, coverage.getInstructionsTotal());
+        assertEquals(107, coverage.getInstructionsTotal());
     }
 
     @Test
@@ -349,9 +349,9 @@ public class EntryPointTest extends AbstractTest {
         );
 
         assertEquals(23, coveragePerTestMethod.getCoverageOf("test3").getInstructionsCovered());
-        assertEquals(115, coveragePerTestMethod.getCoverageOf("test3").getInstructionsTotal());
+        assertEquals(107, coveragePerTestMethod.getCoverageOf("test3").getInstructionsTotal());
         assertEquals(23, coveragePerTestMethod.getCoverageOf("test8").getInstructionsCovered());
-        assertEquals(115, coveragePerTestMethod.getCoverageOf("test8").getInstructionsTotal());
+        assertEquals(107, coveragePerTestMethod.getCoverageOf("test8").getInstructionsTotal());
     }
 
     @Test

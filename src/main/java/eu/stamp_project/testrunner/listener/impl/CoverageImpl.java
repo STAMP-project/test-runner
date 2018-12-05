@@ -8,6 +8,8 @@ import org.jacoco.core.analysis.*;
 import org.jacoco.core.data.ExecutionDataStore;
 
 import java.io.*;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -38,6 +40,11 @@ public class CoverageImpl implements Coverage, Serializable {
     }
 
     @Override
+    public void setExecutionPath(String executionPath) {
+        this.executionPath = executionPath;
+    }
+
+    @Override
     public int getInstructionsCovered() {
         return instructionsCovered;
     }
@@ -52,18 +59,18 @@ public class CoverageImpl implements Coverage, Serializable {
         return executionPath;
     }
 
-    protected static final transient Function<CoverageBuilder, String> computePathExecuted = coverageBuilder ->
-            coverageBuilder.getClasses()
-                    .stream()
-                    .map(iClassCoverage ->
-                            ConstantsHelper.pathToFullQualifiedName.apply(iClassCoverage.getName()) + ConstantsHelper.PATH_SEPARATOR  +
-                                    IntStream.range(iClassCoverage.getFirstLine(), iClassCoverage.getLastLine())
-                                            .mapToObj(iClassCoverage::getLine)
-                                            .map(ILine::getInstructionCounter)
-                                            .map(ICounter::getCoveredCount)
-                                            .map(Object::toString)
-                                            .collect(Collectors.joining(","))
-                    ).collect(Collectors.joining(";"));
+    public static List<Integer> getListOfCountForCounterFunction(IClassCoverage coverage,
+                                                                 Function<ICounter, Integer> counterGetter) {
+        return coverage.getMethods()
+                .stream()
+                .filter(iMethodCoverage -> !"<clinit>".equals(iMethodCoverage.getName()))
+                .flatMap(iMethodCoverage ->
+                        IntStream.range(iMethodCoverage.getFirstLine(), iMethodCoverage.getLastLine() + 1)
+                                .mapToObj(iMethodCoverage::getLine)
+                                .map(ILine::getInstructionCounter)
+                                .map(counterGetter)
+                ).collect(Collectors.toList());
+    }
 
     @Override
     public boolean isBetterThan(Coverage that) {
@@ -85,14 +92,26 @@ public class CoverageImpl implements Coverage, Serializable {
             throw new RuntimeException(e);
         }
         final int[] counter = new int[2];
-        coverageBuilder.getClasses().stream()
-                .map(IClassCoverage::getInstructionCounter)
-                .forEach(iCounter -> {
-                    counter[0] += iCounter.getCoveredCount();
-                    counter[1] += iCounter.getTotalCount();
-                });
-
-        this.executionPath = computePathExecuted.apply(coverageBuilder);
+        final StringBuilder builderExecutionPath = new StringBuilder();
+        coverageBuilder.getClasses().forEach(coverage -> {
+            final List<Integer> listOfCountForCounterFunction =
+                    CoverageImpl.getListOfCountForCounterFunction(coverage, ICounter::getCoveredCount);
+            builderExecutionPath.append(coverage.getName())
+                    .append(":")
+                    .append(listOfCountForCounterFunction
+                            .stream()
+                            .map(Objects::toString)
+                            .collect(Collectors.joining(","))
+                    ).append(";");
+            counter[0] += listOfCountForCounterFunction.stream()
+                    .mapToInt(Integer::intValue)
+                    .sum();
+            counter[1] += CoverageImpl.getListOfCountForCounterFunction(coverage, ICounter::getTotalCount)
+                    .stream()
+                    .mapToInt(Integer::intValue)
+                    .sum();
+        });
+        this.executionPath = builderExecutionPath.toString();
         this.instructionsCovered = counter[0];
         this.instructionsTotal = counter[1];
     }
@@ -126,6 +145,7 @@ public class CoverageImpl implements Coverage, Serializable {
 
     /**
      * Load from serialized object
+     *
      * @return an Instance of JUnit4Coverage loaded from a serialized file.
      */
     public static Coverage load() {
