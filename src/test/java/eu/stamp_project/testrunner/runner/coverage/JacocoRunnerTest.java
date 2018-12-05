@@ -31,8 +31,9 @@ public class JacocoRunnerTest extends AbstractTest {
         );
         final Coverage load = CoverageImpl.load();
         assertEquals(30, load.getInstructionsCovered());
-        assertEquals(115, load.getInstructionsTotal());
-        System.out.println(load.getExecutionPath());
+        assertEquals(107, load.getInstructionsTotal());
+        System.out.println(String.join(ConstantsHelper.LINE_SEPARATOR, load.getExecutionPath().split(";")));
+        System.out.println(load.getInstructionsCovered());
     }
 
     @Test
@@ -50,6 +51,6 @@ public class JacocoRunnerTest extends AbstractTest {
         );
         final Coverage load = CoverageImpl.load();
         assertEquals(23, load.getInstructionsCovered());
-        assertEquals(115, load.getInstructionsTotal());
+        assertEquals(107, load.getInstructionsTotal());
     }
 }

@@ -30,7 +30,8 @@ public class JacocoRunnerPerTestMethodTest extends AbstractTest {
                 }
         );
         final CoveragePerTestMethodImpl load = CoveragePerTestMethodImpl.load();
-        assertEquals(31, load.getCoverageResultsMap().get("test").getInstructionsCovered());
+        System.out.println(load);
+        assertEquals(34, load.getCoverageResultsMap().get("test").getInstructionsCovered());
     }
 
     @Test

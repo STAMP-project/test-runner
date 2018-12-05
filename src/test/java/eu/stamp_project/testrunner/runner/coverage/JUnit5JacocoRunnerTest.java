@@ -33,7 +33,7 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
         );
         final Coverage load = CoverageImpl.load();
         assertEquals(30, load.getInstructionsCovered());
-        assertEquals(115, load.getInstructionsTotal());
+        assertEquals(107, load.getInstructionsTotal());
         System.out.println(load.getExecutionPath());
     }
 
@@ -53,7 +53,7 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
         );
         final Coverage load = CoverageImpl.load();
         assertEquals(23, load.getInstructionsCovered());
-        assertEquals(115, load.getInstructionsTotal());
+        assertEquals(107, load.getInstructionsTotal());
     }
 
     @Ignore
@@ -73,7 +73,7 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
         );
         final Coverage load = CoverageImpl.load();
         assertEquals(23, load.getInstructionsCovered());
-        assertEquals(115, load.getInstructionsTotal());
+        assertEquals(107, load.getInstructionsTotal());
     }
 
 }
