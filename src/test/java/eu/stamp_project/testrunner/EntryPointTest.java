@@ -4,7 +4,6 @@ import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
 import eu.stamp_project.testrunner.listener.TestListener;
 import eu.stamp_project.testrunner.runner.Failure;
-import eu.stamp_project.testrunner.runner.JUnit4Runner;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.junit.After;
 import org.junit.Before;
@@ -365,6 +364,7 @@ public class EntryPointTest extends AbstractTest {
                 JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "example.ParametrizedTestSuiteExample"
         );
+        System.out.println(testListener);
         assertEquals(10, testListener.getPassingTests().size());
         assertEquals(0, testListener.getFailingTests().size());
     }
