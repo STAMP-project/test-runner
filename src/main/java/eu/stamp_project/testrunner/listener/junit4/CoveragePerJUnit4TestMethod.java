@@ -2,6 +2,7 @@ package eu.stamp_project.testrunner.listener.junit4;
 
 import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
+import eu.stamp_project.testrunner.listener.impl.CoverageImpl;
 import eu.stamp_project.testrunner.listener.impl.CoveragePerTestMethodImpl;
 import org.jacoco.core.analysis.*;
 import org.jacoco.core.data.ExecutionDataStore;
@@ -12,14 +13,12 @@ import org.junit.runner.Description;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Created by Benjamin DANGLOT
@@ -96,7 +95,7 @@ public class CoveragePerJUnit4TestMethod extends JUnit4TestListener implements C
         coverageBuilder.getClasses()
                 .forEach(classCoverage ->
                         this.coveragesPerMethodName.get(testMethodName)
-                                .add((IClassCoverage) classCoverage)
+                                .add(classCoverage)
                 );
     }
 
@@ -136,25 +135,23 @@ public class CoveragePerJUnit4TestMethod extends JUnit4TestListener implements C
                         final IClassCoverage current = classCoverages.get(0);
                         final List<IClassCoverage> subListOnSameClass =
                                 getSameClassCoverage(current.getName(), classCoverages);
-                        final int firstLine = subListOnSameClass.get(0).getFirstLine();
-                        final int lastLine = subListOnSameClass.get(0).getLastLine();
-                        if (!subListOnSameClass.stream()
-                                .allMatch(iClassCoverage ->
-                                        iClassCoverage.getFirstLine() == firstLine &&
-                                                iClassCoverage.getLastLine() == lastLine)) {
-                            throw new RuntimeException("Something wrong happened, not every IClassCoverages have the same number of line");
-                        }
-                        for (int i = firstLine; i < lastLine; i++) {
-                            final int currentCursor = i;
-                            final int bestCoverage = subListOnSameClass.stream()
-                                    .map(iClassCoverage -> iClassCoverage.getLine(currentCursor))
-                                    .map(ILine::getInstructionCounter)
-                                    .map(ICounter::getCoveredCount)
-                                    .max(Integer::compareTo)
-                                    .get();
-                            covered += bestCoverage;
-                        }
-                        total += subListOnSameClass.get(0).getInstructionCounter().getTotalCount();
+                        final List<List<Integer>> coveragePerMethods = subListOnSameClass.stream()
+                                .map(coverage ->
+                                        CoverageImpl.getListOfCountForCounterFunction(coverage, ICounter::getCoveredCount)
+                                ).collect(Collectors.toList());
+                        final List<Integer> bestCoverage = IntStream.range(0, coveragePerMethods.get(0).size())
+                                .boxed()
+                                .map(index ->
+                                        coveragePerMethods.stream()
+                                                .map(integers -> integers.get(index))
+                                                .max(Integer::compareTo)
+                                                .get()
+                                ).collect(Collectors.toList());
+                        covered += bestCoverage.stream().mapToInt(Integer::intValue).sum();
+                        total += CoverageImpl.getListOfCountForCounterFunction(subListOnSameClass.get(0), ICounter::getTotalCount)
+                                .stream()
+                                .mapToInt(Integer::intValue)
+                                .sum();
                         classCoverages.removeAll(subListOnSameClass);
                     }
                     this.internalCoverage.getCoverageResultsMap().put(testMethodName, new JUnit4Coverage(covered, total));
