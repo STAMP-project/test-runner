@@ -28,7 +28,7 @@ You can add to your `pom.xml`:
 <dependency>
     <groupId>eu.stamp-project</groupId>
     <artifactId>test-runner</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.4</version>
     <classifier>jar-with-dependencies</classifier>
 </dependency>
 ```
