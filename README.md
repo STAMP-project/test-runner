@@ -22,7 +22,121 @@ This project provides a framework to run JUnit tests in a new JVM. It allows to 
 
 ## API
 
-TODO
+The only API that you should use is `eu.stamp_project.testrunner.EntryPoint`.
+
+This class provides several methods to execute all the test methods of given test classes, specific test methods of a given test class, compute the code coverage with JaCoCo, etc.
+
+#### Tests Execution
+
+1. Executing all the test methods of a test class.
+
+```java
+EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass);
+```  
+
+The `classpath` must contain all the dependencies required to execute the test. Elements must be separated by the system path separator.
+
+The `fullQualifiedNameOfTestClass` must be a correct full qualified name, _e.g._ `my.package.TestClass`.
+
+The folder that contains the compiled file of your project must be included in the `classpath`.
+
+The compiled (`.class`) of the test class to be executed must be included in the given `classpath`. 
+
+2. Executing specific test methods of a given test class.
+
+```java
+EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass, String[] methodNames);
+```
+
+The two first parameters are the same above.
+
+The String array `methodsNames` must contains the name of test methods to be executed. 
+
+Each of these test methods must be in the test class designated by the `fullQualifiedNameOfTestClass`.
+
+Following the list of API to execute tests methods:
+
+```java
+// Execute all the test methods of a given test class
+EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass);
+// Execute all the test methods of given test classes
+EntryPoint.runTests(String classpath, String[] fullQualifiedNameOfTestClasses);
+// Execute a specific test method of a given test class
+EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass, String methodName);
+// Execute specific test methods of a given test class
+EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass, String[] methodNames);
+// Execute specific test methods of given test classes
+EntryPoint.runTests(String classpath, String[] fullQualifiedNameOfTestClasses, String[] methodNames); 
+```
+
+##### Output
+
+The output of all `runTests()` API is a `eu.stamp_project.testrunner.listener.TestListener`.
+
+This object provides all the information needed about the execution of test methods:
+
+   * `getRunningTests()`: the list of test methods that have been executed.
+   * `getPassingTests()`: the list of test methods that succeed.
+   * `getFailingTests()`: the list of test methods that failed.
+   * `getAssumptionFailingTests()`: the list of test methods that have a failing assumption.
+   * `getIgnoredTests()`: the list of test methods that are ignored.
+   
+The method `TestListener#aggregate(TestListener that)` allows to aggregate the results.
+
+#### Global Coverage
+
+The API to compute the instruction coverage is similar than the API to execute the test but required an additional parameter: `String targetProjectClasses`.
+
+This String must contain both relative paths to the binaries of the program and the binaries of the test suite. This is required by JaCoCo. For a typical maven project, this is would be: `target/classes:target/test-classes`. Note that the separator, here `:` is used on Linux. You must use the system separator. 
+
+Following the list of API to compute the coverage:
+
+```java
+// Compute the instruction coverage of all the test methods of a given test class
+EntryPoint.runCoverage(String classpath, String targetProjectClasses, String fullQualifiedNameOfTestClass);
+// Compute the instruction coverage of all the test methods of given test classes
+EntryPoint.runCoverage(String classpath, String targetProjectClasses, String[] fullQualifiedNameOfTestClasses);
+// Compute the instruction coverage of a specific test method of a given test class
+EntryPoint.runCoverage(String classpath, String targetProjectClasses, String fullQualifiedNameOfTestClass, String methodName);
+// Compute the instruction coverage of specific test methods of a given test class
+EntryPoint.runCoverage(String classpath, String targetProjectClasses, String fullQualifiedNameOfTestClass, String[] methodNames);
+// Compute the instruction coverage of specific test methods of given test classes
+EntryPoint.runCoverage(String classpath, String targetProjectClasses, String[] fullQualifiedNameOfTestClasses, String[] methodNames); 
+```
+
+##### Output
+
+The output of all `runCoverage()` API is a `eu.stamp_project.testrunner.listener.Coverage`.
+
+The object provides the two following method:
+
+   * `getInstructionsCovered()`: returns the number of instruction covered by the tests.
+   * `getInstructionsTotal()`: returns the total number of instruction.
+
+#### Coverage per test methods
+
+In the same way, you can have the coverage per test methods using `runCoveragePerTestMethods()` API of `EntryPoint` class.
+
+##### Output
+
+The output of all `runCoveragePerTestMethods()` API is a `eu.stamp_project.testrunner.listener.Serializable`.
+
+   * `Map<String, Coverage> getCoverageResultsMap()`: returns a map that associate the simple of a test method to its instruction coverage.
+   * `Coverage getCoverageOf(String testMethodName)`: returns the instruction coverage of a test method, specified by its simple name. 
+  
+### Configuration
+
+In `EntryPoint` class, you have access to several fields that allow to configure the execution:
+
+   * `boolean jUnit5Mode`: set JUnit5 mode. If your test are JUnit5, you must set this boolean to true.
+   * `boolean verbose`: enable the verbose mode.
+   * `int timeoutInMs`: the number of milliseconds to wait before considering that the execution is in timeout. In case of time out, this will end with a failure and `EntryPoint` will throw a `java.util.concurrentTimeoutException`.
+   * `File workingDirectory`: the file descriptor to specify from where you want to execute the tests. You can use it when your test use relative path for instance. By default, it is set to null to inherit from this java process. 
+   * `String JVMArgs`: `EntryPoint` uses the command "java". This field allows users to specify Java Virtual Machine(JVM) arguments, _e.g._ `-Xms4G`. If this value is `null`, `EntryPoint` won't pass any JVMArgs. The value of this field should be properly formatted for command line usage, _e.g._ `-Xms4G -Xmx8G -XX:-UseGCOverheadLimit`. The args should be separated with white spaces.
+   * `PrintStream outPrintStream`: allows to pass a customized `PrintStream` on which the java process called will printout. If this field is equal to `null`, `EntryPoint` with use the stdout.
+   * `PrintStream errPrintStream`: allows to pass a customized `PrintStream` on which the java process called will printerr. If this field is equal to `null`, `EntryPoint` with use the stderr.
+   * `boolean persistence`: enable this boolean in order to keep the state between runs. By default, the persistence is set to true. If you set it to false, the following values will be reset (_i.e._ set the default value) after each run: `JVMArgs`,  `outPrintStream`, `errPrintStream`, `workingDirectory`, `timeoutInMs`.
+   * `List<String> blackList`: add to this list the simple name of test methods that you want to avoid to execute. 
 
 ## Dependency:
 
