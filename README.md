@@ -22,51 +22,44 @@ This project provides a framework to run JUnit tests in a new JVM. It allows to 
 
 ## API
 
-The only API that you should use is `eu.stamp_project.testrunner.EntryPoint`.
-
-This class provides several methods to execute all the test methods of given test classes, specific test methods of a given test class, compute the code coverage with JaCoCo, etc.
+The provided API is `eu.stamp_project.testrunner.EntryPoint`. This class provides several static methods to execute all the test methods of given test classes, specific test methods of a given test class, compute the code coverage with JaCoCo, etc.
 
 #### Tests Execution
 
 1. Executing all the test methods of a test class.
 
 ```java
-EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass);
+// class TestListener explained below 
+TestListener result = EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass);
 ```  
 
-The `classpath` must contain all the dependencies required to execute the test. Elements must be separated by the system path separator.
-
-The `fullQualifiedNameOfTestClass` must be a correct full qualified name, _e.g._ `my.package.TestClass`.
-
-The folder that contains the compiled file of your project must be included in the `classpath`.
-
-The compiled (`.class`) of the test class to be executed must be included in the given `classpath`. 
+The `classpath` must contain all the dependencies required to execute the test. Elements must be separated by the system path separator. The `fullQualifiedNameOfTestClass` must be a correct full qualified name, _e.g._ `my.package.TestClass`. The folder that contains the compiled file of your project must be included in the `classpath`. The compiled (`.class`) of the test class to be executed must be included in the given `classpath`. 
 
 2. Executing specific test methods of a given test class.
 
 ```java
-EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass, String[] methodNames);
+TestListener result = EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass, String[] methodNames);
 ```
 
-The two first parameters are the same above.
+The two first parameters are the same above. The String array `methodsNames`contains the name of test methods to be executed.  Each of these test methods must be in the test class designated by the `fullQualifiedNameOfTestClass`.
 
-The String array `methodsNames` must contains the name of test methods to be executed. 
-
-Each of these test methods must be in the test class designated by the `fullQualifiedNameOfTestClass`.
-
-Following the list of API to execute tests methods:
+Complete list:
 
 ```java
 // Execute all the test methods of a given test class
-EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass);
+TestListener result = EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass);
+
 // Execute all the test methods of given test classes
-EntryPoint.runTests(String classpath, String[] fullQualifiedNameOfTestClasses);
+TestListener result = EntryPoint.runTests(String classpath, String[] fullQualifiedNameOfTestClasses);
+
 // Execute a specific test method of a given test class
-EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass, String methodName);
+TestListener result = EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass, String methodName);
+
 // Execute specific test methods of a given test class
-EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass, String[] methodNames);
+TestListener result = EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass, String[] methodNames);
+
 // Execute specific test methods of given test classes
-EntryPoint.runTests(String classpath, String[] fullQualifiedNameOfTestClasses, String[] methodNames); 
+TestListener result = EntryPoint.runTests(String classpath, String[] fullQualifiedNameOfTestClasses, String[] methodNames); 
 ```
 
 ##### Output
