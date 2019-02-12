@@ -11,9 +11,9 @@ import java.util.List;
  * benjamin.danglot@inria.fr
  * on 13/11/18
  */
-public interface TestListener extends Serializable {
+public interface TestResult extends Serializable {
 
-    public static final String SERIALIZE_NAME = "TestListener";
+    public static final String SERIALIZE_NAME = "TestResult";
 
     public static final String OUTPUT_DIR = "target" + ConstantsHelper.FILE_SEPARATOR + "dspot" + ConstantsHelper.FILE_SEPARATOR;
 
@@ -21,10 +21,10 @@ public interface TestListener extends Serializable {
 
     /**
      * Aggregate result of this instance to the given instance
-     * @param that the other instance of TestListener of which we need to add the values to this instance
+     * @param that the other instance of TestResult of which we need to add the values to this instance
      * @return this
      */
-    public TestListener aggregate(TestListener that);
+    public TestResult aggregate(TestResult that);
 
     public List<Failure> getFailingTests();
 

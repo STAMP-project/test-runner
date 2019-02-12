@@ -1,7 +1,7 @@
 package eu.stamp_project.testrunner.runner;
 
 import eu.stamp_project.testrunner.EntryPoint;
-import eu.stamp_project.testrunner.listener.junit5.JUnit5TestListener;
+import eu.stamp_project.testrunner.listener.junit5.JUnit5TestResult;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
@@ -26,16 +26,16 @@ public class JUnit5Runner {
      * For the expected arguments, see {@link ParserOptions}
      */
     public static void main(String args[]) {
-        final JUnit5TestListener jUnit5TestListener = new JUnit5TestListener();
+        final JUnit5TestResult jUnit5TestResult = new JUnit5TestResult();
         final ParserOptions options = ParserOptions.parse(args);
         JUnit5Runner.run(
                 options.getFullQualifiedNameOfTestClassesToRun(),
                 options.getTestMethodNamesToRun(),
                 options.getBlackList(),
-                jUnit5TestListener,
+                jUnit5TestResult,
                 JUnit5Runner.class.getClassLoader()
         );
-        jUnit5TestListener.save();
+        jUnit5TestResult.save();
     }
 
     /**
@@ -49,7 +49,7 @@ public class JUnit5Runner {
     public static void run(String[] testClassNames,
                            String[] testMethodNames,
                            List<String> blackList, // TODO the blacklist is not yet implemented
-                           JUnit5TestListener listener,
+                           JUnit5TestResult listener,
                            ClassLoader customClassLoader) {
         final LauncherDiscoveryRequestBuilder requestBuilder = LauncherDiscoveryRequestBuilder.request();
         if (testMethodNames.length == 0) {

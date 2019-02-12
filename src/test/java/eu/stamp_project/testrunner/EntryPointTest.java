@@ -2,7 +2,7 @@ package eu.stamp_project.testrunner;
 
 import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
-import eu.stamp_project.testrunner.listener.TestListener;
+import eu.stamp_project.testrunner.listener.TestResult;
 import eu.stamp_project.testrunner.runner.Failure;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.junit.After;
@@ -48,16 +48,16 @@ public class EntryPointTest extends AbstractTest {
 
         EntryPoint.blackList.add("testFailing");
 
-        final TestListener testListener = EntryPoint.runTests(
+        final TestResult testResult = EntryPoint.runTests(
                 JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "failing.FailingTestClass"
         );
 
-        assertEquals(2, testListener.getRunningTests().size());
-        assertEquals(1, testListener.getPassingTests().size());
-        assertEquals(0, testListener.getFailingTests().size());
-        assertEquals(1, testListener.getAssumptionFailingTests().size());
-        assertEquals(1, testListener.getIgnoredTests().size());
+        assertEquals(2, testResult.getRunningTests().size());
+        assertEquals(1, testResult.getPassingTests().size());
+        assertEquals(0, testResult.getFailingTests().size());
+        assertEquals(1, testResult.getAssumptionFailingTests().size());
+        assertEquals(1, testResult.getIgnoredTests().size());
     }
 
 
@@ -86,7 +86,7 @@ public class EntryPointTest extends AbstractTest {
         EntryPoint.JVMArgs = "-XX:+PrintGCDetails";
         assertNotNull(EntryPoint.JVMArgs);
 
-        final TestListener testListener = EntryPoint.runTests(
+        final TestResult testResult = EntryPoint.runTests(
                 JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "example.TestSuiteExample"
         );
@@ -95,8 +95,8 @@ public class EntryPointTest extends AbstractTest {
         assertTrue(errStream.toString().isEmpty()); // no error occurs
 //        assertTrue(GCdetail + " should contain GC detail, e.g. the word \"Heap\".", GCdetail.contains("Heap")); // it print the GC Details TODO FIXME
 
-        assertEquals(7, testListener.getPassingTests().size());
-        assertEquals(0, testListener.getFailingTests().size());
+        assertEquals(7, testResult.getPassingTests().size());
+        assertEquals(0, testResult.getFailingTests().size());
     }
 
     @Test
@@ -111,27 +111,27 @@ public class EntryPointTest extends AbstractTest {
         EntryPoint.JVMArgs = "-XX:+PrintGCDetails";
         assertNotNull(EntryPoint.JVMArgs);
 
-        TestListener testListener = EntryPoint.runTests(
+        TestResult testResult = EntryPoint.runTests(
                 JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "example.TestSuiteExample"
         );
 
         assertNotNull(EntryPoint.JVMArgs);
-        assertEquals(7, testListener.getPassingTests().size());
-        assertEquals(0, testListener.getFailingTests().size());
+        assertEquals(7, testResult.getPassingTests().size());
+        assertEquals(0, testResult.getFailingTests().size());
 
         EntryPoint.persistence = false;
         EntryPoint.JVMArgs = "-XX:+PrintGCDetails";
         assertNotNull(EntryPoint.JVMArgs);
 
-        testListener = EntryPoint.runTests(
+        testResult = EntryPoint.runTests(
                 JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "example.TestSuiteExample"
         );
 
         assertNull(EntryPoint.JVMArgs);
-        assertEquals(7, testListener.getPassingTests().size());
-        assertEquals(0, testListener.getFailingTests().size());
+        assertEquals(7, testResult.getPassingTests().size());
+        assertEquals(0, testResult.getFailingTests().size());
     }
 
     @Test
@@ -141,21 +141,21 @@ public class EntryPointTest extends AbstractTest {
             Test to run test class that use easymock framework
          */
 
-        final TestListener testListener = EntryPoint.runTests(
+        final TestResult testResult = EntryPoint.runTests(
                 JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + EASYMOCK_CP +
                         ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "easymock.LoginControllerIntegrationTest"
         );
-        assertEquals(7, testListener.getRunningTests().size());
-        assertEquals(7, testListener.getPassingTests().size());
-        assertEquals(0, testListener.getFailingTests().size());
+        assertEquals(7, testResult.getRunningTests().size());
+        assertEquals(7, testResult.getPassingTests().size());
+        assertEquals(0, testResult.getFailingTests().size());
     }
 
     @Test
     public void testOnFailingTest() throws Exception {
         /*
-            EntryPoint should return a proper testListener.
-            This testListener contains:
+            EntryPoint should return a proper testResult.
+            This testResult contains:
                 - three running test
                 - one failing test
                 - one passing test
@@ -163,22 +163,22 @@ public class EntryPointTest extends AbstractTest {
                 - one ignored test
          */
 
-        final TestListener testListener = EntryPoint.runTests(
+        final TestResult testResult = EntryPoint.runTests(
                 JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "failing.FailingTestClass"
         );
 
-        assertEquals(3, testListener.getRunningTests().size());
-        assertEquals(1, testListener.getPassingTests().size());
-        assertEquals(1, testListener.getFailingTests().size());
-        assertEquals(1, testListener.getAssumptionFailingTests().size());
-        assertEquals(1, testListener.getIgnoredTests().size());
+        assertEquals(3, testResult.getRunningTests().size());
+        assertEquals(1, testResult.getPassingTests().size());
+        assertEquals(1, testResult.getFailingTests().size());
+        assertEquals(1, testResult.getAssumptionFailingTests().size());
+        assertEquals(1, testResult.getIgnoredTests().size());
 
-        final Failure testFailing = testListener.getFailureOf("testFailing");
+        final Failure testFailing = testResult.getFailureOf("testFailing");
         assertEquals("testFailing", testFailing.testCaseName);
 
         try {
-            testListener.getFailureOf("testPassing");
+            testResult.getFailureOf("testPassing");
             fail("Should have throw IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             assertTrue(true); // expected
@@ -205,15 +205,15 @@ public class EntryPointTest extends AbstractTest {
 
         /*
             Test the method runTestClasses() of EntryPoint.
-                It should return the testListener with the result of the execution of the list of test classes.
+                It should return the testResult with the result of the execution of the list of test classes.
          */
 
-        final TestListener testListener = EntryPoint.runTests(
+        final TestResult testResult = EntryPoint.runTests(
                 JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 new String[]{"example.TestSuiteExample", "example.TestSuiteExample2"}
         );
-        assertEquals(13, testListener.getPassingTests().size());
-        assertEquals(0, testListener.getFailingTests().size());
+        assertEquals(13, testResult.getPassingTests().size());
+        assertEquals(0, testResult.getFailingTests().size());
     }
 
     @Test
@@ -221,15 +221,15 @@ public class EntryPointTest extends AbstractTest {
 
         /*
             Test the method runTest() of EntryPoint.
-                It should return the testListener with the result of the execution of the test class.
+                It should return the testResult with the result of the execution of the test class.
          */
 
-        final TestListener testListener = EntryPoint.runTests(
+        final TestResult testResult = EntryPoint.runTests(
                 JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "example.TestSuiteExample"
         );
-        assertEquals(7, testListener.getPassingTests().size());
-        assertEquals(0, testListener.getFailingTests().size());
+        assertEquals(7, testResult.getPassingTests().size());
+        assertEquals(0, testResult.getFailingTests().size());
     }
 
     @Ignore
@@ -238,18 +238,18 @@ public class EntryPointTest extends AbstractTest {
 
         /*
             Test the method runTest() of EntryPoint.
-                It should return the testListener with the result of the execution of the test class.
+                It should return the testResult with the result of the execution of the test class.
          */
 
         EntryPoint.verbose = true;
 
-        final TestListener testListener = EntryPoint.runTests(
+        final TestResult testResult = EntryPoint.runTests(
                 JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "example.TestSuiteExample",
                 new String[]{"test4", "test9"}
         );
-        assertEquals(2, testListener.getPassingTests().size());
-        assertEquals(0, testListener.getFailingTests().size());
+        assertEquals(2, testResult.getPassingTests().size());
+        assertEquals(0, testResult.getFailingTests().size());
 
         EntryPoint.verbose = false;
     }
@@ -360,13 +360,13 @@ public class EntryPointTest extends AbstractTest {
             Test the execution of Parametrized test class
          */
 
-        final TestListener testListener = EntryPoint.runTests(
+        final TestResult testResult = EntryPoint.runTests(
                 JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "example.ParametrizedTestSuiteExample"
         );
-        System.out.println(testListener);
-        assertEquals(10, testListener.getPassingTests().size());
-        assertEquals(0, testListener.getFailingTests().size());
+        System.out.println(testResult);
+        assertEquals(10, testResult.getPassingTests().size());
+        assertEquals(0, testResult.getFailingTests().size());
     }
 
     @Test
@@ -376,13 +376,13 @@ public class EntryPointTest extends AbstractTest {
             Test the execution of Parametrized test
          */
 
-        final TestListener testListener = EntryPoint.runTests(
+        final TestResult testResult = EntryPoint.runTests(
                 JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "example.ParametrizedTestSuiteExample",
                 "test3"
         );
-        assertEquals(2, testListener.getPassingTests().size());
-        assertEquals(0, testListener.getFailingTests().size());
+        assertEquals(2, testResult.getPassingTests().size());
+        assertEquals(0, testResult.getFailingTests().size());
     }
 
     @Test

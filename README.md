@@ -29,8 +29,8 @@ The provided API is [`eu.stamp_project.testrunner.EntryPoint`](https://github.co
 1. Executing all the test methods of a test class.
 
 ```java
-// class TestListener explained below 
-TestListener result = EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass);
+// class TestResult explained below 
+TestResult result = EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass);
 ```  
 
 The `classpath` must contain all the dependencies required to execute the test. Elements must be separated by the system path separator. The `fullQualifiedNameOfTestClass` must be a correct full qualified name, _e.g._ `my.package.TestClass`. The folder that contains the compiled file of your project must be included in the `classpath`. The compiled (`.class`) of the test class to be executed must be included in the given `classpath`. 
@@ -38,7 +38,7 @@ The `classpath` must contain all the dependencies required to execute the test. 
 2. Executing specific test methods of a given test class.
 
 ```java
-TestListener result = EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass, String[] methodNames);
+TestResult result = EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass, String[] methodNames);
 ```
 
 The two first parameters are the same above. The String array `methodsNames`contains the name of test methods to be executed.  Each of these test methods must be in the test class designated by the `fullQualifiedNameOfTestClass`.
@@ -47,24 +47,24 @@ Complete list:
 
 ```java
 // Execute all the test methods of a given test class
-TestListener result = EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass);
+TestResult result = EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass);
 
 // Execute all the test methods of given test classes
-TestListener result = EntryPoint.runTests(String classpath, String[] fullQualifiedNameOfTestClasses);
+TestResult result = EntryPoint.runTests(String classpath, String[] fullQualifiedNameOfTestClasses);
 
 // Execute a specific test method of a given test class
-TestListener result = EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass, String methodName);
+TestResult result = EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass, String methodName);
 
 // Execute specific test methods of a given test class
-TestListener result = EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass, String[] methodNames);
+TestResult result = EntryPoint.runTests(String classpath, String fullQualifiedNameOfTestClass, String[] methodNames);
 
 // Execute specific test methods of given test classes
-TestListener result = EntryPoint.runTests(String classpath, String[] fullQualifiedNameOfTestClasses, String[] methodNames); 
+TestResult result = EntryPoint.runTests(String classpath, String[] fullQualifiedNameOfTestClasses, String[] methodNames); 
 ```
 
 ##### Output
 
-The output of all `runTests()` API is a [`eu.stamp_project.testrunner.listener.TestListener`](https://github.com/STAMP-project/testrunner/blob/master/src/main/java/eu/stamp_project/testrunner/listener/TestListener.java#L14).
+The output of all `runTests()` API is a [`eu.stamp_project.testrunner.listener.TestResult`](https://github.com/STAMP-project/testrunner/blob/master/src/main/java/eu/stamp_project/testrunner/listener/TestResult.java#L14).
 
 This object provides all the information needed about the execution of test methods:
 
@@ -74,12 +74,12 @@ This object provides all the information needed about the execution of test meth
    * `getAssumptionFailingTests()`: returns the list of test methods that have a failing assumption. For example, in JUnit4 one can make assumptions using `org.junit.Assume` API, _e.g._ `Assume.assumeTrue(myBoolean)`. If the assumption does not hold, it is not necessary because the program is broken but rather than the test is irrelevant in the current state, _e.g._ one can make dedicated test to a platform. 
    * `getIgnoredTests()`: returns the list of test methods that are ignored.
    
-The method `TestListener#aggregate(TestListener that)` allows to aggregate the results. It returns a new `TestListener` that contains both test results, _i.e._ test result of the caller and the parameter. Example:
+The method `TestResult#aggregate(TestResult that)` allows to aggregate the results. It returns a new `TestResult` that contains both test results, _i.e._ test result of the caller and the parameter. Example:
 
 ```java
-TestListener result1 = EntryPoint.runTests(classpath, eu.stamp_project.MyFirstTest);
-TestListener result2 = EntryPoint.runTests(classpath, eu.stamp_project.MySecondTest);
-TestListener allResult = result1.aggregate(result2); // contains both result1 and result2
+TestResult result1 = EntryPoint.runTests(classpath, eu.stamp_project.MyFirstTest);
+TestResult result2 = EntryPoint.runTests(classpath, eu.stamp_project.MySecondTest);
+TestResult allResult = result1.aggregate(result2); // contains both result1 and result2
 ``` 
 
 #### Global Coverage with JaCoCo. 

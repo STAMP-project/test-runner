@@ -1,6 +1,6 @@
 package eu.stamp_project.testrunner.maven;
 
-import eu.stamp_project.testrunner.listener.TestListener;
+import eu.stamp_project.testrunner.listener.TestResult;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.apache.maven.shared.invoker.*;
 import org.slf4j.Logger;
@@ -33,10 +33,10 @@ public class EntryPoint {
      *
      * @param absolutePathToRootProject      path to the root of the targeted project
      * @param fullQualifiedNameOfTestClasses test classes to be run.
-     * @return an instance of TestListener {@link TestListener} containing result of the exeuction of test methods.
+     * @return an instance of TestResult {@link TestResult} containing result of the exeuction of test methods.
      */
-    public static TestListener runTestClasses(String absolutePathToRootProject,
-                                              String... fullQualifiedNameOfTestClasses) {
+    public static TestResult runTestClasses(String absolutePathToRootProject,
+                                            String... fullQualifiedNameOfTestClasses) {
         if (fullQualifiedNameOfTestClasses.length > 0) {
             EntryPoint.runMavenGoal(absolutePathToRootProject, GOAL_TEST, GOAL_SPECIFY +
                     String.join(TEST_CLASS_SEPARATOR, fullQualifiedNameOfTestClasses)
@@ -58,11 +58,11 @@ public class EntryPoint {
      * @param absolutePathToRootProject    path to the root of the targeted project
      * @param fullQualifiedNameOfTestClass test class to be run.
      * @param testMethods                  test methods to be run.
-     * @return an instance of TestListener {@link TestListener} containing result of the execution of test methods.
+     * @return an instance of TestResult {@link TestResult} containing result of the execution of test methods.
      */
-    public static TestListener runTests(String absolutePathToRootProject,
-                                              String fullQualifiedNameOfTestClass,
-                                              String... testMethods) {
+    public static TestResult runTests(String absolutePathToRootProject,
+                                      String fullQualifiedNameOfTestClass,
+                                      String... testMethods) {
         if (testMethods.length > 0) {
             EntryPoint.runMavenGoal(absolutePathToRootProject, GOAL_TEST, GOAL_SPECIFY +
                     fullQualifiedNameOfTestClass + TEST_CLASS_METHOD_SEPARATOR +

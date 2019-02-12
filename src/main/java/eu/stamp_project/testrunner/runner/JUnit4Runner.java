@@ -1,7 +1,7 @@
 package eu.stamp_project.testrunner.runner;
 
 import eu.stamp_project.testrunner.EntryPoint;
-import eu.stamp_project.testrunner.listener.junit4.JUnit4TestListener;
+import eu.stamp_project.testrunner.listener.junit4.JUnit4TestResult;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
@@ -22,16 +22,16 @@ public class JUnit4Runner {
      * For the expected arguments, see {@link ParserOptions}
      */
     public static void main(String[] args) {
-        final JUnit4TestListener jUnit4TestListener = new JUnit4TestListener();
+        final JUnit4TestResult jUnit4TestResult = new JUnit4TestResult();
         final ParserOptions options = ParserOptions.parse(args);
         JUnit4Runner.run(
                 options.getFullQualifiedNameOfTestClassesToRun(),
                 options.getTestMethodNamesToRun(),
                 options.getBlackList(),
-                jUnit4TestListener,
+                jUnit4TestResult,
                 JUnit4Runner.class.getClassLoader()
         );
-        jUnit4TestListener.save();
+        jUnit4TestResult.save();
     }
 
     /**
@@ -45,7 +45,7 @@ public class JUnit4Runner {
     public static void run(String[] testClassNames,
                            String[] testMethodNames,
                            List<String> blackList,
-                           JUnit4TestListener listener,
+                           JUnit4TestResult listener,
                            ClassLoader customClassLoader) {
         Request request;
         request = Request.classes(Arrays.stream(testClassNames).map(testClassName -> {

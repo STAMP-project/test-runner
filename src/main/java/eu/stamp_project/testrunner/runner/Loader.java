@@ -1,7 +1,7 @@
 package eu.stamp_project.testrunner.runner;
 
 import eu.stamp_project.testrunner.EntryPoint;
-import eu.stamp_project.testrunner.listener.impl.TestListenerImpl;
+import eu.stamp_project.testrunner.listener.impl.TestResultImpl;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
 
 import java.io.File;
@@ -20,7 +20,7 @@ public class Loader<T> {
         T object;
         String outputDirectoryPath = EntryPoint.workingDirectory != null ?
                 EntryPoint.workingDirectory.getAbsolutePath() + ConstantsHelper.FILE_SEPARATOR : "";
-        File f = new File(outputDirectoryPath + TestListenerImpl.OUTPUT_DIR + name + TestListenerImpl.EXTENSION);
+        File f = new File(outputDirectoryPath + TestResultImpl.OUTPUT_DIR + name + TestResultImpl.EXTENSION);
         if (!f.exists()) {
             throw new RuntimeException(new FileNotFoundException(f.getAbsolutePath() + " does not exist."));
         } else {

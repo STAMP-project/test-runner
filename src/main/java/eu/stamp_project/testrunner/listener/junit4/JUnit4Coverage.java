@@ -9,7 +9,7 @@ import java.io.Serializable;
 /**
  * This class represents the instruction coverage of source.
  */
-public class JUnit4Coverage extends JUnit4TestListener implements Coverage, Serializable {
+public class JUnit4Coverage extends JUnit4TestResult implements Coverage, Serializable {
 
     private static final long serialVersionUID = 109548359596802378L;
 

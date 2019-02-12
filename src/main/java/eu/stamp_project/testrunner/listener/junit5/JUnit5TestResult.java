@@ -1,6 +1,6 @@
 package eu.stamp_project.testrunner.listener.junit5;
 
-import eu.stamp_project.testrunner.listener.impl.TestListenerImpl;
+import eu.stamp_project.testrunner.listener.impl.TestResultImpl;
 import eu.stamp_project.testrunner.runner.Failure;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.reporting.ReportEntry;
@@ -16,7 +16,7 @@ import java.util.function.Function;
  * benjamin.danglot@inria.fr
  * on 13/11/18
  */
-public class JUnit5TestListener extends TestListenerImpl implements TestExecutionListener {
+public class JUnit5TestResult extends TestResultImpl implements TestExecutionListener {
 
     private static final long serialVersionUID = -7818892670028055637L;
 

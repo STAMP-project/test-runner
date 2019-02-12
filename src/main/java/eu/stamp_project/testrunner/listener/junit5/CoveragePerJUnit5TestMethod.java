@@ -19,7 +19,7 @@ import java.util.Map;
  *
  * This class represents the instruction coverage per test method.
  */
-public class CoveragePerJUnit5TestMethod extends JUnit5TestListener implements CoveragePerTestMethod {
+public class CoveragePerJUnit5TestMethod extends JUnit5TestResult implements CoveragePerTestMethod {
 
     private static final long serialVersionUID = 8360711686354566769L;
 
