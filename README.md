@@ -22,7 +22,7 @@ This project provides a framework to run JUnit tests in a new JVM. It allows to 
 
 ## API
 
-The provided API is `eu.stamp_project.testrunner.EntryPoint`. This class provides several static methods to execute all the test methods of given test classes, specific test methods of a given test class, compute the code coverage with JaCoCo, etc.
+The provided API is [`eu.stamp_project.testrunner.EntryPoint`](https://github.com/STAMP-project/testrunner/blob/master/src/main/java/eu/stamp_project/testrunner/EntryPoint.java#L63). This class provides several static methods to execute all the test methods of given test classes, specific test methods of a given test class, compute the code coverage with JaCoCo, etc.
 
 #### Tests Execution
 
@@ -64,17 +64,17 @@ TestListener result = EntryPoint.runTests(String classpath, String[] fullQualifi
 
 ##### Output
 
-The output of all `runTests()` API is a `eu.stamp_project.testrunner.listener.TestListener`.
+The output of all `runTests()` API is a [`eu.stamp_project.testrunner.listener.TestListener`](https://github.com/STAMP-project/testrunner/blob/master/src/main/java/eu/stamp_project/testrunner/listener/TestListener.java#L14).
 
 This object provides all the information needed about the execution of test methods:
 
-   * `getRunningTests()`: the list of test methods that have been executed.
-   * `getPassingTests()`: the list of test methods that succeed.
-   * `getFailingTests()`: the list of test methods that failed.
-   * `getAssumptionFailingTests()`: the list of test methods that have a failing assumption. For example, in JUnit4 one can make assumptions using `org.junit.Assume` API, _e.g._ `Assume.assumeTrue(myBoolean)`. If the assumption does not hold, it is not necessary because the program is broken but rather than the test is irrelevant in the current state, _e.g._ one can make dedicated test to a platform. 
-   * `getIgnoredTests()`: the list of test methods that are ignored.
+   * `getRunningTests()`: returns the list of test methods that have been executed.
+   * `getPassingTests()`: returns the list of test methods that succeed.
+   * `getFailingTests()`: returns the list of test methods that failed.
+   * `getAssumptionFailingTests()`: returns the list of test methods that have a failing assumption. For example, in JUnit4 one can make assumptions using `org.junit.Assume` API, _e.g._ `Assume.assumeTrue(myBoolean)`. If the assumption does not hold, it is not necessary because the program is broken but rather than the test is irrelevant in the current state, _e.g._ one can make dedicated test to a platform. 
+   * `getIgnoredTests()`: returns the list of test methods that are ignored.
    
-The method `TestListener#aggregate(TestListener that)` allows to aggregate the results it returns a new `TestListener` that contains both test results, _i.e._ test result of the caller and the parameter. Example:
+The method `TestListener#aggregate(TestListener that)` allows to aggregate the results. It returns a new `TestListener` that contains both test results, _i.e._ test result of the caller and the parameter. Example:
 
 ```java
 TestListener result1 = EntryPoint.runTests(classpath, eu.stamp_project.MyFirstTest);
@@ -107,7 +107,7 @@ Coverage coverage = EntryPoint.runCoverage(String classpath, String targetProjec
 
 ##### Output
 
-The output of all `runCoverage()` API is a `eu.stamp_project.testrunner.listener.Coverage`.
+The output of all `runCoverage()` API is a [`eu.stamp_project.testrunner.listener.Coverage`](https://github.com/STAMP-project/testrunner/blob/master/src/main/java/eu/stamp_project/testrunner/listener/Coverage.java#L11).
 
 The object provides the two following method:
 
@@ -120,7 +120,7 @@ In the same way, you can have the coverage per test methods using `runCoveragePe
 
 ##### Output
 
-The output of all `runCoveragePerTestMethods()` API is a `eu.stamp_project.testrunner.listener.Serializable`.
+The output of all `runCoveragePerTestMethods()` API is a [`eu.stamp_project.testrunner.listener.CoveragePerTestMethod`](https://github.com/STAMP-project/testrunner/blob/master/src/main/java/eu/stamp_project/testrunner/listener/CoveragePerTestMethod.java#L13).
 
    * `Map<String, Coverage> getCoverageResultsMap()`: returns a map that associate the simple of a test method to its instruction coverage.
    * `Coverage getCoverageOf(String testMethodName)`: returns the instruction coverage of a test method, specified by its simple name. 
