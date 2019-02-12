@@ -146,7 +146,7 @@ You can add to your `pom.xml`:
 <dependency>
     <groupId>eu.stamp-project</groupId>
     <artifactId>test-runner</artifactId>
-    <version>2.0.4</version>
+    <version>2.0.5</version>
     <classifier>jar-with-dependencies</classifier>
 </dependency>
 ```
