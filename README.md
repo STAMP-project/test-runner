@@ -71,10 +71,16 @@ This object provides all the information needed about the execution of test meth
    * `getRunningTests()`: the list of test methods that have been executed.
    * `getPassingTests()`: the list of test methods that succeed.
    * `getFailingTests()`: the list of test methods that failed.
-   * `getAssumptionFailingTests()`: the list of test methods that have a failing assumption.
+   * `getAssumptionFailingTests()`: the list of test methods that have a failing assumption. For example, in JUnit4 one can make assumptions using `org.junit.Assume` API, _e.g._ `Assume.assumeTrue(myBoolean)`. If the assumption does not hold, it is not necessary because the program is broken but rather than the test is irrelevant in the current state, _e.g._ one can make dedicated test to a platform. 
    * `getIgnoredTests()`: the list of test methods that are ignored.
    
-The method `TestListener#aggregate(TestListener that)` allows to aggregate the results.
+The method `TestListener#aggregate(TestListener that)` allows to aggregate the results it returns a new `TestListener` that contains both test results, _i.e._ test result of the caller and the parameter. Example:
+
+```java
+TestListener result1 = EntryPoint.runTests(classpath, eu.stamp_project.MyFirstTest);
+TestListener result2 = EntryPoint.runTests(classpath, eu.stamp_project.MySecondTest);
+TestListener allResult = result1.aggregate(result2); // contains both result1 and result2
+``` 
 
 #### Global Coverage with JaCoCo. 
 
@@ -176,3 +182,4 @@ further details).
 
 TestRunner is partially funded by research project STAMP (European Commission - H2020)
 ![STAMP - European Commission - H2020](docs/logo_readme_md.png)
+
