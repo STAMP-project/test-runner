@@ -76,26 +76,28 @@ This object provides all the information needed about the execution of test meth
    
 The method `TestListener#aggregate(TestListener that)` allows to aggregate the results.
 
-#### Global Coverage
+#### Global Coverage with JaCoCo. 
 
-The API to compute the instruction coverage is similar than the API to execute the test but required an additional parameter: `String targetProjectClasses`.
-
-This String must contain both relative paths to the binaries of the program and the binaries of the test suite. This is required by JaCoCo. For a typical maven project, this is would be: `target/classes:target/test-classes`. Note that the separator, here `:` is used on Linux. You must use the system separator. 
-
-Following the list of API to compute the coverage:
+API to compute the coverage:
 
 ```java
 // Compute the instruction coverage of all the test methods of a given test class
-EntryPoint.runCoverage(String classpath, String targetProjectClasses, String fullQualifiedNameOfTestClass);
+Coverage coverage = EntryPoint.runCoverage(String classpath, String targetProjectClasses, String fullQualifiedNameOfTestClass);
+
 // Compute the instruction coverage of all the test methods of given test classes
-EntryPoint.runCoverage(String classpath, String targetProjectClasses, String[] fullQualifiedNameOfTestClasses);
+Coverage coverage = EntryPoint.runCoverage(String classpath, String targetProjectClasses, String[] fullQualifiedNameOfTestClasses);
+
 // Compute the instruction coverage of a specific test method of a given test class
-EntryPoint.runCoverage(String classpath, String targetProjectClasses, String fullQualifiedNameOfTestClass, String methodName);
+Coverage coverage = EntryPoint.runCoverage(String classpath, String targetProjectClasses, String fullQualifiedNameOfTestClass, String methodName);
+
 // Compute the instruction coverage of specific test methods of a given test class
-EntryPoint.runCoverage(String classpath, String targetProjectClasses, String fullQualifiedNameOfTestClass, String[] methodNames);
+Coverage coverage = EntryPoint.runCoverage(String classpath, String targetProjectClasses, String fullQualifiedNameOfTestClass, String[] methodNames);
+
 // Compute the instruction coverage of specific test methods of given test classes
-EntryPoint.runCoverage(String classpath, String targetProjectClasses, String[] fullQualifiedNameOfTestClasses, String[] methodNames); 
+Coverage coverage = EntryPoint.runCoverage(String classpath, String targetProjectClasses, String[] fullQualifiedNameOfTestClasses, String[] methodNames); 
 ```
+
+`String targetProjectClasses` must contain both relative paths to the binaries of the program and the binaries of the test suite. For a typical maven project, this is would be: `target/classes:target/test-classes`. Note that the separator, here `:` is used on Linux. You must use the system separator. 
 
 ##### Output
 
