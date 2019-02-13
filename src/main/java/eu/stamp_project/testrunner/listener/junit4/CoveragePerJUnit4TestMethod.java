@@ -12,7 +12,6 @@ import org.junit.runner.Description;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -27,7 +26,7 @@ import java.util.stream.IntStream;
  * <p>
  * This class represents the instruction coverage per test method.
  */
-public class CoveragePerJUnit4TestMethod extends JUnit4TestListener implements CoveragePerTestMethod {
+public class CoveragePerJUnit4TestMethod extends JUnit4TestResult implements CoveragePerTestMethod {
 
     private static final long serialVersionUID = 8360711686354566769L;
 

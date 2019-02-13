@@ -1,7 +1,7 @@
 package eu.stamp_project.testrunner.listener.junit4;
 
-import eu.stamp_project.testrunner.listener.TestListener;
-import eu.stamp_project.testrunner.listener.impl.TestListenerImpl;
+import eu.stamp_project.testrunner.listener.TestResult;
+import eu.stamp_project.testrunner.listener.impl.TestResultImpl;
 import eu.stamp_project.testrunner.runner.Failure;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunListener;
@@ -16,24 +16,24 @@ import java.util.List;
  * <p>
  * This object is the output of the execution of the tests.
  */
-public class JUnit4TestListener extends RunListener implements TestListener, Serializable {
+public class JUnit4TestResult extends RunListener implements TestResult, Serializable {
 
     private final static long serialVersionUID = 2295395800748319976L;
 
-    private TestListenerImpl internalTestListener;
+    private TestResultImpl internalTestResult;
 
-    public JUnit4TestListener() {
-        this.internalTestListener = new TestListenerImpl();
+    public JUnit4TestResult() {
+        this.internalTestResult = new TestResultImpl();
     }
 
     @Override
     public void testFinished(Description description) throws Exception {
-        this.internalTestListener.getRunningTests().add(description.getMethodName());
+        this.internalTestResult.getRunningTests().add(description.getMethodName());
     }
 
     @Override
     public void testFailure(org.junit.runner.notification.Failure failure) throws Exception {
-        this.internalTestListener.getFailingTests().add(
+        this.internalTestResult.getFailingTests().add(
                 new Failure(
                         failure.getDescription().getMethodName(),
                         failure.getDescription().getClassName(),
@@ -44,7 +44,7 @@ public class JUnit4TestListener extends RunListener implements TestListener, Ser
 
     @Override
     public void testAssumptionFailure(org.junit.runner.notification.Failure failure) {
-        this.internalTestListener.getAssumptionFailingTests().add(
+        this.internalTestResult.getAssumptionFailingTests().add(
                 new Failure(
                         failure.getDescription().getMethodName(),
                         failure.getDescription().getClassName(),
@@ -55,23 +55,23 @@ public class JUnit4TestListener extends RunListener implements TestListener, Ser
 
     @Override
     public void testIgnored(Description description) throws Exception {
-        this.internalTestListener.getIgnoredTests().add(description.getMethodName());
+        this.internalTestResult.getIgnoredTests().add(description.getMethodName());
     }
 
     @Override
     public List<String> getRunningTests() {
-        return this.internalTestListener.getRunningTests();
+        return this.internalTestResult.getRunningTests();
     }
 
     @Override
     public List<String> getPassingTests() {
-        return this.internalTestListener.getPassingTests();
+        return this.internalTestResult.getPassingTests();
     }
 
     @Override
-    public TestListener aggregate(TestListener that) {
-        if (that instanceof JUnit4TestListener) {
-            return this.internalTestListener.aggregate(((JUnit4TestListener) that).internalTestListener);
+    public TestResult aggregate(TestResult that) {
+        if (that instanceof JUnit4TestResult) {
+            return this.internalTestResult.aggregate(((JUnit4TestResult) that).internalTestResult);
         } else {
             return this;
         }
@@ -79,17 +79,17 @@ public class JUnit4TestListener extends RunListener implements TestListener, Ser
 
     @Override
     public List<Failure> getFailingTests() {
-        return this.internalTestListener.getFailingTests();
+        return this.internalTestResult.getFailingTests();
     }
 
     @Override
     public List<Failure> getAssumptionFailingTests() {
-        return this.internalTestListener.getAssumptionFailingTests();
+        return this.internalTestResult.getAssumptionFailingTests();
     }
 
     @Override
     public List<String> getIgnoredTests() {
-        return this.internalTestListener.getIgnoredTests();
+        return this.internalTestResult.getIgnoredTests();
     }
 
     @Override
@@ -102,15 +102,15 @@ public class JUnit4TestListener extends RunListener implements TestListener, Ser
 
     @Override
     public void save() {
-        this.internalTestListener.save();
+        this.internalTestResult.save();
     }
 
     public String toString() {
-        return "JUnit4TestListener{" +
-                "runningTests=" + this.internalTestListener.getRunningTests() +
-                ", failingTests=" + this.internalTestListener.getFailingTests() +
-                ", assumptionFailingTests=" + this.internalTestListener.getAssumptionFailingTests() +
-                ", ignoredTests=" + this.internalTestListener.getIgnoredTests() +
+        return "JUnit4TestResult{" +
+                "runningTests=" + this.internalTestResult.getRunningTests() +
+                ", failingTests=" + this.internalTestResult.getFailingTests() +
+                ", assumptionFailingTests=" + this.internalTestResult.getAssumptionFailingTests() +
+                ", ignoredTests=" + this.internalTestResult.getIgnoredTests() +
                 '}';
     }
 }

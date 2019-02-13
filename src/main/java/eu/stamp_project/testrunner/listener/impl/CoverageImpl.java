@@ -1,9 +1,8 @@
 package eu.stamp_project.testrunner.listener.impl;
 
 import eu.stamp_project.testrunner.listener.Coverage;
-import eu.stamp_project.testrunner.listener.TestListener;
+import eu.stamp_project.testrunner.listener.TestResult;
 import eu.stamp_project.testrunner.runner.Loader;
-import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.jacoco.core.analysis.*;
 import org.jacoco.core.data.ExecutionDataStore;
 
@@ -123,7 +122,7 @@ public class CoverageImpl implements Coverage, Serializable {
 
     @Override
     public void save() {
-        File outputDir = new File(TestListener.OUTPUT_DIR);
+        File outputDir = new File(TestResult.OUTPUT_DIR);
         if (!outputDir.exists()) {
             if (!outputDir.mkdirs()) {
                 System.err.println("Error while creating output dir");

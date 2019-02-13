@@ -1,8 +1,8 @@
 package eu.stamp_project.testrunner.maven;
 
-import eu.stamp_project.testrunner.listener.TestListener;
+import eu.stamp_project.testrunner.listener.TestResult;
+import eu.stamp_project.testrunner.listener.junit4.JUnit4TestResult;
 import eu.stamp_project.testrunner.runner.Failure;
-import eu.stamp_project.testrunner.listener.junit4.JUnit4TestListener;
 import org.junit.runner.Description;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public class SurefireReportsReader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SurefireReportsReader.class);
 
-    public TestListener readAll(String pathToRootContainingReports) {
+    public TestResult readAll(String pathToRootContainingReports) {
         final File rootDirectory = new File(pathToRootContainingReports);
         if (!rootDirectory.exists()) {
             LOGGER.error("{} does not exists! Could not read the surefire reports.", pathToRootContainingReports);
@@ -35,13 +35,13 @@ public class SurefireReportsReader {
                 .filter(file -> file.getName().startsWith("TEST-"))
                 .map(File::getAbsolutePath)
                 .map(this::read)
-                .reduce(TestListener::aggregate)
+                .reduce(TestResult::aggregate)
                 .get();
     }
 
-    public TestListener read(String pathToSurefireReports) {
+    public TestResult read(String pathToSurefireReports) {
         try {
-            final JUnit4TestListener listener = new JUnit4TestListener();
+            final JUnit4TestResult listener = new JUnit4TestResult();
             File fXmlFile = new File(pathToSurefireReports);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -61,8 +61,8 @@ public class SurefireReportsReader {
         }
     }
 
-    private JUnit4TestListener readTestCase(Node testCase) {
-        final JUnit4TestListener listener = new JUnit4TestListener();
+    private JUnit4TestResult readTestCase(Node testCase) {
+        final JUnit4TestResult listener = new JUnit4TestResult();
         final String testClassName = testCase.getAttributes().getNamedItem("classname").getNodeValue();
         final String testName = testCase.getAttributes().getNamedItem("name").getNodeValue();
         final Description testDescription = Description.createTestDescription(testClassName, testName, testClassName + "#" + testName);

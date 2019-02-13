@@ -11,7 +11,7 @@ import java.io.Serializable;
  * benjamin.danglot@inria.fr
  * on 14/11/18
  */
-public class JUnit5Coverage extends JUnit5TestListener implements Coverage, Serializable {
+public class JUnit5Coverage extends JUnit5TestResult implements Coverage, Serializable {
 
     private static final long serialVersionUID = -2873920196510405923L;
 

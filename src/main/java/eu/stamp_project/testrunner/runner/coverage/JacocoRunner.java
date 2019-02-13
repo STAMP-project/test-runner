@@ -2,7 +2,7 @@ package eu.stamp_project.testrunner.runner.coverage;
 
 import eu.stamp_project.testrunner.EntryPoint;
 import eu.stamp_project.testrunner.listener.Coverage;
-import eu.stamp_project.testrunner.listener.TestListener;
+import eu.stamp_project.testrunner.listener.TestResult;
 import eu.stamp_project.testrunner.listener.junit4.JUnit4Coverage;
 import eu.stamp_project.testrunner.listener.junit5.JUnit5Coverage;
 import eu.stamp_project.testrunner.runner.JUnit4Runner;
@@ -161,9 +161,9 @@ public class JacocoRunner {
                 listener = new JUnit4Coverage();
                 JUnit4Runner.run(new String[]{fullQualifiedNameOfTestClass}, testMethodNames, Collections.emptyList(), (JUnit4Coverage) listener, this.instrumentedClassLoader);
             }
-            if (!((TestListener) listener).getFailingTests().isEmpty()) {
+            if (!((TestResult) listener).getFailingTests().isEmpty()) {
                 System.err.println("Some test(s) failed during computation of coverage:\n" +
-                        ((TestListener) listener).getFailingTests()
+                        ((TestResult) listener).getFailingTests()
                                 .stream()
                                 .map(Failure::toString)
                                 .collect(Collectors.joining("\n"))
@@ -221,9 +221,9 @@ public class JacocoRunner {
                 listener = new JUnit4Coverage();
                 JUnit4Runner.run(fullQualifiedNameOfTestClasses, new String[0], this.blackList, (JUnit4Coverage) listener, this.instrumentedClassLoader);
             }
-            if (!((TestListener) listener).getFailingTests().isEmpty()) {
+            if (!((TestResult) listener).getFailingTests().isEmpty()) {
                 System.err.println("Some test(s) failed during computation of coverage:\n" +
-                        ((TestListener) listener).getFailingTests()
+                        ((TestResult) listener).getFailingTests()
                                 .stream()
                                 .map(Failure::toString)
                                 .collect(Collectors.joining("\n"))

@@ -1,6 +1,6 @@
 package eu.stamp_project.testrunner.listener.impl;
 
-import eu.stamp_project.testrunner.listener.TestListener;
+import eu.stamp_project.testrunner.listener.TestResult;
 import eu.stamp_project.testrunner.runner.Failure;
 import eu.stamp_project.testrunner.runner.Loader;
 
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * benjamin.danglot@inria.fr
  * on 13/11/18
  */
-public class TestListenerImpl implements TestListener, Serializable {
+public class TestResultImpl implements TestResult, Serializable {
 
     private static final long serialVersionUID = 6898135595908384570L;
 
@@ -26,7 +26,7 @@ public class TestListenerImpl implements TestListener, Serializable {
     private List<Failure> assumptionFailingTests;
     private List<String> ignoredTests;
 
-    public TestListenerImpl() {
+    public TestResultImpl() {
         this.runningTests = new ArrayList<>();
         this.failingTests = new ArrayList<>();
         this.assumptionFailingTests = new ArrayList<>();
@@ -53,9 +53,9 @@ public class TestListenerImpl implements TestListener, Serializable {
     }
 
     @Override
-    public TestListener aggregate(TestListener that) {
-        if (that instanceof TestListenerImpl) {
-            final TestListenerImpl thatListener = (TestListenerImpl) that;
+    public TestResult aggregate(TestResult that) {
+        if (that instanceof TestResultImpl) {
+            final TestResultImpl thatListener = (TestResultImpl) that;
             this.runningTests.addAll(thatListener.runningTests);
             this.failingTests.addAll(thatListener.failingTests);
             this.assumptionFailingTests.addAll(thatListener.assumptionFailingTests);
@@ -109,12 +109,12 @@ public class TestListenerImpl implements TestListener, Serializable {
         System.out.println("File saved to the following path: " + f.getAbsolutePath());
     }
 
-    public static TestListener load() {
-        return new Loader<TestListener>().load(SERIALIZE_NAME);
+    public static TestResult load() {
+        return new Loader<TestResult>().load(SERIALIZE_NAME);
     }
 
     public String toString() {
-        return "TestListenerImpl{" +
+        return "TestResultImpl{" +
                 "runningTests=" + this.getRunningTests() +
                 ", failingTests=" + this.getFailingTests() +
                 ", assumptionFailingTests=" + this.getAssumptionFailingTests() +

@@ -2,7 +2,7 @@ package eu.stamp_project.testrunner.runner.coverage;
 
 import eu.stamp_project.testrunner.EntryPoint;
 import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
-import eu.stamp_project.testrunner.listener.TestListener;
+import eu.stamp_project.testrunner.listener.TestResult;
 import eu.stamp_project.testrunner.listener.junit4.CoveragePerJUnit4TestMethod;
 import eu.stamp_project.testrunner.listener.junit5.CoveragePerJUnit5TestMethod;
 import eu.stamp_project.testrunner.runner.Failure;
@@ -90,9 +90,9 @@ public class JacocoRunnerPerTestMethod extends JacocoRunner {
                 listener = new CoveragePerJUnit4TestMethod(data, classesDirectory);
                 JUnit4Runner.run(new String[]{fullQualifiedNameOfTestClass}, testMethodNames, Collections.emptyList(), (CoveragePerJUnit4TestMethod) listener, this.instrumentedClassLoader);
             }
-            if (!((TestListener) listener).getFailingTests().isEmpty()) {
+            if (!((TestResult) listener).getFailingTests().isEmpty()) {
                 System.err.println("Some test(s) failed during computation of coverage:\n" +
-                        ((TestListener) listener).getFailingTests()
+                        ((TestResult) listener).getFailingTests()
                                 .stream()
                                 .map(Failure::toString)
                                 .collect(Collectors.joining("\n"))

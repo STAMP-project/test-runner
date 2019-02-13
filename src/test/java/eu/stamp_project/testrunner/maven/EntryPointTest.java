@@ -1,6 +1,6 @@
 package eu.stamp_project.testrunner.maven;
 
-import eu.stamp_project.testrunner.listener.TestListener;
+import eu.stamp_project.testrunner.listener.TestResult;
 import eu.stamp_project.testrunner.runner.Failure;
 import org.junit.After;
 import org.junit.Before;
@@ -36,18 +36,18 @@ public class EntryPointTest {
                 When running with maven, assumption failure are consider as ignored.
          */
 
-        final TestListener testListener =  EntryPoint.runTestClasses("src/test/resources/test-projects", "failing.FailingTestClass");
-        assertEquals(2, testListener.getRunningTests().size());
-        assertEquals(1, testListener.getPassingTests().size());
-        assertEquals(1, testListener.getFailingTests().size());
-        assertEquals(0, testListener.getAssumptionFailingTests().size());
-        assertEquals(2, testListener.getIgnoredTests().size());
+        final TestResult testResult =  EntryPoint.runTestClasses("src/test/resources/test-projects", "failing.FailingTestClass");
+        assertEquals(2, testResult.getRunningTests().size());
+        assertEquals(1, testResult.getPassingTests().size());
+        assertEquals(1, testResult.getFailingTests().size());
+        assertEquals(0, testResult.getAssumptionFailingTests().size());
+        assertEquals(2, testResult.getIgnoredTests().size());
 
-        final Failure testFailing = testListener.getFailureOf("testFailing");
+        final Failure testFailing = testResult.getFailureOf("testFailing");
         assertEquals("testFailing", testFailing.testCaseName);
 
         try {
-            testListener.getFailureOf("testPassing");
+            testResult.getFailureOf("testPassing");
             fail("Should have throw IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             assertTrue(true); // expected
@@ -63,13 +63,13 @@ public class EntryPointTest {
                 When running with maven, assumption failure are consider as ignored.
          */
 
-        final TestListener testListener =  EntryPoint.runTests("src/test/resources/test-projects",
+        final TestResult testResult =  EntryPoint.runTests("src/test/resources/test-projects",
                 "example.TestSuiteExample", "test2");
-        assertEquals(1, testListener.getRunningTests().size());
-        assertEquals(1, testListener.getPassingTests().size());
-        assertEquals(0, testListener.getFailingTests().size());
-        assertEquals(0, testListener.getAssumptionFailingTests().size());
-        assertEquals(0, testListener.getIgnoredTests().size());
+        assertEquals(1, testResult.getRunningTests().size());
+        assertEquals(1, testResult.getPassingTests().size());
+        assertEquals(0, testResult.getFailingTests().size());
+        assertEquals(0, testResult.getAssumptionFailingTests().size());
+        assertEquals(0, testResult.getIgnoredTests().size());
     }
 
 }

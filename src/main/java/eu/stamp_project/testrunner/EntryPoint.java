@@ -3,7 +3,7 @@ package eu.stamp_project.testrunner;
 import eu.stamp_project.testrunner.listener.*;
 import eu.stamp_project.testrunner.listener.impl.CoverageImpl;
 import eu.stamp_project.testrunner.listener.impl.CoveragePerTestMethodImpl;
-import eu.stamp_project.testrunner.listener.impl.TestListenerImpl;
+import eu.stamp_project.testrunner.listener.impl.TestResultImpl;
 import eu.stamp_project.testrunner.listener.junit4.JUnit4Coverage;
 import eu.stamp_project.testrunner.runner.JUnit4Runner;
 import eu.stamp_project.testrunner.runner.ParserOptions;
@@ -79,16 +79,15 @@ public class EntryPoint {
 
     /**
      * working directory of the java sub-process.
-     * By Default, it is set to null to inherit from this java process.
+     * By default, it is set to null to inherit from this java process.
      */
     public static File workingDirectory = null;
 
     /**
-     * {@link EntryPoint} use the command "java". This field allows users to specify Java Virtual Machine(JVM) arguments, <i>e.g.</i> -Xms4G.
+     * {@link EntryPoint} uses the command "java". This field allows users to specify Java Virtual Machine(JVM) arguments, <i>e.g.</i> -Xms4G.
      * If this value is <code>null</code>, {@link EntryPoint} won't pass any JVMArgs.
      * The value of this field should be properly formatted for command line usage, <i>e.g.</i> -Xms4G -Xmx8G -XX:-UseGCOverheadLimit.
      * The args should be separated with white spaces.
-     * The JVMArgs are reset after a run, in order to clean the state.
      */
     public static String JVMArgs = null;
 
@@ -126,25 +125,25 @@ public class EntryPoint {
     /* EXECUTION OF TEST API */
 
 
-    public static TestListener runTests(String classpath,
-                                        String fullQualifiedNameOfTestClass) throws TimeoutException {
+    public static TestResult runTests(String classpath,
+                                      String fullQualifiedNameOfTestClass) throws TimeoutException {
         return EntryPoint.runTests(classpath, new String[]{fullQualifiedNameOfTestClass}, new String[0]);
     }
 
-    public static TestListener runTests(String classpath,
-                                        String[] fullQualifiedNameOfTestClasses) throws TimeoutException {
+    public static TestResult runTests(String classpath,
+                                      String[] fullQualifiedNameOfTestClasses) throws TimeoutException {
         return EntryPoint.runTests(classpath, fullQualifiedNameOfTestClasses, new String[0]);
     }
 
-    public static TestListener runTests(String classpath,
-                                        String fullQualifiedNameOfTestClass,
-                                        String methodName) throws TimeoutException {
+    public static TestResult runTests(String classpath,
+                                      String fullQualifiedNameOfTestClass,
+                                      String methodName) throws TimeoutException {
         return EntryPoint.runTests(classpath, new String[]{fullQualifiedNameOfTestClass}, new String[]{methodName});
     }
 
-    public static TestListener runTests(String classpath,
-                                        String fullQualifiedNameOfTestClass,
-                                        String[] methodNames) throws TimeoutException {
+    public static TestResult runTests(String classpath,
+                                      String fullQualifiedNameOfTestClass,
+                                      String[] methodNames) throws TimeoutException {
         return EntryPoint.runTests(classpath, new String[]{fullQualifiedNameOfTestClass}, methodNames);
     }
 
@@ -159,12 +158,12 @@ public class EntryPoint {
      * @param classpath                      the classpath required to run the given test.
      * @param fullQualifiedNameOfTestClasses test class to be run.
      * @param methodNames                    test methods to be run.
-     * @return an instance of TestListener {@link TestListener} containing result of the execution of test methods.
+     * @return an instance of TestResult {@link TestResult} containing result of the execution of test methods.
      * @throws TimeoutException when the execution takes longer than timeoutInMs
      */
-    public static TestListener runTests(String classpath,
-                                        String[] fullQualifiedNameOfTestClasses,
-                                        String[] methodNames) throws TimeoutException {
+    public static TestResult runTests(String classpath,
+                                      String[] fullQualifiedNameOfTestClasses,
+                                      String[] methodNames) throws TimeoutException {
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE, new String[]{
                         getJavaCommand(),
                         classpath +
@@ -180,14 +179,14 @@ public class EntryPoint {
         return EntryPoint.runTests(javaCommand);
     }
 
-    private static TestListener runTests(String commandLine) throws TimeoutException {
+    private static TestResult runTests(String commandLine) throws TimeoutException {
         try {
             runGivenCommandLine(commandLine);
         } catch (TimeoutException e) {
             LOGGER.warn("Timeout when running {}", commandLine);
             throw e;
         }
-        final TestListener load = TestListenerImpl.load();
+        final TestResult load = TestResultImpl.load();
         if (EntryPoint.verbose) {
             LOGGER.info("Test has been run: {}",
                     Stream.concat(load.getPassingTests().stream().map(Object::toString),
