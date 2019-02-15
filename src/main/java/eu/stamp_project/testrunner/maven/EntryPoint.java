@@ -37,15 +37,34 @@ public class EntryPoint {
      */
     public static TestResult runTestClasses(String absolutePathToRootProject,
                                             String... fullQualifiedNameOfTestClasses) {
+        return runTestClasses(absolutePathToRootProject, POM_FILE, fullQualifiedNameOfTestClasses);
+    }
+
+    /**
+     * Execution of various test classes.
+     * <p>
+     * Run all the test classes given as a full qualified name. For instance, my.package.MyClassTest.
+     * This methods will run all the test methods within the given test classes.
+     * </p>
+     *
+     * @param absolutePathToRootProject      path to the root of the targeted project
+     * @param fullQualifiedNameOfTestClasses test classes to be run.
+     * @param pomFileName                    the filename of the pom to be used
+     * @return an instance of TestResult {@link TestResult} containing result of the exeuction of test methods.
+     */
+    public static TestResult runTestClasses(String absolutePathToRootProject,
+                                            String pomFileName,
+                                            String... fullQualifiedNameOfTestClasses) {
         if (fullQualifiedNameOfTestClasses.length > 0) {
             EntryPoint.runMavenGoal(absolutePathToRootProject, GOAL_TEST, GOAL_SPECIFY +
                     String.join(TEST_CLASS_SEPARATOR, fullQualifiedNameOfTestClasses)
             );
         } else {
-            EntryPoint.runMavenGoal(absolutePathToRootProject, GOAL_TEST);
+            EntryPoint.runMavenGoal(absolutePathToRootProject, pomFileName, GOAL_TEST);
         }
         return new SurefireReportsReader().readAll(absolutePathToRootProject + "/" + PATH_TO_SUREFIRE);
     }
+
 
     /**
      * Execution of various test methods inside a given test class.
@@ -63,22 +82,44 @@ public class EntryPoint {
     public static TestResult runTests(String absolutePathToRootProject,
                                       String fullQualifiedNameOfTestClass,
                                       String... testMethods) {
+        return runTests(absolutePathToRootProject, fullQualifiedNameOfTestClass, POM_FILE, testMethods);
+    }
+
+    /**
+     * Execution of various test methods inside a given test class.
+     * <p>
+     * Run all the test methods given inside the given test class. The test class must be given as a full qualified name.
+     * For instance, my.package.MyClassTest.
+     * This methods will run all the test methods given.
+     * </p>
+     *
+     * @param absolutePathToRootProject    path to the root of the targeted project
+     * @param fullQualifiedNameOfTestClass test class to be run.
+     * @param pomFileName                  the filename of the pom to be used
+     * @param testMethods                  test methods to be run.
+     * @return an instance of TestResult {@link TestResult} containing result of the execution of test methods.
+     */
+    public static TestResult runTests(String absolutePathToRootProject,
+                                      String fullQualifiedNameOfTestClass,
+                                      String pomFileName,
+                                      String... testMethods) {
         if (testMethods.length > 0) {
             EntryPoint.runMavenGoal(absolutePathToRootProject, GOAL_TEST, GOAL_SPECIFY +
                     fullQualifiedNameOfTestClass + TEST_CLASS_METHOD_SEPARATOR +
                     String.join(TEST_METHOD_SEPARATOR, testMethods)
             );
         } else {
-            EntryPoint.runMavenGoal(absolutePathToRootProject, GOAL_TEST);
+            EntryPoint.runMavenGoal(absolutePathToRootProject, pomFileName, GOAL_TEST);
         }
         return new SurefireReportsReader().readAll(absolutePathToRootProject + "/" + PATH_TO_SUREFIRE);
     }
 
-    static int runMavenGoal(String absolutePathToPomFile, String... goals) {
+
+    static int runMavenGoal(String absolutePathToPomFile, String pomFileName, String... goals) {
         LOGGER.info("run mvn {}", String.join(ConstantsHelper.WHITE_SPACE, goals));
         InvocationRequest request = new DefaultInvocationRequest();
         request.setGoals(Arrays.asList(goals));
-        request.setPomFile(new File(absolutePathToPomFile + "/" + POM_FILE));
+        request.setPomFile(new File(absolutePathToPomFile + "/" + pomFileName));
         request.setJavaHome(new File(System.getProperty("java.home")));
         request.setProperties(properties);
         Invoker invoker = new DefaultInvoker();
