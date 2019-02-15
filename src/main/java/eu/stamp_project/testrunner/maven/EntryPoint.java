@@ -37,7 +37,7 @@ public class EntryPoint {
      */
     public static TestResult runTestClasses(String absolutePathToRootProject,
                                             String... fullQualifiedNameOfTestClasses) {
-        return runTestClasses(absolutePathToRootProject, POM_FILE, fullQualifiedNameOfTestClasses);
+        return runTestClassesSpecificPom(absolutePathToRootProject, POM_FILE, fullQualifiedNameOfTestClasses);
     }
 
     /**
@@ -52,7 +52,7 @@ public class EntryPoint {
      * @param pomFileName                    the filename of the pom to be used
      * @return an instance of TestResult {@link TestResult} containing result of the exeuction of test methods.
      */
-    public static TestResult runTestClasses(String absolutePathToRootProject,
+    public static TestResult runTestClassesSpecificPom(String absolutePathToRootProject,
                                             String pomFileName,
                                             String... fullQualifiedNameOfTestClasses) {
         if (fullQualifiedNameOfTestClasses.length > 0) {
@@ -82,7 +82,7 @@ public class EntryPoint {
     public static TestResult runTests(String absolutePathToRootProject,
                                       String fullQualifiedNameOfTestClass,
                                       String... testMethods) {
-        return runTests(absolutePathToRootProject, fullQualifiedNameOfTestClass, POM_FILE, testMethods);
+        return runTestsSpecificPom(absolutePathToRootProject, fullQualifiedNameOfTestClass, POM_FILE, testMethods);
     }
 
     /**
@@ -99,7 +99,7 @@ public class EntryPoint {
      * @param testMethods                  test methods to be run.
      * @return an instance of TestResult {@link TestResult} containing result of the execution of test methods.
      */
-    public static TestResult runTests(String absolutePathToRootProject,
+    public static TestResult runTestsSpecificPom(String absolutePathToRootProject,
                                       String fullQualifiedNameOfTestClass,
                                       String pomFileName,
                                       String... testMethods) {
