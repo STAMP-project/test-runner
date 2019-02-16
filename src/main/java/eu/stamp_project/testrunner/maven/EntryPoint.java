@@ -104,22 +104,22 @@ public class EntryPoint {
                                       String pomFileName,
                                       String... testMethods) {
         if (testMethods.length > 0) {
-            EntryPoint.runMavenGoal(absolutePathToRootProject, GOAL_TEST, GOAL_SPECIFY +
+            EntryPoint.runMavenGoal(absolutePathToRootProject + "/" + pomFileName, GOAL_TEST, GOAL_SPECIFY +
                     fullQualifiedNameOfTestClass + TEST_CLASS_METHOD_SEPARATOR +
                     String.join(TEST_METHOD_SEPARATOR, testMethods)
             );
         } else {
-            EntryPoint.runMavenGoal(absolutePathToRootProject, pomFileName, GOAL_TEST);
+            EntryPoint.runMavenGoal(absolutePathToRootProject + "/" + pomFileName, GOAL_TEST);
         }
         return new SurefireReportsReader().readAll(absolutePathToRootProject + "/" + PATH_TO_SUREFIRE);
     }
 
 
-    static int runMavenGoal(String absolutePathToPomFile, String pomFileName, String... goals) {
+    static int runMavenGoal(String absolutePathToPomFile, String... goals) {
         LOGGER.info("run mvn {}", String.join(ConstantsHelper.WHITE_SPACE, goals));
         InvocationRequest request = new DefaultInvocationRequest();
         request.setGoals(Arrays.asList(goals));
-        request.setPomFile(new File(absolutePathToPomFile + "/" + pomFileName));
+        request.setPomFile(new File(absolutePathToPomFile));
         request.setJavaHome(new File(System.getProperty("java.home")));
         request.setProperties(properties);
         Invoker invoker = new DefaultInvoker();
