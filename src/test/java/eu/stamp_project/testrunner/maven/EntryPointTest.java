@@ -63,8 +63,13 @@ public class EntryPointTest {
                 When running with maven, assumption failure are consider as ignored.
          */
 
-        final TestResult testResult =  EntryPoint.runTests("src/test/resources/test-projects",
-                "example.TestSuiteExample", "test2");
+        EntryPoint.preGoals = "--quiet,-Dverbose";
+
+        final TestResult testResult =  EntryPoint.runTests(
+                "src/test/resources/test-projects",
+                "example.TestSuiteExample",
+                "test2"
+        );
         assertEquals(1, testResult.getRunningTests().size());
         assertEquals(1, testResult.getPassingTests().size());
         assertEquals(0, testResult.getFailingTests().size());
