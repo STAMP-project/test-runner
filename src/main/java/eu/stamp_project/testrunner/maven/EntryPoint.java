@@ -24,6 +24,8 @@ public class EntryPoint {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EntryPoint.class);
 
+    public static String preGoals = "";
+
     /**
      * Execution of various test classes.
      * <p>
@@ -53,8 +55,8 @@ public class EntryPoint {
      * @return an instance of TestResult {@link TestResult} containing result of the exeuction of test methods.
      */
     public static TestResult runTestClassesSpecificPom(String absolutePathToRootProject,
-                                            String pomFileName,
-                                            String... fullQualifiedNameOfTestClasses) {
+                                                       String pomFileName,
+                                                       String... fullQualifiedNameOfTestClasses) {
         if (fullQualifiedNameOfTestClasses.length > 0) {
             EntryPoint.runMavenGoal(absolutePathToRootProject, GOAL_TEST, GOAL_SPECIFY +
                     String.join(TEST_CLASS_SEPARATOR, fullQualifiedNameOfTestClasses)
@@ -100,9 +102,9 @@ public class EntryPoint {
      * @return an instance of TestResult {@link TestResult} containing result of the execution of test methods.
      */
     public static TestResult runTestsSpecificPom(String absolutePathToRootProject,
-                                      String fullQualifiedNameOfTestClass,
-                                      String pomFileName,
-                                      String... testMethods) {
+                                                 String fullQualifiedNameOfTestClass,
+                                                 String pomFileName,
+                                                 String... testMethods) {
         if (testMethods.length > 0) {
             EntryPoint.runMavenGoal(absolutePathToRootProject + "/" + pomFileName, GOAL_TEST, GOAL_SPECIFY +
                     fullQualifiedNameOfTestClass + TEST_CLASS_METHOD_SEPARATOR +
@@ -116,7 +118,14 @@ public class EntryPoint {
 
 
     static int runMavenGoal(String absolutePathToPomFile, String... goals) {
-        LOGGER.info("run mvn {}", String.join(ConstantsHelper.WHITE_SPACE, goals));
+        final String[] splittedPreGoals = preGoals.isEmpty() ? new String[0] : preGoals.split(",");
+        if (!eu.stamp_project.testrunner.EntryPoint.persistence) {
+            preGoals = "";
+        }
+        final String[] finalGoals = new String[splittedPreGoals.length + goals.length];
+        System.arraycopy(splittedPreGoals, 0, finalGoals, 0, splittedPreGoals.length);
+        System.arraycopy(goals, 0, finalGoals, splittedPreGoals.length, goals.length);
+        LOGGER.info("run mvn {}", String.join(ConstantsHelper.WHITE_SPACE, finalGoals));
         InvocationRequest request = new DefaultInvocationRequest();
         request.setGoals(Arrays.asList(goals));
         request.setPomFile(new File(absolutePathToPomFile));
