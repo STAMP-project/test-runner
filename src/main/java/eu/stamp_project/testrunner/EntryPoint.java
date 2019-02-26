@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -345,47 +344,11 @@ public class EntryPoint {
         return load;
     }
 
-    /*
-
-        INTERNAL CLASS AND METHOD
-
-     */
-    private static class RunnableProcess implements Runnable {
-
-        private Process process;
-
-        private String commandLine;
-
-        public RunnableProcess(Process process, String commandLine) {
-            this.process = process;
-            this.commandLine = commandLine;
-        }
-
-        @Override
-        public void run() {
-            try {
-
-                if (EntryPoint.verbose) {
-                    new ThreadToReadInputStream(
-                            EntryPoint.outPrintStream != null ? EntryPoint.outPrintStream : System.out,
-                            process.getInputStream()
-                    ).start();
-                    new ThreadToReadInputStream(EntryPoint.errPrintStream != null ? EntryPoint.errPrintStream : System.err
-                            , process.getErrorStream()
-                    ).start();
-                }
-                process.waitFor();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
     private static void runGivenCommandLine(String commandLine) throws TimeoutException {
-        if (EntryPoint.verbose) {
+    	if (EntryPoint.verbose) {
             LOGGER.info("Run: {}", commandLine);
         }
-        if (workingDirectory != null && !workingDirectory.exists()) {
+    	if (workingDirectory != null && !workingDirectory.exists()) {
             LOGGER.warn("The specified working directory does not exist: {}." +
                             "{} Inherit from this process: {}." +
                             " Reset workingDirectory variable.",
@@ -394,26 +357,30 @@ public class EntryPoint {
             );
             workingDirectory = null;
         }
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Process process = null;
-        try {
-            process = Runtime.getRuntime().exec(commandLine, null, workingDirectory);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        final Future<?> submit = executor.submit(new RunnableProcess(process, commandLine));
-        try {
-            submit.get(timeoutInMs, TimeUnit.MILLISECONDS);
-        } catch (TimeoutException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
+    	Process process = null;
+		try {
+			ProcessBuilder pb = new ProcessBuilder().command(Arrays.asList(commandLine.split(" ")));
+			if (workingDirectory!=null) {
+				pb.directory(workingDirectory);
+			}
+
+			if (EntryPoint.verbose) {
+				process = pb.inheritIO().start();
+			}else {
+				process = pb.start();
+			}
+			boolean finished = process.waitFor(timeoutInMs, TimeUnit.MILLISECONDS);
+			if (!finished) {
+				throw new RuntimeException("Forked process did not finished correctly");
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		} finally {
             if (process != null) {
                 process.destroyForcibly();
             }
-            submit.cancel(true);
-            executor.shutdownNow();
             if (!persistence) {
                 reset();
             }
@@ -427,31 +394,6 @@ public class EntryPoint {
         EntryPoint.outPrintStream = null;
         EntryPoint.errPrintStream = null;
         EntryPoint.blackList.clear();
-    }
-
-    private static class ThreadToReadInputStream extends Thread {
-
-        private final PrintStream output;
-        private final InputStream input;
-
-        ThreadToReadInputStream(PrintStream output, InputStream input) {
-            this.output = output;
-            this.input = input;
-        }
-
-        @Override
-        public synchronized void start() {
-            int read;
-            try {
-                while ((read = this.input.read()) != -1) {
-                    this.output.print((char) read);
-                }
-            } catch (Exception ignored) {
-                //ignored
-            } finally {
-                this.interrupt();
-            }
-        }
     }
 
     /*
@@ -477,7 +419,7 @@ public class EntryPoint {
     private static final int DEFAULT_TIMEOUT = 10000;
 
     static String getJavaCommand() {
-        if (EntryPoint.JVMArgs != null) {
+        if (EntryPoint.JVMArgs != null && !EntryPoint.JVMArgs.isEmpty()) {
             return JAVA_COMMAND + ConstantsHelper.WHITE_SPACE + EntryPoint.JVMArgs + ConstantsHelper.WHITE_SPACE + CLASSPATH_OPT;
         } else {
             return JAVA_COMMAND + ConstantsHelper.WHITE_SPACE + CLASSPATH_OPT;
