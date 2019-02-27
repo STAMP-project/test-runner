@@ -16,12 +16,15 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
+import java.lang.ProcessBuilder.Redirect;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -365,10 +368,24 @@ public class EntryPoint {
 			}
 
 			if (EntryPoint.verbose) {
-				process = pb.inheritIO().start();
+				//Redirecting to given output stream
+				if (EntryPoint.outPrintStream != null) {
+					pb.redirectOutput(Redirect.PIPE);
+					pb.redirectError(Redirect.PIPE);
+				}else {
+					//Redirecting to main process IO (System.out/err)
+					pb.inheritIO();
+				}
 			}else {
-				process = pb.start();
+				//Redirecting to null file is required to avoid thread deadlocks (when verbose is disabled)
+				pb.redirectOutput (new File("NUL")).redirectErrorStream(true);
 			}
+			process = pb.start();
+			if (EntryPoint.verbose && EntryPoint.outPrintStream != null) {
+				inheritIO(process.getInputStream(), EntryPoint.outPrintStream);
+			    inheritIO(process.getErrorStream(), EntryPoint.outPrintStream);
+			}
+
 			boolean finished = process.waitFor(timeoutInMs, TimeUnit.MILLISECONDS);
 			if (!finished) {
 				throw new RuntimeException("Forked process did not finished correctly");
@@ -385,6 +402,23 @@ public class EntryPoint {
                 reset();
             }
         }
+    }
+
+    /**
+     * This method redirect Process IO to given destination using pipes
+     * @param src process input stream
+     * @param dest destination output stream
+     */
+    private static void inheritIO(final InputStream src, final PrintStream dest) {
+        new Thread(new Runnable() {
+            public void run() {
+                Scanner sc = new Scanner(src);
+                while (sc.hasNextLine()) {
+                    dest.println(sc.nextLine());
+                }
+                sc.close();
+            }
+        }).start();
     }
 
     private static void reset() {
