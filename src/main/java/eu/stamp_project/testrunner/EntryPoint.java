@@ -183,11 +183,13 @@ public class EntryPoint {
                         ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun,
                         String.join(ConstantsHelper.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
                         methodNames.length == 0 ? ""
-                                : ParserOptions.FLAG_testMethodNamesToRun + ConstantsHelper.WHITE_SPACE
-                                        + String.join(ConstantsHelper.PATH_SEPARATOR, methodNames),
+                                : (ParserOptions.FLAG_testMethodNamesToRun + ConstantsHelper.WHITE_SPACE
+                                        + String.join(ConstantsHelper.PATH_SEPARATOR, methodNames)),
                         EntryPoint.blackList.isEmpty() ? ""
                                 : (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE
-                                        + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)) });
+                                        + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList))
+                }
+        );
         return EntryPoint.runTests(javaCommand);
     }
 
@@ -264,10 +266,11 @@ public class EntryPoint {
                         EntryPoint.JACOCO_RUNNER_QUALIFIED_NAME, ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
                         targetProjectClasses, ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun,
                         String.join(ConstantsHelper.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
-                        methodNames.length == 0 ? "" : ParserOptions.FLAG_testMethodNamesToRun,
-                        String.join(ConstantsHelper.PATH_SEPARATOR, methodNames),
-                        EntryPoint.blackList.isEmpty() ? ""
-                                : (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE
+                        methodNames.length == 0 ? "" :
+                                (ParserOptions.FLAG_testMethodNamesToRun + ConstantsHelper.WHITE_SPACE +
+                                        String.join(ConstantsHelper.PATH_SEPARATOR, methodNames)),
+                        EntryPoint.blackList.isEmpty() ? "" :
+                                (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE
                                         + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
                         EntryPoint.jUnit5Mode ? ParserOptions.FLAG_isJUnit5 : "" });
         return EntryPoint.runCoverage(javaCommand);
@@ -351,8 +354,8 @@ public class EntryPoint {
                 EntryPoint.JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME, ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
                 targetProjectClasses, ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun,
                 String.join(ConstantsHelper.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
-                methodNames.length == 0 ? "" : ParserOptions.FLAG_testMethodNamesToRun,
-                String.join(ConstantsHelper.PATH_SEPARATOR, methodNames),
+                methodNames.length == 0 ? "" : ParserOptions.FLAG_testMethodNamesToRun + ConstantsHelper.WHITE_SPACE +
+                        String.join(ConstantsHelper.PATH_SEPARATOR, methodNames),
                 EntryPoint.blackList.isEmpty() ? ""
                         : (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE
                                 + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
@@ -429,7 +432,7 @@ public class EntryPoint {
 
     /**
      * This method redirect Process IO to given destination using pipes
-     * 
+     *
      * @param src
      *            process input stream
      * @param dest

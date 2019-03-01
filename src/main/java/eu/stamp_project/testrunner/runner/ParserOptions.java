@@ -40,6 +40,9 @@ public class ParserOptions {
                 case FLAG_isJUnit5:
                     parserOptions.isJUnit5 = true;
                     break;
+                case " ":
+                case "":
+                    break;
                 default:
                     System.err.println(String.format("[ERROR]: %s is not a supported command line options", args[i]));
                     usage();
