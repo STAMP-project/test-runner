@@ -64,6 +64,30 @@
 
     <dependencies>
 
+        <!-- https://mvnrepository.com/artifact/eu.stamp-project/descartes -->
+        <dependency>
+            <groupId>eu.stamp-project</groupId>
+            <artifactId>descartes</artifactId>
+            <version>1.2.4</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.pitest</groupId>
+                    <artifactId>pitest-entry</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.pitest</groupId>
+                    <artifactId>pitest</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.pitest/pitest-entry -->
+        <dependency>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest-entry</artifactId>
+            <version>1.4.7</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <dependency>
             <groupId>commons-io</groupId>
