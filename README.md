@@ -9,6 +9,7 @@ This project provides a framework to run JUnit tests in a new JVM. It allows to 
 
 * test: run JUnit test, the whole test class or specific test cases methods.
 * coverage: run JaCoCo to compute the instruction coverage of the given test suite or by test methods.
+* mutation score: run PIT to compute the mutation score of the test suite. Supporting descartes and gregor mutation engine.
 * JVMArgs: can specify Java Virtual Machine Arguments
 * workingDirectory: can specify where to launch the java process
 * outputStream and errStream: can customize the output stream and the error stream of the java process.
@@ -124,6 +125,34 @@ The output of all `runCoveragePerTestMethods()` API is a [`eu.stamp_project.test
 
    * `Map<String, Coverage> getCoverageResultsMap()`: returns a map that associate the simple of a test method to its instruction coverage.
    * `Coverage getCoverageOf(String testMethodName)`: returns the instruction coverage of a test method, specified by its simple name. 
+   
+#### Mutation Score
+
+The test runner can now compute the mutation using [PIT](http://pitest.org).
+
+API:
+
+```java
+List<? extends AbstractPitResult> EntryPoint.runPit(final String classpath, final String pathToRootProject, final String filterTargetClasses, final String targetTests)
+```
+
+`classpath` is the classpath of the application. It must contains all the dependencies, the source code and the test code.
+`pathToRootProject` is the path to the root folder of the project.
+`filterTargetClasses` is a regex that matches the application source code to be mutated.
+`targetTests` is a regex that matches test classes that will be executed to compute the mutation score.
+
+#### Output
+
+The output is a list of pit result. Pit results are encapsuled in two objects, depending on the output format used.
+
+In any case, the pit result gives the following information:
+
+* the full qualified name of the mutated class (application).
+* the full qualified name of the mutant operator used to mutate the class designed above.
+* the simple name of the method mutated.
+* the line number of the mutant.
+* the state of the mutant at the end of the analysis. It can be: `SURVIVED`, `KILLED`, `NO_COVERAGE`, `TIMED_OUT`, `NON_VIABLE`, `MEMORY_ERROR`.
+* the full qualified name of the test killer.
   
 ### Configuration
 
@@ -138,6 +167,9 @@ In `EntryPoint` class, you have access to several fields that allow to configure
    * `PrintStream errPrintStream`: allows to pass a customized `PrintStream` on which the java process called will printerr. If this field is equal to `null`, `EntryPoint` with use the stderr.
    * `boolean persistence`: enable this boolean in order to keep the state between runs. By default, the persistence is set to true. If you set it to false, the following values will be reset (_i.e._ set the default value) after each run: `JVMArgs`,  `outPrintStream`, `errPrintStream`, `workingDirectory`, `timeoutInMs`.
    * `List<String> blackList`: add to this list the simple name of test methods that you want to avoid to execute. 
+   * `MutationEngine mutationEngine`: configure the mutation engine to be used. Possible values are `MutationEngine.DESCARTES` or `MutationEngine.GREGOR`. Default is `MutationEngine.DESCARTES`. You must use the accessor to set this value, see [EntryPoint#setMutationEngine(ConstantsHelper.MutationEngine mutationEngine)](https://github.com/STAMP-project/testrunner/blob/master/src/main/java/eu/stamp_project/testrunner/EntryPoint.java#L156).
+   * `List<String> pitMutators`: List of mutators to be used. These mutators are designed by a string. They must match with the used mutation engine. By default, it uses the default mutators for descartes and the mutator `ALL` for gregor. This value is modified when you change the mutation engine with [EntryPoint#setMutationEngine(ConstantsHelper.MutationEngine mutationEngine)](https://github.com/STAMP-project/testrunner/blob/master/src/main/java/eu/stamp_project/testrunner/EntryPoint.java#L156).
+   * `AbstractParser.OutputFormat pitOutputFormat`: specify the output format to be used for the mutation analyzed. Possible values are `AbstractParser.OutputFormat.XML` or `AbstractParser.OutputFormat.CSV`. Default is `AbstractParser.OutputFormat.XML`. The `AbstractParser.OutputFormat.XML` contains more information than the `AbstractParser.OutputFormat.CSV`.
 
 ## Dependency:
 
