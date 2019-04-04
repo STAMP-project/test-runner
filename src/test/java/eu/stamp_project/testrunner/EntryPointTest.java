@@ -3,6 +3,7 @@ package eu.stamp_project.testrunner;
 import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
 import eu.stamp_project.testrunner.listener.TestResult;
+import eu.stamp_project.testrunner.listener.pit.AbstractPitResult;
 import eu.stamp_project.testrunner.runner.Failure;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.junit.After;
@@ -12,6 +13,7 @@ import org.junit.Ignore;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 import static org.junit.Assert.assertEquals;
@@ -33,11 +35,52 @@ public class EntryPointTest extends AbstractTest {
         EntryPoint.outPrintStream = null;
         EntryPoint.errPrintStream = null;
         EntryPoint.verbose = true;
+        EntryPoint.setMutationEngine(ConstantsHelper.MutationEngine.DESCARTES);
     }
 
     @After
     public void tearDown() {
         EntryPoint.blackList.clear();
+    }
+
+    @Test
+    public void testPitRun() throws TimeoutException {
+
+        /*
+            Run pit with default option on test projects.
+            Default options are using descartes mutation engine and default mutators of descartes.
+            This result with a list of pit result.
+            NOTE: it seems that running pit in debug mode (in IDEA) does not work, be careful.
+         */
+
+        final List<? extends AbstractPitResult> pitResults = EntryPoint.runPit(
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                "src/test/resources/test-projects/",
+                "example.*",
+                "example.TestSuiteExample"
+        );
+        assertEquals(2, pitResults.size());
+        assertEquals(2, pitResults.stream().filter(result -> result.getStateOfMutant() == AbstractPitResult.State.KILLED).count());
+    }
+
+    @Test
+    public void testPitRunWithGregor() {
+
+        /*
+            Run pit with gregor mutation engine and ALL mutators.
+            We observe much more mutants
+         */
+
+        EntryPoint.setMutationEngine(ConstantsHelper.MutationEngine.GREGOR);
+
+        final List<? extends AbstractPitResult> pitResults = EntryPoint.runPit(
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                "src/test/resources/test-projects/",
+                "example.*",
+                "example.TestSuiteExample(.)*"
+        );
+        assertEquals(95, pitResults.size());
+        assertEquals(45, pitResults.stream().filter(result -> result.getStateOfMutant() == AbstractPitResult.State.KILLED).count());
     }
 
     @Test
@@ -394,7 +437,7 @@ public class EntryPointTest extends AbstractTest {
 
         EntryPoint.runCoveragePerTestMethods(
                 JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES
-                + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP,
+                        + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP,
                 TEST_PROJECT_CLASSES,
                 "example.ParametrizedTestSuiteExample",
                 "test3:test4:test7"
