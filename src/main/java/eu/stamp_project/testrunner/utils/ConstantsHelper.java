@@ -1,6 +1,9 @@
 package eu.stamp_project.testrunner.utils;
 
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -9,6 +12,37 @@ import java.util.function.Function;
  * on 28/11/18
  */
 public class ConstantsHelper {
+
+    public enum MutationEngine {
+        GREGOR(Collections.singletonList("ALL")),
+        DESCARTES(Arrays.asList(
+                "void",
+                "null",
+                "true",
+                "false",
+                "empty",
+                "0",
+                "1",
+                "(byte)0",
+                "(byte)1",
+                "(short)0",
+                "(short)1",
+                "0L",
+                "1L",
+                "0.0",
+                "1.0",
+                "0.0f",
+                "1.0f",
+                "'\40'",
+                "'A'",
+                "\"\"",
+                "\"A\""
+        ));
+        public final List<String> mutators;
+        MutationEngine(List<String> mutators) {
+            this.mutators = mutators;
+        }
+    }
 
     public static final String WHITE_SPACE = " ";
 
