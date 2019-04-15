@@ -15,8 +15,8 @@ import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.apache.commons.io.FileUtils;
 import org.jacoco.core.runtime.IRuntime;
 import org.objectweb.asm.xml.Processor;
-import org.pitest.boot.HotSwapAgent;
 import org.pitest.mutationtest.config.PluginServices;
+import org.pitest.mutationtest.engine.gregor.GregorMutationEngine;
 import org.pitest.testapi.TestGroupConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.ProcessBuilder.Redirect;
-import java.lang.instrument.ClassDefinition;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
@@ -293,7 +292,8 @@ public class EntryPoint {
                 new String[]{getJavaCommand(),
                         classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES
                                 + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES,
-                        EntryPoint.JACOCO_RUNNER_QUALIFIED_NAME, ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
+                        EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_JACOCO_RUNNER_QUALIFIED_NAME : EntryPoint.JUNIT4_JACOCO_RUNNER_QUALIFIED_NAME,
+                        ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
                         targetProjectClasses, ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun,
                         String.join(ConstantsHelper.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
                         methodNames.length == 0 ? "" :
@@ -302,7 +302,7 @@ public class EntryPoint {
                         EntryPoint.blackList.isEmpty() ? "" :
                                 (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE
                                         + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
-                        EntryPoint.jUnit5Mode ? ParserOptions.FLAG_isJUnit5 : ""});
+                        });
         return EntryPoint.runCoverage(javaCommand);
     }
 
@@ -373,10 +373,13 @@ public class EntryPoint {
      */
     public static CoveragePerTestMethod runCoveragePerTestMethods(String classpath, String targetProjectClasses,
                                                                   String[] fullQualifiedNameOfTestClasses, String[] methodNames) throws TimeoutException {
-        final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE, new String[]{getJavaCommand(),
+        final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
+                new String[]{
+                        getJavaCommand(),
                 classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES
                         + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES,
-                EntryPoint.JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME, ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
+                EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME : EntryPoint.JUNIT4_JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME,
+                ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
                 targetProjectClasses, ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun,
                 String.join(ConstantsHelper.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
                 methodNames.length == 0 ? "" : ParserOptions.FLAG_testMethodNamesToRun + ConstantsHelper.WHITE_SPACE +
@@ -384,7 +387,7 @@ public class EntryPoint {
                 EntryPoint.blackList.isEmpty() ? ""
                         : (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE
                         + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
-                EntryPoint.jUnit5Mode ? ParserOptions.FLAG_isJUnit5 : ""});
+                });
         try {
             EntryPoint.runGivenCommandLine(javaCommand);
         } catch (TimeoutException e) {
@@ -402,10 +405,10 @@ public class EntryPoint {
     /* COMPUTE MUTATION SCORE WITH PIT API */
 
     /**
-     * @param classpath the classpath of the project for which we need to compute the mutation score
-     * @param pathToRootProject the path to the root folder of the project
+     * @param classpath           the classpath of the project for which we need to compute the mutation score
+     * @param pathToRootProject   the path to the root folder of the project
      * @param filterTargetClasses the regex to match source classes (application) to mutate
-     * @param targetTests the full qualified name of the test class for which we want to compute the mutation score.
+     * @param targetTests         the full qualified name of the test class for which we want to compute the mutation score.
      * @return a list of {@link eu.stamp_project.testrunner.listener.pit.AbstractPitResult} that contains the mutation analysis. The type depends on the format used.
      */
     public static List<? extends AbstractPitResult> runPit(final String classpath,
@@ -425,7 +428,7 @@ public class EntryPoint {
                         targetTests,
                         EntryPoint.pitOutputFormat.name().toLowerCase(),
                         EntryPoint.mutationEngine.name().toLowerCase(),
-                        EntryPoint.pitMutators.stream().collect(Collectors.joining(ConstantsHelper.PATH_SEPARATOR))
+                        String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.pitMutators)
                 }
         );
         return AbstractParser.build(EntryPoint.pitOutputFormat).parseAndDelete(
@@ -530,9 +533,13 @@ public class EntryPoint {
 
     private static final String JUNIT5_TEST_RUNNER_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.JUnit5Runner";
 
-    private static final String JACOCO_RUNNER_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JacocoRunner";
+    private static final String JUNIT4_JACOCO_RUNNER_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JUnit4JacocoRunner";
 
-    private static final String JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JacocoRunnerPerTestMethod";
+    private static final String JUNIT5_JACOCO_RUNNER_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JUnit5JacocoRunner";
+
+    private static final String JUNIT4_JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JUnit4JacocoRunnerPerTestMethod";
+
+    private static final String JUNIT5_JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JUnit5JacocoRunnerPerTestMethod";
 
     private static final String ABSOLUTE_PATH_TO_RUNNER_CLASSES = initAbsolutePathToRunnerClasses();
 
@@ -570,8 +577,12 @@ public class EntryPoint {
     private static final String ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES = CLASSES_TO_PATH_OF_DEPENDENCIES
             .apply(JACOCO_DEPENDENCIES);
 
-    private static final List<Class<?>> PIT_DEPENDENCIES = Arrays.asList(TestGroupConfig.class, PluginServices.class,
-            DescartesMutationEngine.class);
+    private static final List<Class<?>> PIT_DEPENDENCIES = Arrays.asList(
+            GregorMutationEngine.class,
+            TestGroupConfig.class,
+            PluginServices.class,
+            DescartesMutationEngine.class
+    );
 
     private static final String ABSOLUTE_PATH_TO_PIT_DEPENDENCIES = CLASSES_TO_PATH_OF_DEPENDENCIES
             .apply(PIT_DEPENDENCIES);

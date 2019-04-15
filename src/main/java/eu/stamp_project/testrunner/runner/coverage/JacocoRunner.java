@@ -2,13 +2,9 @@ package eu.stamp_project.testrunner.runner.coverage;
 
 import eu.stamp_project.testrunner.EntryPoint;
 import eu.stamp_project.testrunner.listener.Coverage;
+import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
 import eu.stamp_project.testrunner.listener.TestResult;
-import eu.stamp_project.testrunner.listener.junit4.JUnit4Coverage;
-import eu.stamp_project.testrunner.listener.junit5.JUnit5Coverage;
-import eu.stamp_project.testrunner.runner.JUnit4Runner;
 import eu.stamp_project.testrunner.runner.Failure;
-import eu.stamp_project.testrunner.runner.JUnit5Runner;
-import eu.stamp_project.testrunner.runner.ParserOptions;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -37,46 +33,7 @@ import static java.util.ResourceBundle.clearCache;
  * benjamin.danglot@inria.fr
  * on 18/12/17
  */
-public class JacocoRunner {
-
-    /**
-     * The entry method to execute junit tests.
-     * This method is not meant to be used directly, but rather using {@link EntryPoint}
-     * For the expected arguments, see {@link ParserOptions}
-     */
-    public static void main(String[] args) {
-        final ParserOptions options = ParserOptions.parse(args);
-        final String[] splittedArgs0 = options.getPathToCompiledClassesOfTheProject().split(ConstantsHelper.PATH_SEPARATOR);
-        final String classesDirectory = splittedArgs0[0];
-        final String testClassesDirectory = splittedArgs0[1];
-        final boolean isJUnit5 = options.isJUnit5();
-        final JacocoRunner jacocoRunner =
-                new JacocoRunner(isJUnit5,
-                        classesDirectory,
-                        testClassesDirectory,
-                        options.getBlackList()
-                );
-        final String[] testClassesToRun = options.getFullQualifiedNameOfTestClassesToRun();
-        if (testClassesToRun.length > 1) {
-            jacocoRunner.run(classesDirectory,
-                    testClassesDirectory,
-                    testClassesToRun
-            ).save();
-        } else {
-            if (options.getTestMethodNamesToRun().length == 0) {
-                jacocoRunner.run(classesDirectory,
-                        testClassesDirectory,
-                        testClassesToRun
-                ).save();
-            } else {
-                jacocoRunner.run(classesDirectory,
-                        testClassesDirectory,
-                        testClassesToRun[0],
-                        options.getTestMethodNamesToRun()
-                ).save();
-            }
-        }
-    }
+public abstract class JacocoRunner {
 
     protected MemoryClassLoader instrumentedClassLoader;
 
@@ -86,25 +43,20 @@ public class JacocoRunner {
 
     protected List<String> blackList;
 
-    protected boolean isJUnit5;
-
     /**
-     * @param isJUnit5             tell if the given tests are JUnit5 or not
      * @param classesDirectory     the path to the directory that contains the .class file of sources
      * @param testClassesDirectory the path to the directory that contains the .class file of test sources
      */
-    public JacocoRunner(boolean isJUnit5, String classesDirectory, String testClassesDirectory) {
-        this(isJUnit5, classesDirectory, testClassesDirectory, Collections.emptyList());
+    public JacocoRunner(String classesDirectory, String testClassesDirectory) {
+        this(classesDirectory, testClassesDirectory, Collections.emptyList());
     }
 
     /**
-     * @param isJUnit5             tell if the given tests are JUnit5 or not
      * @param classesDirectory     the path to the directory that contains the .class file of sources
      * @param testClassesDirectory the path to the directory that contains the .class file of test sources
      * @param blackList            the names of the test methods to NOT be run.
      */
-    public JacocoRunner(boolean isJUnit5, String classesDirectory, String testClassesDirectory, List<String> blackList) {
-        this.isJUnit5 = isJUnit5;
+    public JacocoRunner(String classesDirectory, String testClassesDirectory, List<String> blackList) {
         try {
             this.instrumentedClassLoader = new MemoryClassLoader(
                     new URL[]{
@@ -153,14 +105,7 @@ public class JacocoRunner {
                     IOUtils.toByteArray(classLoader.getResourceAsStream(resource))
             );
             runtime.startup(data);
-            final Coverage listener;
-            if (this.isJUnit5) {
-                listener = new JUnit5Coverage();
-                JUnit5Runner.run(new String[]{fullQualifiedNameOfTestClass}, testMethodNames, Collections.emptyList(), (JUnit5Coverage) listener, this.instrumentedClassLoader);
-            } else {
-                listener = new JUnit4Coverage();
-                JUnit4Runner.run(new String[]{fullQualifiedNameOfTestClass}, testMethodNames, Collections.emptyList(), (JUnit4Coverage) listener, this.instrumentedClassLoader);
-            }
+            final Coverage listener = this.executeTest(new String[]{fullQualifiedNameOfTestClass}, testMethodNames, Collections.emptyList());
             if (!((TestResult) listener).getFailingTests().isEmpty()) {
                 System.err.println("Some test(s) failed during computation of coverage:\n" +
                         ((TestResult) listener).getFailingTests()
@@ -178,6 +123,10 @@ public class JacocoRunner {
             throw new RuntimeException(e);
         }
     }
+
+    protected abstract Coverage executeTest(String[] testClassNames,
+                                            String[] testMethodNames,
+                                            List<String> blackList);
 
     /**
      * Compute the instruction coverage of the given tests
@@ -213,14 +162,7 @@ public class JacocoRunner {
         });
         try {
             runtime.startup(data);
-            final Coverage listener;
-            if (this.isJUnit5) {
-                listener = new JUnit5Coverage();
-                JUnit5Runner.run(fullQualifiedNameOfTestClasses, new String[0], this.blackList, (JUnit5Coverage) listener, this.instrumentedClassLoader);
-            } else {
-                listener = new JUnit4Coverage();
-                JUnit4Runner.run(fullQualifiedNameOfTestClasses, new String[0], this.blackList, (JUnit4Coverage) listener, this.instrumentedClassLoader);
-            }
+            final Coverage listener = this.executeTest(fullQualifiedNameOfTestClasses, new String[0], this.blackList);
             if (!((TestResult) listener).getFailingTests().isEmpty()) {
                 System.err.println("Some test(s) failed during computation of coverage:\n" +
                         ((TestResult) listener).getFailingTests()

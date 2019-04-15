@@ -1,6 +1,7 @@
 package eu.stamp_project.testrunner.runner.coverage;
 
 import eu.stamp_project.testrunner.EntryPoint;
+import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
 import eu.stamp_project.testrunner.listener.TestResult;
 import eu.stamp_project.testrunner.listener.junit4.CoveragePerJUnit4TestMethod;
@@ -28,30 +29,7 @@ import static java.util.ResourceBundle.clearCache;
  * benjamin.danglot@inria.fr
  * on 27/11/18
  */
-public class JacocoRunnerPerTestMethod extends JacocoRunner {
-
-
-    /**
-     * The entry method to execute junit tests.
-     * This method is not meant to be used directly, but rather using {@link EntryPoint}
-     * For the expected arguments, see {@link ParserOptions}
-     */
-    public static void main(String[] args) {
-        final ParserOptions options = ParserOptions.parse(args);
-        final String[] splittedArgs0 = options.getPathToCompiledClassesOfTheProject().split(ConstantsHelper.PATH_SEPARATOR);
-        final String classesDirectory = splittedArgs0[0];
-        final String testClassesDirectory = splittedArgs0[1];
-        final boolean isJUnit5 = options.isJUnit5();
-        new JacocoRunnerPerTestMethod(isJUnit5,
-                classesDirectory,
-                testClassesDirectory,
-                options.getBlackList()
-        ).runCoveragePerTestMethod(classesDirectory,
-                testClassesDirectory,
-                options.getFullQualifiedNameOfTestClassesToRun()[0],
-                options.getTestMethodNamesToRun()
-        ).save();
-    }
+public abstract class JacocoRunnerPerTestMethod extends JacocoRunner {
 
     /**
      * Compute the instruction coverage of the given tests per test methods
@@ -82,14 +60,7 @@ public class JacocoRunnerPerTestMethod extends JacocoRunner {
                     IOUtils.toByteArray(classLoader.getResourceAsStream(resource))
             );
             this.runtime.startup(data);
-            final CoveragePerTestMethod listener;
-            if (this.isJUnit5) {
-                listener = new CoveragePerJUnit5TestMethod(data, classesDirectory);
-                JUnit5Runner.run(new String[]{fullQualifiedNameOfTestClass}, testMethodNames, Collections.emptyList(), (CoveragePerJUnit5TestMethod) listener, this.instrumentedClassLoader);
-            } else {
-                listener = new CoveragePerJUnit4TestMethod(data, classesDirectory);
-                JUnit4Runner.run(new String[]{fullQualifiedNameOfTestClass}, testMethodNames, Collections.emptyList(), (CoveragePerJUnit4TestMethod) listener, this.instrumentedClassLoader);
-            }
+            final CoveragePerTestMethod listener = this.executeTestPerTestMethod(data, classesDirectory, new String[]{fullQualifiedNameOfTestClass}, testMethodNames);
             if (!((TestResult) listener).getFailingTests().isEmpty()) {
                 System.err.println("Some test(s) failed during computation of coverage:\n" +
                         ((TestResult) listener).getFailingTests()
@@ -106,22 +77,30 @@ public class JacocoRunnerPerTestMethod extends JacocoRunner {
         }
     }
 
+    @Override
+    protected Coverage executeTest(String[] testClassNames, String[] testMethodNames, List<String> blackList) {
+        throw new UnsupportedOperationException();
+    }
+
+    protected abstract CoveragePerTestMethod executeTestPerTestMethod(RuntimeData data,
+                                                                      String classesDirectory,
+                                                                      String[] testClassNames,
+                                                                      String[] testMethodNames);
+
     /**
-     * @param isJUnit5             tell if the given tests are JUnit5 or not
      * @param classesDirectory     the path to the directory that contains the .class file of sources
      * @param testClassesDirectory the path to the directory that contains the .class file of test sources
      */
-    public JacocoRunnerPerTestMethod(boolean isJUnit5, String classesDirectory, String testClassesDirectory) {
-        super(isJUnit5, classesDirectory, testClassesDirectory);
+    public JacocoRunnerPerTestMethod(String classesDirectory, String testClassesDirectory) {
+        super(classesDirectory, testClassesDirectory);
     }
 
     /**
-     * @param isJUnit5             tell if the given tests are JUnit5 or not
      * @param classesDirectory     the path to the directory that contains the .class file of sources
      * @param testClassesDirectory the path to the directory that contains the .class file of test sources
      * @param blackList            the names of the test methods to NOT be run.
      */
-    public JacocoRunnerPerTestMethod(boolean isJUnit5, String classesDirectory, String testClassesDirectory, List<String> blackList) {
-        super(isJUnit5, classesDirectory, testClassesDirectory, blackList);
+    public JacocoRunnerPerTestMethod(String classesDirectory, String testClassesDirectory, List<String> blackList) {
+        super(classesDirectory, testClassesDirectory, blackList);
     }
 }

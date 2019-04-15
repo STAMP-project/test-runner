@@ -37,9 +37,6 @@ public class ParserOptions {
                 case FLAG_blackList:
                     parserOptions.blackList = convertArrayToList.apply(args[++i]);
                     break;
-                case FLAG_isJUnit5:
-                    parserOptions.isJUnit5 = true;
-                    break;
                 case " ":
                 case "":
                     break;
@@ -66,9 +63,6 @@ public class ParserOptions {
 
         usage.append(FLAG_blackList).append(ConstantsHelper.WHITE_SPACE)
                 .append(FLAG_HELP_blackList).append(ConstantsHelper.LINE_SEPARATOR);
-
-        usage.append(FLAG_isJUnit5).append(ConstantsHelper.WHITE_SPACE)
-                .append(FLAG_HELP_isJUnit5).append(ConstantsHelper.LINE_SEPARATOR);
 
         System.out.println(usage.toString());
     }
@@ -113,21 +107,11 @@ public class ParserOptions {
 
     public static final String FLAG_HELP_blackList = "This flag must be followed by the list of simple names of test methods to NOT be run. Names must be separated by the system path separator, e.g. ':' on Linux";
 
-    /**
-     * If this boolean is true, it enables the JUnit5 mode of the test runner, otherwise, it executes JUnit4.
-     */
-    private boolean isJUnit5;
-
-    public static final String FLAG_isJUnit5 = "--junit5";
-
-    public static final String FLAG_HELP_isJUnit5 = "This flag enable the JUnit5 mode of the test-runner. If you use JUnit5, you must use this flag, otherwise, don't.";
-
     private ParserOptions() {
         this.pathToCompiledClassesOfTheProject = "";
         this.fullQualifiedNameOfTestClassesToRun = new String[]{};
         this.testMethodNamesToRun = new String[]{};
         this.blackList = new ArrayList<>();
-        this.isJUnit5 = false;
     }
 
     public String getPathToCompiledClassesOfTheProject() {
@@ -146,7 +130,4 @@ public class ParserOptions {
         return blackList;
     }
 
-    public boolean isJUnit5() {
-        return isJUnit5;
-    }
 }
