@@ -6,6 +6,7 @@ import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
 import org.pitest.mutationtest.tooling.EntryPoint;
 import org.pitest.testapi.TestGroupConfig;
+import org.pitest.util.Glob;
 
 import java.io.File;
 import java.net.URL;
