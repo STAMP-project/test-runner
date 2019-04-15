@@ -25,10 +25,9 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
             Using the api to compute the coverage on a test class
          */
 
-        JacocoRunner.main(new String[]{
+        JUnit5JacocoRunner.main(new String[]{
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject, TEST_PROJECT_CLASSES,
                         ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, "junit5.TestSuiteExample",
-                        ParserOptions.FLAG_isJUnit5
                 }
         );
         final Coverage load = CoverageImpl.load();
@@ -46,11 +45,10 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
             Using the api to compute the coverage on test cases
          */
 
-        JacocoRunner.main(new String[]{
+        JUnit5JacocoRunner.main(new String[]{
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject, TEST_PROJECT_CLASSES,
                         ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, "junit5.TestSuiteExample",
-                        ParserOptions.FLAG_testMethodNamesToRun, "test8:test2",
-                        ParserOptions.FLAG_isJUnit5
+                        ParserOptions.FLAG_testMethodNamesToRun, "test8:test2"
                 }
         );
         final Coverage load = CoverageImpl.load();
@@ -66,11 +64,10 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
             Using the api to compute the coverage on test cases
          */
 
-        JacocoRunner.main(new String[]{
+        JUnit5JacocoRunner.main(new String[]{
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject, TEST_PROJECT_CLASSES,
                         ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, "junit5.ParametrizedTest",
-                        ParserOptions.FLAG_testMethodNamesToRun, "test",
-                        ParserOptions.FLAG_isJUnit5
+                        ParserOptions.FLAG_testMethodNamesToRun, "test"
                 }
         );
         final Coverage load = CoverageImpl.load();

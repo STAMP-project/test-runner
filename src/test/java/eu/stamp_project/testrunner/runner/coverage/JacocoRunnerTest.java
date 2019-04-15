@@ -24,7 +24,7 @@ public class JacocoRunnerTest extends AbstractTest {
             Using the api to compute the coverage on a test class
          */
 
-        JacocoRunner.main(new String[]{
+        JUnit4JacocoRunner.main(new String[]{
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject, TEST_PROJECT_CLASSES,
                         ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, "example.TestSuiteExample"
                 }
@@ -43,7 +43,7 @@ public class JacocoRunnerTest extends AbstractTest {
             Using the api to compute the coverage on test cases
          */
 
-        JacocoRunner.main(new String[]{
+        JUnit4JacocoRunner.main(new String[]{
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject, TEST_PROJECT_CLASSES,
                         ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, "example.TestSuiteExample",
                         ParserOptions.FLAG_testMethodNamesToRun, "test8:test2"
