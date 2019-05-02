@@ -3,15 +3,19 @@ package eu.stamp_project.testrunner;
 import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
 import eu.stamp_project.testrunner.listener.TestResult;
+import eu.stamp_project.testrunner.listener.pit.AbstractPitResult;
 import eu.stamp_project.testrunner.runner.Failure;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
@@ -35,6 +39,27 @@ public class EntryPointJUnit5Test extends AbstractTest {
     public void tearDown() throws Exception {
         EntryPoint.blackList.clear();
         EntryPoint.jUnit5Mode = false;
+    }
+
+    @Ignore
+    @Test
+    public void testPitRun() throws TimeoutException {
+
+        /*
+            Run pit with default option on test projects.
+            Default options are using descartes mutation engine and default mutators of descartes.
+            This result with a list of pit result.
+            NOTE: it seems that running pit in debug mode (in IDEA) does not work, be careful.
+         */
+
+        final List<? extends AbstractPitResult> pitResults = EntryPoint.runPit(
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                "src/test/resources/test-projects/",
+                "example.*",
+                "junit5.TestSuiteExample"
+        );
+        assertEquals(2, pitResults.size());
+        assertEquals(2, pitResults.stream().filter(result -> result.getStateOfMutant() == AbstractPitResult.State.KILLED).count());
     }
 
     @Ignore
