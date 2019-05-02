@@ -52,7 +52,6 @@ public class PitCSVResult extends AbstractPitResult{
                 ", stateOfMutant=" + stateOfMutant +
                 ", fullQualifiedNameOfKiller='" + fullQualifiedNameOfKiller + '\'' +
                 ", simpleNameMethod='" + simpleNameMethod + '\'' +
-//                ", testCase=" + testCase +
                 '}';
     }
 }

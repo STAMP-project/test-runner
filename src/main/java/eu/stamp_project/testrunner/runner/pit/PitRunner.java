@@ -6,7 +6,6 @@ import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
 import org.pitest.mutationtest.tooling.EntryPoint;
 import org.pitest.testapi.TestGroupConfig;
-import org.pitest.util.Glob;
 
 import java.io.File;
 import java.net.URL;
@@ -22,6 +21,10 @@ import java.util.regex.Pattern;
  * on 03/04/19
  */
 public class PitRunner {
+
+    private static final String JUNIT4_TEST_PLUGIN = "junit";
+
+    private static final String JUNIT5_TEST_PLUGIN = "junit5";
 
     public final static String REPORT_PITS = "target/report-pits/";
 
@@ -85,6 +88,11 @@ public class PitRunner {
         data.setGroupConfig(testGroupConfig);
         data.setExportLineCoverage(true);
         data.setMutationEngine(mutationEngine);
+        data.setTestPlugin(
+                eu.stamp_project.testrunner.EntryPoint.jUnit5Mode ?
+                        JUNIT5_TEST_PLUGIN :
+                        JUNIT4_TEST_PLUGIN
+        );
         return data;
     }
 
