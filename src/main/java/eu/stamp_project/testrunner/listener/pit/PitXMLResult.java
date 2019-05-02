@@ -92,7 +92,6 @@ public class PitXMLResult extends AbstractPitResult {
                 ", stateOfMutant=" + stateOfMutant +
                 ", fullQualifiedNameOfKiller='" + fullQualifiedNameOfKiller + '\'' +
                 ", simpleNameMethod='" + simpleNameMethod + '\'' +
-//                ", testCase=" + testCase + '\'' +
                 ", methodDescription='" + methodDescription + '\'' +
                 ", mutationDescription='" + mutationDescription + '\'' +
                 ", index='" + index + '\'' +

@@ -19,8 +19,6 @@ public class AbstractPitResult {
 
     protected final String simpleNameMethod;
 
-//    protected CtMethod testCase = null;
-
     public AbstractPitResult(String fullQualifiedNameOfMutatedClass, AbstractPitResult.State stateOfMutant,
                              String fullQualifiedNameMutantOperator,
                              String fullQualifiedNameMethod, String fullQualifiedNameOfKiller,
@@ -56,25 +54,11 @@ public class AbstractPitResult {
         return fullQualifiedNameOfKiller;
     }
 
-    // TODO move this somewhere in DSpot...
-    /*
-    public CtMethod getMethod(CtType<?> ctClass) {
-        if ("none".equals(this.simpleNameMethod)) {
-            return null;
-        } else {
-            if (this.testCase == null) {
-                List<CtMethod<?>> methodsByName = ctClass.getMethodsByName(this.simpleNameMethod);
-                if (methodsByName.isEmpty()) {
-                    if (ctClass.getSuperclass() != null) {
-                        return getMethod(ctClass.getSuperclass().getDeclaration());
-                    } else {
-                        return null;
-                    }
-                }
-                this.testCase = methodsByName.get(0);
-            }
-            return this.testCase;
-        }
+    public String getFullQualifiedNameOfMutatedClass() {
+        return fullQualifiedNameOfMutatedClass;
     }
-    */
+
+    public String getSimpleNameMethod() {
+        return simpleNameMethod;
+    }
 }
