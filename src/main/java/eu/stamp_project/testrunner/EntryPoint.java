@@ -14,7 +14,10 @@ import eu.stamp_project.testrunner.runner.pit.PitRunner;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.apache.commons.io.FileUtils;
 import org.jacoco.core.runtime.IRuntime;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.objectweb.asm.xml.Processor;
+import org.opentest4j.TestAbortedException;
+import org.pitest.junit5.JUnit5Configuration;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.engine.gregor.GregorMutationEngine;
 import org.pitest.testapi.TestGroupConfig;
@@ -302,7 +305,7 @@ public class EntryPoint {
                         EntryPoint.blackList.isEmpty() ? "" :
                                 (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE
                                         + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
-                        });
+                });
         return EntryPoint.runCoverage(javaCommand);
     }
 
@@ -376,17 +379,17 @@ public class EntryPoint {
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{
                         getJavaCommand(),
-                classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES
-                        + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES,
-                EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME : EntryPoint.JUNIT4_JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME,
-                ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
-                targetProjectClasses, ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun,
-                String.join(ConstantsHelper.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
-                methodNames.length == 0 ? "" : ParserOptions.FLAG_testMethodNamesToRun + ConstantsHelper.WHITE_SPACE +
-                        String.join(ConstantsHelper.PATH_SEPARATOR, methodNames),
-                EntryPoint.blackList.isEmpty() ? ""
-                        : (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE
-                        + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
+                        classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES
+                                + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES,
+                        EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME : EntryPoint.JUNIT4_JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME,
+                        ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
+                        targetProjectClasses, ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun,
+                        String.join(ConstantsHelper.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
+                        methodNames.length == 0 ? "" : ParserOptions.FLAG_testMethodNamesToRun + ConstantsHelper.WHITE_SPACE +
+                                String.join(ConstantsHelper.PATH_SEPARATOR, methodNames),
+                        EntryPoint.blackList.isEmpty() ? ""
+                                : (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE
+                                + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
                 });
         try {
             EntryPoint.runGivenCommandLine(javaCommand);
@@ -415,14 +418,26 @@ public class EntryPoint {
                                                            final String pathToRootProject,
                                                            final String filterTargetClasses,
                                                            final String targetTests) {
+        final String classpathToExecute;
+        if (jUnit5Mode) {
+            classpathToExecute = String.join(ConstantsHelper.PATH_SEPARATOR,
+                    new String[]{
+                            classpath,
+                            ABSOLUTE_PATH_TO_PIT_DEPENDENCIES,
+                            ABSOLUTE_PATH_TO_PIT_DEPENDENCIES_FOR_JUNIT5
+                    }
+            );
+        } else {
+            classpathToExecute = String.join(ConstantsHelper.PATH_SEPARATOR,
+                    new String[]{
+                            classpath,
+                            ABSOLUTE_PATH_TO_PIT_DEPENDENCIES
+                    }
+            );
+        }
         PitRunner.main(
                 new String[]{
-                        String.join(ConstantsHelper.PATH_SEPARATOR,
-                                new String[]{
-                                        classpath,
-                                        ABSOLUTE_PATH_TO_PIT_DEPENDENCIES
-                                }
-                        ),
+                        classpathToExecute,
                         pathToRootProject,
                         filterTargetClasses,
                         targetTests,
@@ -566,10 +581,9 @@ public class EntryPoint {
             .map(clazz -> clazz.getProtectionDomain().getCodeSource().getLocation()).map(URL::getPath)
             .map(path -> path.startsWith("file:") ? path.substring("file:".length()) : path)
             .map(path -> path.split("!")[0]).map(path -> path.replace("/", ConstantsHelper.FILE_SEPARATOR))
-            .map(EntryPoint::RemoveWinFileSeparator).map(path -> {
-                LOGGER.info("{}", path);
-                return path;
-            }).collect(Collectors.joining(ConstantsHelper.PATH_SEPARATOR));
+            .map(EntryPoint::RemoveWinFileSeparator)
+            .peek(path -> LOGGER.info("{}", path))
+            .collect(Collectors.joining(ConstantsHelper.PATH_SEPARATOR));
 
     private static final List<Class<?>> JACOCO_DEPENDENCIES = Arrays.asList(IRuntime.class, Processor.class,
             FileUtils.class);
@@ -584,8 +598,17 @@ public class EntryPoint {
             DescartesMutationEngine.class
     );
 
+    private static final List<Class<?>> PIT_DEPENDENCIES_FOR_JUNIT5 = Arrays.asList(
+            JUnit5Configuration.class,
+            ExtensionContext.class,
+            TestAbortedException.class
+    );
+
     private static final String ABSOLUTE_PATH_TO_PIT_DEPENDENCIES = CLASSES_TO_PATH_OF_DEPENDENCIES
             .apply(PIT_DEPENDENCIES);
+
+    private static final String ABSOLUTE_PATH_TO_PIT_DEPENDENCIES_FOR_JUNIT5 = CLASSES_TO_PATH_OF_DEPENDENCIES
+            .apply(PIT_DEPENDENCIES_FOR_JUNIT5);
 
     private static String initAbsolutePathToRunnerClasses() {
         URL resource = ClassLoader.getSystemClassLoader().getResource("runner-classes/");
