@@ -12,7 +12,6 @@ mkdir --parent src/main/resources/runner-classes/eu/stamp_project/testrunner/lis
 mkdir --parent src/main/resources/runner-classes/eu/stamp_project/testrunner/listener/pit
 mkdir --parent src/main/resources/runner-classes/eu/stamp_project/testrunner/runner/
 mkdir --parent src/main/resources/runner-classes/eu/stamp_project/testrunner/runner/coverage/
-mkdir --parent src/main/resources/runner-classes/eu/stamp_project/testrunner/runner/pit/
 
 cp -r target/classes/eu/stamp_project/testrunner/utils/*.class src/main/resources/runner-classes/eu/stamp_project/testrunner/utils/
 cp -r target/classes/eu/stamp_project/testrunner/listener/*.class src/main/resources/runner-classes/eu/stamp_project/testrunner/listener/
@@ -22,6 +21,5 @@ cp -r target/classes/eu/stamp_project/testrunner/listener/junit5/*.class src/mai
 cp -r target/classes/eu/stamp_project/testrunner/listener/pit/*.class src/main/resources/runner-classes/eu/stamp_project/testrunner/listener/pit/
 cp -r target/classes/eu/stamp_project/testrunner/runner/*.class src/main/resources/runner-classes/eu/stamp_project/testrunner/runner/
 cp -r target/classes/eu/stamp_project/testrunner/runner/coverage/*.class src/main/resources/runner-classes/eu/stamp_project/testrunner/runner/coverage/
-cp -r target/classes/eu/stamp_project/testrunner/runner/pit/*.class src/main/resources/runner-classes/eu/stamp_project/testrunner/runner/pit/
 
 mvn clean compile
