@@ -481,7 +481,8 @@ public class EntryPoint {
             } else {
                 // Redirecting to null file is required to avoid thread deadlocks (when verbose
                 // is disabled)
-                pb.redirectOutput(new File("NUL")).redirectErrorStream(true);
+                pb.redirectOutput(File. createTempFile("test-runner-error", ".tmp"))
+                        .redirectErrorStream(true);
             }
             process = pb.start();
             if (EntryPoint.verbose && EntryPoint.outPrintStream != null) {
