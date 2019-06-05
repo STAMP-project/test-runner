@@ -56,7 +56,7 @@ public class JUnit5Coverage extends JUnit5TestResult implements Coverage, Serial
     }
 
     @Override
-    public void save() {
+    public synchronized void save() {
         this.internalCoverage.save();
     }
 
