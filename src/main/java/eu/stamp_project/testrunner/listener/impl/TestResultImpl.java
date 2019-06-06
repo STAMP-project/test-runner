@@ -88,7 +88,7 @@ public class TestResultImpl implements TestResult, Serializable {
     }
 
     @Override
-    public void save() {
+    public synchronized void save() {
         File outputDir = new File(OUTPUT_DIR);
         if (!outputDir.exists()) {
             if (!outputDir.mkdirs()) {
