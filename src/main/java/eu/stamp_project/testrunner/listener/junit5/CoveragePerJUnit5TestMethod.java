@@ -34,7 +34,7 @@ public class CoveragePerJUnit5TestMethod extends JUnit5TestResult implements Cov
     }
 
     @Override
-    public void executionStarted(TestIdentifier testIdentifier) {
+    public synchronized void executionStarted(TestIdentifier testIdentifier) {
         if (testIdentifier.isTest()) {
             this.internalCoverage.setExecutionData(new ExecutionDataStore());
             this.internalCoverage.setSessionInfos(new SessionInfoStore());
@@ -49,7 +49,7 @@ public class CoveragePerJUnit5TestMethod extends JUnit5TestResult implements Cov
     }
 
     @Override
-    public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
+    public synchronized void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
         if (testIdentifier.isTest()) {
             this.internalCoverage.getData().collect(
                     this.internalCoverage.getExecutionData(),

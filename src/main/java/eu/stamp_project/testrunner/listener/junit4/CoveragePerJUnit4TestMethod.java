@@ -54,7 +54,7 @@ public class CoveragePerJUnit4TestMethod extends JUnit4TestResult implements Cov
             parametrizedName.contains("[") ? parametrizedName.split("\\[")[0] : parametrizedName;
 
     @Override
-    public void testStarted(Description description) throws Exception {
+    public synchronized void testStarted(Description description) throws Exception {
         this.internalCoverage.setExecutionData(new ExecutionDataStore());
         this.internalCoverage.setSessionInfos(new SessionInfoStore());
         this.internalCoverage.getData().setSessionId(description.getMethodName());
@@ -66,7 +66,7 @@ public class CoveragePerJUnit4TestMethod extends JUnit4TestResult implements Cov
     }
 
     @Override
-    public void testFinished(Description description) throws Exception {
+    public synchronized void testFinished(Description description) throws Exception {
         this.internalCoverage.getData().collect(
                 this.internalCoverage.getExecutionData(),
                 this.internalCoverage.getSessionInfos(),
