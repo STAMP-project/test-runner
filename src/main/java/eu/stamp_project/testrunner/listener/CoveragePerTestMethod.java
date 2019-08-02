@@ -14,7 +14,7 @@ public interface CoveragePerTestMethod extends Serializable {
 
     public static final String SERIALIZE_NAME = "CoveragePerTest";
 
-    public static final String OUTPUT_DIR = "target" + ConstantsHelper.FILE_SEPARATOR + "dspot" + ConstantsHelper.FILE_SEPARATOR;
+    public static final String OUTPUT_DIR = "target" + ConstantsHelper.FILE_SEPARATOR;
 
     public static final String EXTENSION = ".ser";
 
