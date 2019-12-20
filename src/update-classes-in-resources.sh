@@ -4,14 +4,14 @@ mvn clean compile
 
 rm -rf src/main/resources/runner-classes/
 
-mkdir --parent src/main/resources/runner-classes/eu/stamp_project/testrunner/listener/
-mkdir --parent src/main/resources/runner-classes/eu/stamp_project/testrunner/utils/
-mkdir --parent src/main/resources/runner-classes/eu/stamp_project/testrunner/listener/impl
-mkdir --parent src/main/resources/runner-classes/eu/stamp_project/testrunner/listener/junit4
-mkdir --parent src/main/resources/runner-classes/eu/stamp_project/testrunner/listener/junit5
-mkdir --parent src/main/resources/runner-classes/eu/stamp_project/testrunner/listener/pit
-mkdir --parent src/main/resources/runner-classes/eu/stamp_project/testrunner/runner/
-mkdir --parent src/main/resources/runner-classes/eu/stamp_project/testrunner/runner/coverage/
+mkdir -p src/main/resources/runner-classes/eu/stamp_project/testrunner/listener/
+mkdir -p src/main/resources/runner-classes/eu/stamp_project/testrunner/utils/
+mkdir -p src/main/resources/runner-classes/eu/stamp_project/testrunner/listener/impl
+mkdir -p src/main/resources/runner-classes/eu/stamp_project/testrunner/listener/junit4
+mkdir -p src/main/resources/runner-classes/eu/stamp_project/testrunner/listener/junit5
+mkdir -p src/main/resources/runner-classes/eu/stamp_project/testrunner/listener/pit
+mkdir -p src/main/resources/runner-classes/eu/stamp_project/testrunner/runner/
+mkdir -p src/main/resources/runner-classes/eu/stamp_project/testrunner/runner/coverage/
 
 cp -r target/classes/eu/stamp_project/testrunner/utils/*.class src/main/resources/runner-classes/eu/stamp_project/testrunner/utils/
 cp -r target/classes/eu/stamp_project/testrunner/listener/*.class src/main/resources/runner-classes/eu/stamp_project/testrunner/listener/
