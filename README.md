@@ -104,7 +104,7 @@ Coverage coverage = EntryPoint.runCoverage(String classpath, String targetProjec
 Coverage coverage = EntryPoint.runCoverage(String classpath, String targetProjectClasses, String[] fullQualifiedNameOfTestClasses, String[] methodNames); 
 ```
 
-`String targetProjectClasses` must contain both absolute paths to the binaries of the program and the binaries of the test suite. For a typical maven project, this is would be: `<path_to_project>/target/classes:<path_to_project>/target/test-classes` where `<path_to_project>` is the path to the project under test. Note that the separator, here `:` is used on Linux. You must use the system separator. 
+`String targetProjectClasses` must contain both the absolute paths to the binaries of the program and of the binaries of the test suite. For a typical maven project, this is would be: `<path_to_project>/target/classes:<path_to_project>/target/test-classes` where `<path_to_project>` is the path to the project under test. Note that the separator, here `:` is used on Linux. You must use the system separator. 
 
 ##### Output
 
