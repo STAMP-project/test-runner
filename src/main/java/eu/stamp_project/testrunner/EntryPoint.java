@@ -452,8 +452,11 @@ public class EntryPoint {
     }
 
     private static void runGivenCommandLine(String commandLine) throws TimeoutException {
+        List<String> command = Arrays.asList(commandLine.split(" "));
+        command = command.stream().map(s -> s.replaceAll("%20", " ")).collect(Collectors.toList());
+
         if (EntryPoint.verbose) {
-            LOGGER.info("Run: {}", commandLine);
+            LOGGER.info("Run: {}", command);
         }
         if (workingDirectory != null && !workingDirectory.exists()) {
             LOGGER.warn(
@@ -464,7 +467,7 @@ public class EntryPoint {
         }
         Process process = null;
         try {
-            ProcessBuilder pb = new ProcessBuilder().command(Arrays.asList(commandLine.split(" ")));
+            ProcessBuilder pb = new ProcessBuilder().command(command);
             if (workingDirectory != null) {
                 pb.directory(workingDirectory);
             }
