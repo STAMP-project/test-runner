@@ -214,7 +214,7 @@ public class EntryPoint {
             throws TimeoutException {
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{getJavaCommand(),
-                        classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES,
+                        (classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES).replaceAll(" ", "%20"),
                         EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_TEST_RUNNER_QUALIFIED_NAME
                                 : EntryPoint.JUNIT4_TEST_RUNNER_QUALIFIED_NAME,
                         ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun,
@@ -293,11 +293,11 @@ public class EntryPoint {
                                        String[] fullQualifiedNameOfTestClasses, String[] methodNames) throws TimeoutException {
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{getJavaCommand(),
-                        classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES
-                                + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES,
+                        (classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES
+                                + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES).replaceAll(" ", "%20"),
                         EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_JACOCO_RUNNER_QUALIFIED_NAME : EntryPoint.JUNIT4_JACOCO_RUNNER_QUALIFIED_NAME,
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
-                        targetProjectClasses, ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun,
+                        (targetProjectClasses).replaceAll(" ", "%20"), ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun,
                         String.join(ConstantsHelper.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
                         methodNames.length == 0 ? "" :
                                 (ParserOptions.FLAG_testMethodNamesToRun + ConstantsHelper.WHITE_SPACE +
@@ -379,11 +379,11 @@ public class EntryPoint {
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{
                         getJavaCommand(),
-                        classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES
-                                + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES,
+                        (classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES
+                                + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES).replaceAll(" ", "%20"),
                         EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME : EntryPoint.JUNIT4_JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME,
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
-                        targetProjectClasses, ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun,
+                        (targetProjectClasses).replaceAll(" ", "%20"), ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun,
                         String.join(ConstantsHelper.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
                         methodNames.length == 0 ? "" : ParserOptions.FLAG_testMethodNamesToRun + ConstantsHelper.WHITE_SPACE +
                                 String.join(ConstantsHelper.PATH_SEPARATOR, methodNames),
