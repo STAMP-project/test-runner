@@ -3,6 +3,7 @@ package eu.stamp_project.testrunner.runner.coverage;
 import eu.stamp_project.testrunner.EntryPoint;
 import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.junit5.JUnit5Coverage;
+import eu.stamp_project.testrunner.listener.junit5.JUnit5TestResult;
 import eu.stamp_project.testrunner.runner.JUnit5Runner;
 import eu.stamp_project.testrunner.runner.ParserOptions;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
@@ -16,14 +17,17 @@ import java.util.List;
  */
 public class JUnit5JacocoRunner extends JacocoRunner {
 
+	
     public JUnit5JacocoRunner(String classesDirectory, String testClassesDirectory) {
         super(classesDirectory, testClassesDirectory);
     }
-
+    
     public JUnit5JacocoRunner(String classesDirectory, String testClassesDirectory, List<String> blackList) {
-        super(classesDirectory, testClassesDirectory, blackList);
+        super(classesDirectory, testClassesDirectory, blackList);;
     }
 
+    
+    
     /**
      * The entry method to execute junit tests.
      * This method is not meant to be used directly, but rather using {@link EntryPoint}
@@ -69,6 +73,19 @@ public class JUnit5JacocoRunner extends JacocoRunner {
                 testMethodNames,
                 blackList,
                 listener,
+                this.instrumentedClassLoader
+        );
+        return listener;
+    }
+    
+    @Override
+    protected Coverage executeTest(String[] testClassNames, String[] testMethodNames, List<String> blackList, Coverage internal) {
+    	JUnit5Coverage listener = new JUnit5Coverage(internal);
+        JUnit5Runner.run(
+                testClassNames,
+                testMethodNames,
+                blackList,
+                (JUnit5TestResult)listener,
                 this.instrumentedClassLoader
         );
         return listener;

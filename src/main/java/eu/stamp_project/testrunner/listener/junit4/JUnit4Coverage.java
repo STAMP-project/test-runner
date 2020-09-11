@@ -2,6 +2,7 @@ package eu.stamp_project.testrunner.listener.junit4;
 
 import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.impl.CoverageImpl;
+import eu.stamp_project.testrunner.listener.impl.CoverageInformation;
 import org.jacoco.core.data.ExecutionDataStore;
 
 import java.io.Serializable;
@@ -23,6 +24,10 @@ public class JUnit4Coverage extends JUnit4TestResult implements Coverage, Serial
         this.internalCoverage = new CoverageImpl(covered, total);
     }
 
+    public JUnit4Coverage(Coverage internalCoverage) {
+        this.internalCoverage = internalCoverage;
+    }
+    	
     @Override
     public void setExecutionPath(String executionPath) {
         this.internalCoverage.setExecutionPath(executionPath);
@@ -69,4 +74,10 @@ public class JUnit4Coverage extends JUnit4TestResult implements Coverage, Serial
                 ((JUnit4Coverage) that).getInstructionsCovered() == this.getInstructionsCovered() &&
                 ((JUnit4Coverage) that).getInstructionsTotal() == this.getInstructionsTotal();
      }
+
+	@Override
+	public CoverageInformation getDetailedCoverage() {
+	
+		return this.internalCoverage.getDetailedCoverage();
+	}
 }

@@ -1,5 +1,6 @@
 package eu.stamp_project.testrunner.listener;
 
+import eu.stamp_project.testrunner.listener.impl.CoverageInformation;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.jacoco.core.data.ExecutionDataStore;
 
@@ -29,5 +30,7 @@ public interface Coverage {
     public boolean isBetterThan(Coverage that);
 
     public void save();
+    
+    public CoverageInformation getDetailedCoverage();
 
 }

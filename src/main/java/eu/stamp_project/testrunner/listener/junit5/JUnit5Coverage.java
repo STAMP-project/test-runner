@@ -2,6 +2,8 @@ package eu.stamp_project.testrunner.listener.junit5;
 
 import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.impl.CoverageImpl;
+import eu.stamp_project.testrunner.listener.impl.CoverageInformation;
+
 import org.jacoco.core.data.ExecutionDataStore;
 
 import java.io.Serializable;
@@ -23,6 +25,10 @@ public class JUnit5Coverage extends JUnit5TestResult implements Coverage, Serial
 
     public JUnit5Coverage(int covered, int total) {
         this.internalCoverage = new CoverageImpl(covered, total);
+    }
+    
+    public JUnit5Coverage(Coverage internalCoverage) {
+        this.internalCoverage = internalCoverage;
     }
 
     @Override
@@ -64,4 +70,10 @@ public class JUnit5Coverage extends JUnit5TestResult implements Coverage, Serial
     public String toString() {
         return this.internalCoverage.toString();
     }
+    
+	@Override
+	public CoverageInformation getDetailedCoverage() {
+	
+		return this.internalCoverage.getDetailedCoverage();
+	}
 }

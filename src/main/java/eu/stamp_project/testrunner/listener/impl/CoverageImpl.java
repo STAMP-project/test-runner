@@ -151,4 +151,9 @@ public class CoverageImpl implements Coverage, Serializable {
         return new Loader<Coverage>().load(SERIALIZE_NAME);
     }
 
+	@Override
+	public CoverageInformation getDetailedCoverage() {
+		return null;
+	}
+
 }

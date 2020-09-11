@@ -5,14 +5,18 @@ import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
 
-class MemoryClassLoader extends URLClassLoader {
+public class MemoryClassLoader extends URLClassLoader {
 
-    private final Map<String, byte[]> definitions = new HashMap<>();
+    private Map<String, byte[]> definitions = new HashMap<>();
 
     public MemoryClassLoader(URL[] urls) {
         super(urls, ClassLoader.getSystemClassLoader());
     }
 
+    public MemoryClassLoader(URL[] urls, ClassLoader parent) {
+		super(urls, parent);
+	}
+    
     /**
      * Add a in-memory representation of a class.
      *
@@ -36,5 +40,13 @@ class MemoryClassLoader extends URLClassLoader {
         }
         return super.loadClass(name, false);
     }
+
+	public Map<String, byte[]> getDefinitions() {
+		return definitions;
+	}
+
+	public void setDefinitions(Map<String, byte[]> definitions) {
+		this.definitions = definitions;
+	}
 
 }
