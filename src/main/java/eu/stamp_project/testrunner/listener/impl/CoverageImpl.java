@@ -4,11 +4,8 @@ import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.TestResult;
 import eu.stamp_project.testrunner.runner.Loader;
 import org.jacoco.core.analysis.*;
-import org.jacoco.core.data.ExecutionDataStore;
-
 import java.io.*;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -37,6 +34,12 @@ public class CoverageImpl implements Coverage, Serializable {
         this.instructionsTotal = total;
         this.executionPath = "";
     }
+
+	public CoverageImpl(int covered, int total, String executionPath) {
+		this.instructionsCovered = covered;
+		this.instructionsTotal = total;
+		this.executionPath = executionPath;
+	}
 
     @Override
     public void setExecutionPath(String executionPath) {
@@ -82,40 +85,6 @@ public class CoverageImpl implements Coverage, Serializable {
     }
 
     @Override
-    public void collectData(ExecutionDataStore executionData, String classesDirectory) {
-        final CoverageBuilder coverageBuilder = new CoverageBuilder();
-        final Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
-        try {
-            analyzer.analyzeAll(new File(classesDirectory));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        final int[] counter = new int[2];
-        final StringBuilder builderExecutionPath = new StringBuilder();
-        coverageBuilder.getClasses().forEach(coverage -> {
-            final List<Integer> listOfCountForCounterFunction =
-                    CoverageImpl.getListOfCountForCounterFunction(coverage, ICounter::getCoveredCount);
-            builderExecutionPath.append(coverage.getName())
-                    .append(":")
-                    .append(listOfCountForCounterFunction
-                            .stream()
-                            .map(Objects::toString)
-                            .collect(Collectors.joining(","))
-                    ).append(";");
-            counter[0] += listOfCountForCounterFunction.stream()
-                    .mapToInt(Integer::intValue)
-                    .sum();
-            counter[1] += CoverageImpl.getListOfCountForCounterFunction(coverage, ICounter::getTotalCount)
-                    .stream()
-                    .mapToInt(Integer::intValue)
-                    .sum();
-        });
-        this.executionPath = builderExecutionPath.toString();
-        this.instructionsCovered = counter[0];
-        this.instructionsTotal = counter[1];
-    }
-
-    @Override
     public String toString() {
         return this.instructionsCovered + " / " + this.instructionsTotal;
     }
@@ -150,10 +119,5 @@ public class CoverageImpl implements Coverage, Serializable {
     public static Coverage load() {
         return new Loader<Coverage>().load(SERIALIZE_NAME);
     }
-
-	@Override
-	public CoverageInformation getDetailedCoverage() {
-		return null;
-	}
 
 }

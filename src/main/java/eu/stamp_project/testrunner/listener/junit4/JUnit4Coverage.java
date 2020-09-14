@@ -1,16 +1,14 @@
 package eu.stamp_project.testrunner.listener.junit4;
 
 import eu.stamp_project.testrunner.listener.Coverage;
+import eu.stamp_project.testrunner.listener.TestCoveredResult;
 import eu.stamp_project.testrunner.listener.impl.CoverageImpl;
-import eu.stamp_project.testrunner.listener.impl.CoverageInformation;
-import org.jacoco.core.data.ExecutionDataStore;
-
 import java.io.Serializable;
 
 /**
  * This class represents the instruction coverage of source.
  */
-public class JUnit4Coverage extends JUnit4TestResult implements Coverage, Serializable {
+public class JUnit4Coverage extends JUnit4TestResult implements Coverage, Serializable, TestCoveredResult {
 
     private static final long serialVersionUID = 109548359596802378L;
 
@@ -48,10 +46,6 @@ public class JUnit4Coverage extends JUnit4TestResult implements Coverage, Serial
         return this.internalCoverage.getExecutionPath();
     }
 
-    @Override
-    public void collectData(ExecutionDataStore executionData, String classesDirectory) {
-        this.internalCoverage.collectData(executionData, classesDirectory);
-    }
 
     @Override
     public boolean isBetterThan(Coverage that) {
@@ -76,8 +70,12 @@ public class JUnit4Coverage extends JUnit4TestResult implements Coverage, Serial
      }
 
 	@Override
-	public CoverageInformation getDetailedCoverage() {
-	
-		return this.internalCoverage.getDetailedCoverage();
+	public void setCoverageInformation(Coverage coverage) {
+		this.internalCoverage = coverage;		
+	}
+
+	@Override
+	public Coverage getCoverageInformation() {
+		return this.internalCoverage;
 	}
 }

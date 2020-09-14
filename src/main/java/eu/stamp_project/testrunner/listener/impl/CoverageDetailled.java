@@ -2,18 +2,8 @@ package eu.stamp_project.testrunner.listener.impl;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.jacoco.core.analysis.Analyzer;
-import org.jacoco.core.analysis.CoverageBuilder;
-import org.jacoco.core.analysis.IClassCoverage;
-import org.jacoco.core.analysis.IMethodCoverage;
-import org.jacoco.core.data.ExecutionDataStore;
-
 import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.TestResult;
 import eu.stamp_project.testrunner.runner.Loader;
@@ -21,16 +11,20 @@ import eu.stamp_project.testrunner.runner.Loader;
 /**
  * created by Benjamin DANGLOT benjamin.danglot@inria.fr on 14/11/18
  */
-public class CoverageLineImpl implements Coverage, Serializable {
+public class CoverageDetailled implements Coverage, Serializable {
 
 	private static final long serialVersionUID = 109548359596802378L;
 	/**
-	 * class name
+	 * contains the information of the coverage
 	 */
 	public CoverageInformation covered = new CoverageInformation();
 
-	public CoverageLineImpl() {
+	public CoverageDetailled() {
 		// empty
+	}
+
+	public CoverageDetailled(CoverageInformation covered) {
+		this.covered = covered;
 	}
 
 	@Override
@@ -51,42 +45,6 @@ public class CoverageLineImpl implements Coverage, Serializable {
 	@Override
 	public boolean isBetterThan(Coverage that) {
 		return false;
-	}
-
-	@Override
-	public void collectData(ExecutionDataStore executionData, String classesDirectory) {
-
-		final CoverageBuilder coverageBuilder = new CoverageBuilder();
-		final Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
-		try {
-			analyzer.analyzeAll(new File(classesDirectory));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-
-		for (IClassCoverage classCoverage : coverageBuilder.getClasses()) {
-
-			// List<Integer> allLinesExecuted = new ArrayList<Integer>();
-			Map<Integer, Integer> covClass = new HashMap<>();
-
-			for (IMethodCoverage methodCoverage : classCoverage.getMethods()) {
-
-				if (!"<clinit>".equals(methodCoverage.getName())) {
-
-					for (int i = methodCoverage.getFirstLine(); i <= methodCoverage.getLastLine() + 1; i++) {
-						int coveredI = methodCoverage.getLine(i).getInstructionCounter().getCoveredCount();
-						covClass.put(i, coveredI);
-					}
-
-				}
-			}
-			CoverageFromClass l = new CoverageFromClass(classCoverage.getName(), classCoverage.getPackageName(),
-					classCoverage.getFirstLine(), classCoverage.getLastLine(), covClass);
-
-			this.covered.put(classCoverage.getName(), l);
-
-		}
-
 	}
 
 	@Override
@@ -130,7 +88,6 @@ public class CoverageLineImpl implements Coverage, Serializable {
 
 	}
 
-	@Override
 	public CoverageInformation getDetailedCoverage() {
 
 		return covered;

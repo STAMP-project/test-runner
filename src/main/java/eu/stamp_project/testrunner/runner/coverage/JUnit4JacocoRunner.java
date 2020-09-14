@@ -1,7 +1,7 @@
 package eu.stamp_project.testrunner.runner.coverage;
 
 import eu.stamp_project.testrunner.EntryPoint;
-import eu.stamp_project.testrunner.listener.Coverage;
+import eu.stamp_project.testrunner.listener.TestCoveredResult;
 import eu.stamp_project.testrunner.listener.junit4.JUnit4Coverage;
 import eu.stamp_project.testrunner.listener.junit4.JUnit4TestResult;
 import eu.stamp_project.testrunner.runner.JUnit4Runner;
@@ -63,10 +63,10 @@ public class JUnit4JacocoRunner extends JacocoRunner {
     }
 
     @Override
-    protected Coverage executeTest(String[] testClassNames,
+    protected  TestCoveredResult executeTest(String[] testClassNames,
                                String[] testMethodNames,
                                List<String> blackList) {
-        final Coverage listener = new JUnit4Coverage();
+        final TestCoveredResult listener = new JUnit4Coverage();
         JUnit4Runner.run(
                 testClassNames,
                 testMethodNames,
@@ -76,19 +76,5 @@ public class JUnit4JacocoRunner extends JacocoRunner {
         );
         return listener;
     }
-    
-    @Override
-    protected Coverage executeTest(String[] testClassNames,
-                               String[] testMethodNames,
-                               List<String> blackList, Coverage internal) {
-    	JUnit4Coverage listener  = new JUnit4Coverage(internal);
-        JUnit4Runner.run(
-                testClassNames,
-                testMethodNames,
-                blackList,
-                (JUnit4TestResult) listener,
-                this.instrumentedClassLoader
-        );
-        return listener;
-    }
+ 
 }

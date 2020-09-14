@@ -2,7 +2,10 @@ package eu.stamp_project.testrunner.runner.coverage;
 
 import eu.stamp_project.testrunner.EntryPoint;
 import eu.stamp_project.testrunner.listener.Coverage;
+import eu.stamp_project.testrunner.listener.CoverageCollector;
+import eu.stamp_project.testrunner.listener.TestCoveredResult;
 import eu.stamp_project.testrunner.listener.TestResult;
+import eu.stamp_project.testrunner.listener.impl.CoverageCollectorSummarization;
 import eu.stamp_project.testrunner.runner.Failure;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.apache.commons.io.FileUtils;
@@ -122,7 +125,7 @@ public abstract class JacocoRunner {
                     IOUtils.toByteArray(classLoader.getResourceAsStream(resource))
             );
             runtime.startup(data);
-            final Coverage listener = this.executeTest(new String[]{fullQualifiedNameOfTestClass}, testMethodNames, Collections.emptyList());
+            final TestResult listener = this.executeTest(new String[]{fullQualifiedNameOfTestClass}, testMethodNames, Collections.emptyList());
             if (!((TestResult) listener).getFailingTests().isEmpty()) {
                 System.err.println("Some test(s) failed during computation of coverage:\n" +
                         ((TestResult) listener).getFailingTests()
@@ -134,26 +137,24 @@ public abstract class JacocoRunner {
             data.collect(executionData, sessionInfos, false);
             runtime.shutdown();
             clearCache(this.instrumentedClassLoader);
-            listener.collectData(executionData, classesDirectory);
-            return listener;
+            
+            CoverageCollector coverageCollector = new CoverageCollectorSummarization();
+            
+            Coverage computedCoverage =  coverageCollector.collectData(executionData, classesDirectory);
+            return computedCoverage;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    protected abstract Coverage executeTest(String[] testClassNames,
+    protected abstract /*Coverage*/TestCoveredResult executeTest(String[] testClassNames,
                                             String[] testMethodNames,
                                             List<String> blackList);
     
     
     
     
-    protected Coverage executeTest(String[] testClassNames,
-                               String[] testMethodNames,
-                               List<String> blackList, Coverage internal) {
-    	return executeTest(testClassNames, testMethodNames, blackList);
-    }
-    
+
 
     /**
      * Compute the instruction coverage of the given tests
@@ -189,8 +190,9 @@ public abstract class JacocoRunner {
         });
         try {
             runtime.startup(data);
-            final Coverage listener = this.executeTest(fullQualifiedNameOfTestClasses, new String[0], this.blackList);
-            if (!((TestResult) listener).getFailingTests().isEmpty()) {
+            TestCoveredResult listener = this.executeTest(fullQualifiedNameOfTestClasses, new String[0], this.blackList);
+
+            if (!listener.getFailingTests().isEmpty()) {
                 System.err.println("Some test(s) failed during computation of coverage:\n" +
                         ((TestResult) listener).getFailingTests()
                                 .stream()
@@ -201,8 +203,13 @@ public abstract class JacocoRunner {
             data.collect(executionData, sessionInfos, false);
             runtime.shutdown();
             clearCache(this.instrumentedClassLoader);
-            listener.collectData(executionData, classesDirectory);
+            CoverageCollector coverageCollector = new CoverageCollectorSummarization();
+            Coverage coverage = coverageCollector.collectData(executionData, classesDirectory);
+            
+            listener.setCoverageInformation(coverage);
+            
             return listener;
+            
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -211,7 +218,7 @@ public abstract class JacocoRunner {
      * We indicate the method to compute the coverage
      * @return
      */
-    public Coverage runAlternative(Coverage coverage, String classesDirectory, String testClassesDirectory,
+    public TestCoveredResult runAlternative(CoverageCollector coverageCollector, String classesDirectory, String testClassesDirectory,
 			String fullQualifiedNameOfTestClass, String... testMethodNames) {
 
 		final RuntimeData data = new RuntimeData();
@@ -222,10 +229,10 @@ public abstract class JacocoRunner {
 		
 			runtime.startup(data);
 
-			final Coverage listener = executeTest(new String[] { fullQualifiedNameOfTestClass }, testMethodNames,
-					Collections.emptyList(), coverage);
+			final TestCoveredResult listener = executeTest(new String[] { fullQualifiedNameOfTestClass }, testMethodNames,
+					Collections.emptyList());
 
-			if (!((TestResult) listener).getFailingTests().isEmpty()) {
+			if (!listener.getFailingTests().isEmpty()) {
 				System.err.println("Some test(s) failed during computation of coverage:\n" + ((TestResult) listener)
 						.getFailingTests().stream().map(Failure::toString).collect(Collectors.joining("\n")));
 			}
@@ -237,9 +244,9 @@ public abstract class JacocoRunner {
 
 			clearCache(this.instrumentedClassLoader);
 
-			listener.collectData(executionData, classesDirectory);
-			listener.collectData(executionData, testClassesDirectory);
-
+			Coverage coverageSource = coverageCollector.collectData(executionData, classesDirectory);
+	
+			listener.setCoverageInformation(coverageSource);
 			return listener;
 
 		} catch (

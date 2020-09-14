@@ -1,10 +1,9 @@
 package eu.stamp_project.testrunner.listener.junit5;
 
 import eu.stamp_project.testrunner.listener.Coverage;
+import eu.stamp_project.testrunner.listener.TestCoveredResult;
 import eu.stamp_project.testrunner.listener.impl.CoverageImpl;
-import eu.stamp_project.testrunner.listener.impl.CoverageInformation;
 
-import org.jacoco.core.data.ExecutionDataStore;
 
 import java.io.Serializable;
 
@@ -13,7 +12,7 @@ import java.io.Serializable;
  * benjamin.danglot@inria.fr
  * on 14/11/18
  */
-public class JUnit5Coverage extends JUnit5TestResult implements Coverage, Serializable {
+public class JUnit5Coverage extends JUnit5TestResult implements Coverage, Serializable, TestCoveredResult {
 
     private static final long serialVersionUID = -2873920196510405923L;
 
@@ -51,10 +50,6 @@ public class JUnit5Coverage extends JUnit5TestResult implements Coverage, Serial
         return this.internalCoverage.getExecutionPath();
     }
 
-    @Override
-    public void collectData(ExecutionDataStore executionData, String classesDirectory) {
-        this.internalCoverage.collectData(executionData, classesDirectory);
-    }
 
     @Override
     public boolean isBetterThan(Coverage that) {
@@ -71,9 +66,15 @@ public class JUnit5Coverage extends JUnit5TestResult implements Coverage, Serial
         return this.internalCoverage.toString();
     }
     
-	@Override
-	public CoverageInformation getDetailedCoverage() {
 	
-		return this.internalCoverage.getDetailedCoverage();
+	@Override
+	public void setCoverageInformation(Coverage coverage) {
+		this.internalCoverage = coverage;		
 	}
+
+	@Override
+	public Coverage getCoverageInformation() {
+		return this.internalCoverage;
+	}
+	
 }

@@ -1,15 +1,10 @@
 package eu.stamp_project.testrunner.runner.coverage;
 
 import eu.stamp_project.testrunner.EntryPoint;
-import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
+import eu.stamp_project.testrunner.listener.TestCoveredResult;
 import eu.stamp_project.testrunner.listener.TestResult;
-import eu.stamp_project.testrunner.listener.junit4.CoveragePerJUnit4TestMethod;
-import eu.stamp_project.testrunner.listener.junit5.CoveragePerJUnit5TestMethod;
 import eu.stamp_project.testrunner.runner.Failure;
-import eu.stamp_project.testrunner.runner.JUnit4Runner;
-import eu.stamp_project.testrunner.runner.JUnit5Runner;
-import eu.stamp_project.testrunner.runner.ParserOptions;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.apache.commons.io.IOUtils;
 import org.jacoco.core.runtime.RuntimeData;
@@ -18,7 +13,6 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,7 +72,7 @@ public abstract class JacocoRunnerPerTestMethod extends JacocoRunner {
     }
 
     @Override
-    protected Coverage executeTest(String[] testClassNames, String[] testMethodNames, List<String> blackList) {
+    protected TestCoveredResult executeTest(String[] testClassNames, String[] testMethodNames, List<String> blackList) {
         throw new UnsupportedOperationException();
     }
 
