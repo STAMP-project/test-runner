@@ -147,7 +147,7 @@ public abstract class JacocoRunner {
         }
     }
 
-    protected abstract /*Coverage*/TestCoveredResult executeTest(String[] testClassNames,
+    protected abstract TestCoveredResult executeTest(String[] testClassNames,
                                             String[] testMethodNames,
                                             List<String> blackList);
     
@@ -288,7 +288,6 @@ public abstract class JacocoRunner {
   		try {
 
   			for (int i = 0; i < classpath.length; i++) {
-  				// System.out.println(cps[i]);
   				urls[i] = new File(classpath[i]).toURI().toURL();
   			}
 
