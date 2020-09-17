@@ -218,7 +218,7 @@ public abstract class JacocoRunner {
      * We indicate the method to compute the coverage
      * @return
      */
-    public TestCoveredResult runAlternative(CoverageCollector coverageCollector, String classesDirectory, String testClassesDirectory,
+    public TestCoveredResult run(CoverageCollector coverageCollector, String classesDirectory, String testClassesDirectory,
 			String fullQualifiedNameOfTestClass, String... testMethodNames) {
 
 		final RuntimeData data = new RuntimeData();

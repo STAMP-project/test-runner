@@ -15,12 +15,12 @@ import eu.stamp_project.testrunner.listener.CoverageCollector;
 /**
  * 
  */
-public class CoverageBuilderDetailled implements CoverageCollector {
+public class CoverageCollectorDetailed implements CoverageCollector {
 
 	private static final long serialVersionUID = 109548359596802378L;
 
 
-	public CoverageBuilderDetailled() {
+	public CoverageCollectorDetailed() {
 
 	}
 
@@ -59,7 +59,7 @@ public class CoverageBuilderDetailled implements CoverageCollector {
 			covered.put(classCoverage.getName(), l);
 
 		}
-		Coverage coverage = new CoverageDetailled(covered);
+		Coverage coverage = new CoverageDetailed(covered);
 		return coverage;
 	}
 

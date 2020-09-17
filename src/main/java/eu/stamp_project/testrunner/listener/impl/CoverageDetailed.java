@@ -11,7 +11,7 @@ import eu.stamp_project.testrunner.runner.Loader;
 /**
  * created by Benjamin DANGLOT benjamin.danglot@inria.fr on 14/11/18
  */
-public class CoverageDetailled implements Coverage, Serializable {
+public class CoverageDetailed implements Coverage, Serializable {
 
 	private static final long serialVersionUID = 109548359596802378L;
 	/**
@@ -19,11 +19,11 @@ public class CoverageDetailled implements Coverage, Serializable {
 	 */
 	public CoverageInformation covered = new CoverageInformation();
 
-	public CoverageDetailled() {
+	public CoverageDetailed() {
 		// empty
 	}
 
-	public CoverageDetailled(CoverageInformation covered) {
+	public CoverageDetailed(CoverageInformation covered) {
 		this.covered = covered;
 	}
 
