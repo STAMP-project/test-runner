@@ -78,23 +78,27 @@ public abstract class JacocoRunner {
     }
 
     
-	protected void recreateInstrumentedClassloaded(String classpath, String classesDirectory, String testClassesDirectory,
-			Map<String, byte[]> definitions) {
-	
-			URLClassLoader urlloader = getUrlClassloaderFromClassPath(classpath);
+	protected void recreateInstrumentedClassloaded(String classpath, String classesDirectory, Map<String, byte[]> definitions) {
 
-			recreateInstrumentedClassloaded(urlloader, classesDirectory, testClassesDirectory, definitions);
+		URLClassLoader urlloader = getUrlClassloaderFromClassPath(classpath);
 
+		recreateInstrumentedClassloaded(urlloader, classesDirectory, definitions);
 
 	}
-	
-	protected void recreateInstrumentedClassloaded(ClassLoader urlloader , String classesDirectory, String testClassesDirectory,
-			Map<String, byte[]> definitions) {
+
+	protected void recreateInstrumentedClassloaded(ClassLoader urlloader, String classesDirectory, Map<String, byte[]> definitions) {
 		try {
 
+			String[] dirs = classesDirectory.split(File.pathSeparator);
 
-			this.instrumentedClassLoader = new MemoryClassLoader(new URL[] { new File(classesDirectory).toURI().toURL(),
-					new File(testClassesDirectory).toURI().toURL() }, urlloader);
+			URL[] urls = new URL[dirs.length];
+
+			for (int i = 0; i < dirs.length; i++) {
+				String dir = dirs[i];
+				urls[i] = new File(dir).toURI().toURL();
+			}
+
+			this.instrumentedClassLoader = new MemoryClassLoader(urls, urlloader);
 			this.instrumentedClassLoader.setDefinitions(definitions);
 
 		} catch (Exception e) {
@@ -229,7 +233,7 @@ public abstract class JacocoRunner {
      * @return
      */
     public TestCoveredResult run(CoverageCollector coverageCollector, ClassLoader parentClassloader, String classesDirectory, String testClassesDirectory,
-			String fullQualifiedNameOfTestClass, String... testMethodNames) {
+			String fullQualifiedNameOfTestClass, boolean coverTest, String... testMethodNames) {
 
 		final RuntimeData data = new RuntimeData();
 		final ExecutionDataStore executionData = new ExecutionDataStore();
@@ -240,8 +244,10 @@ public abstract class JacocoRunner {
 			runtime.startup(data);
 			
 			//TODO: I dont understand why to re-generate the class loader each time we execute the test. If I remove it, it does not compute the coverage  from the second execution
-			this.recreateInstrumentedClassloaded(parentClassloader, classesDirectory, testClassesDirectory, this.instrumentedClassLoader.getDefinitions());
+			String classesToInstrument =classesDirectory +File.pathSeparator+ testClassesDirectory ;
 			
+			this.recreateInstrumentedClassloaded(parentClassloader, classesToInstrument,
+					this.instrumentedClassLoader.getDefinitions());
 
 			final TestCoveredResult listener = executeTest(new String[] { fullQualifiedNameOfTestClass }, testMethodNames,
 					Collections.emptyList());
@@ -258,7 +264,9 @@ public abstract class JacocoRunner {
 
 			clearCache(this.instrumentedClassLoader);
 
-			Coverage coverageSource = coverageCollector.collectData(executionData, classesDirectory);
+	        String pathToCover = (coverTest)? classesToInstrument: classesDirectory;
+			
+			Coverage coverageSource = coverageCollector.collectData(executionData, pathToCover);
 	
 			listener.setCoverageInformation(coverageSource);
 			return listener;
