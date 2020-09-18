@@ -78,17 +78,26 @@ public abstract class JacocoRunner {
     }
 
     
-	public void recreateInstrumentedClassloaded(String classpath, String classesDirectory, String testClassesDirectory,
+	protected void recreateInstrumentedClassloaded(String classpath, String classesDirectory, String testClassesDirectory,
+			Map<String, byte[]> definitions) {
+	
+			URLClassLoader urlloader = getUrlClassloaderFromClassPath(classpath);
+
+			recreateInstrumentedClassloaded(urlloader, classesDirectory, testClassesDirectory, definitions);
+
+
+	}
+	
+	protected void recreateInstrumentedClassloaded(ClassLoader urlloader , String classesDirectory, String testClassesDirectory,
 			Map<String, byte[]> definitions) {
 		try {
 
-			URLClassLoader urlloader = getUrlClassloaderFromClassPath(classpath);
 
 			this.instrumentedClassLoader = new MemoryClassLoader(new URL[] { new File(classesDirectory).toURI().toURL(),
 					new File(testClassesDirectory).toURI().toURL() }, urlloader);
 			this.instrumentedClassLoader.setDefinitions(definitions);
 
-		} catch (MalformedURLException e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 
@@ -216,9 +225,10 @@ public abstract class JacocoRunner {
     }
     /**
      * We indicate the method to compute the coverage
+     * @param parentClassloader 
      * @return
      */
-    public TestCoveredResult run(CoverageCollector coverageCollector, String classesDirectory, String testClassesDirectory,
+    public TestCoveredResult run(CoverageCollector coverageCollector, ClassLoader parentClassloader, String classesDirectory, String testClassesDirectory,
 			String fullQualifiedNameOfTestClass, String... testMethodNames) {
 
 		final RuntimeData data = new RuntimeData();
@@ -228,6 +238,10 @@ public abstract class JacocoRunner {
 		try {
 		
 			runtime.startup(data);
+			
+			//TODO: I dont understand why to re-generate the class loader each time we execute the test. If I remove it, it does not compute the coverage  from the second execution
+			this.recreateInstrumentedClassloaded(parentClassloader, classesDirectory, testClassesDirectory, this.instrumentedClassLoader.getDefinitions());
+			
 
 			final TestCoveredResult listener = executeTest(new String[] { fullQualifiedNameOfTestClass }, testMethodNames,
 					Collections.emptyList());
@@ -260,7 +274,7 @@ public abstract class JacocoRunner {
 	}
     
 	
-    private void instrumentAll(String classesDirectory) {
+    public void instrumentAll(String classesDirectory) {
         final Iterator<File> iterator = FileUtils.iterateFiles(new File(classesDirectory), new String[]{"class"}, true);
         while (iterator.hasNext()) {
             final File next = iterator.next();
