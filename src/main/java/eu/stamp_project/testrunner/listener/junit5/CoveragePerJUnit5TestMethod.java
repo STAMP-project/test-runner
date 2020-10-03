@@ -56,7 +56,7 @@ public class CoveragePerJUnit5TestMethod extends JUnit5TestResult implements Cov
             );
        
             CoverageCollectorSummarization coverageBuilder = new CoverageCollectorSummarization();
-            Coverage jUnit5Coverage =  coverageBuilder.collectData(this.internalCoverage.getExecutionData(), this.internalCoverage.getClassesDirectory());
+            Coverage jUnit5Coverage =  coverageBuilder.transformJacocoObject(this.internalCoverage.getExecutionData(), this.internalCoverage.getClassesDirectory());
             this.internalCoverage.getCoverageResultsMap().put(this.toString.apply(testIdentifier), jUnit5Coverage);
             switch (testExecutionResult.getStatus()) {
                 case FAILED:

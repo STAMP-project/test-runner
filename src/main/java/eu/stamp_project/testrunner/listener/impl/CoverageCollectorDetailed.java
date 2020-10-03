@@ -10,23 +10,17 @@ import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.IMethodCoverage;
 import org.jacoco.core.data.ExecutionDataStore;
 import eu.stamp_project.testrunner.listener.Coverage;
-import eu.stamp_project.testrunner.listener.CoverageCollector;
+import eu.stamp_project.testrunner.listener.CoverageTransformer;
 
 /**
- * 
+ * One implementation of {@link CoverageTransformer} that returns a {@link CoverageDetailed}.
  */
-public class CoverageCollectorDetailed implements CoverageCollector {
+public class CoverageCollectorDetailed implements CoverageTransformer {
 
 	private static final long serialVersionUID = 109548359596802378L;
 
-
-	public CoverageCollectorDetailed() {
-
-	}
-
-
 	@Override
-	public Coverage collectData(ExecutionDataStore executionData, String classesDirectory) {
+	public CoverageDetailed transformJacocoObject(ExecutionDataStore executionData, String classesDirectory) {
 
 	    CoverageInformation covered = new CoverageInformation();
 		
@@ -63,8 +57,7 @@ public class CoverageCollectorDetailed implements CoverageCollector {
 			covered.put(classCoverage.getName(), l);
 
 		}
-		Coverage coverage = new CoverageDetailed(covered);
-		return coverage;
+		return new CoverageDetailed(covered);
 	}
 
 

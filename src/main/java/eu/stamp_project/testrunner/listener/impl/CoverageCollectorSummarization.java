@@ -1,7 +1,7 @@
 package eu.stamp_project.testrunner.listener.impl;
 
 import eu.stamp_project.testrunner.listener.Coverage;
-import eu.stamp_project.testrunner.listener.CoverageCollector;
+import eu.stamp_project.testrunner.listener.CoverageTransformer;
 import org.jacoco.core.analysis.*;
 import org.jacoco.core.data.ExecutionDataStore;
 
@@ -18,7 +18,7 @@ import java.util.stream.IntStream;
  * benjamin.danglot@inria.fr
  * on 14/11/18
  */
-public class CoverageCollectorSummarization implements CoverageCollector {
+public class CoverageCollectorSummarization implements CoverageTransformer {
 
     private static final long serialVersionUID = 109548359596802378L;
 
@@ -44,7 +44,7 @@ public class CoverageCollectorSummarization implements CoverageCollector {
   
 
     @Override
-    public Coverage collectData(ExecutionDataStore executionData, String classesDirectory) {
+    public Coverage transformJacocoObject(ExecutionDataStore executionData, String classesDirectory) {
         final CoverageBuilder coverageBuilder = new CoverageBuilder();
         final Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
         try {

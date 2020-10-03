@@ -74,7 +74,7 @@ public class CoveragePerJUnit4TestMethod extends JUnit4TestResult implements Cov
                 false
         );
         CoverageCollectorSummarization coverageBilder = new CoverageCollectorSummarization();     
-        Coverage jUnit4Coverage =  coverageBilder.collectData(this.internalCoverage.getExecutionData(), this.internalCoverage.getClassesDirectory());
+        Coverage jUnit4Coverage =  coverageBilder.transformJacocoObject(this.internalCoverage.getExecutionData(), this.internalCoverage.getClassesDirectory());
         this.internalCoverage.getCoverageResultsMap().put(description.getMethodName(), jUnit4Coverage);
         if (isParametrized.test(description.getMethodName())) {
             this.collectForParametrizedTest(fromParametrizedToSimpleName.apply(description.getMethodName()));

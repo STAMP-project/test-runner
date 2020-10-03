@@ -2,7 +2,7 @@ package eu.stamp_project.testrunner.runner.coverage;
 
 import eu.stamp_project.testrunner.EntryPoint;
 import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
-import eu.stamp_project.testrunner.listener.TestCoveredResult;
+import eu.stamp_project.testrunner.listener.CoveredTestResult;
 import eu.stamp_project.testrunner.listener.TestResult;
 import eu.stamp_project.testrunner.runner.Failure;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
@@ -72,7 +72,7 @@ public abstract class JacocoRunnerPerTestMethod extends JacocoRunner {
     }
 
     @Override
-    protected TestCoveredResult executeTest(String[] testClassNames, String[] testMethodNames, List<String> blackList) {
+    protected CoveredTestResult executeTest(String[] testClassNames, String[] testMethodNames, List<String> blackList) {
         throw new UnsupportedOperationException();
     }
 

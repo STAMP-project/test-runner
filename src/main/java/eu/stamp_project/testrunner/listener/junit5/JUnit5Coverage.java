@@ -1,7 +1,7 @@
 package eu.stamp_project.testrunner.listener.junit5;
 
 import eu.stamp_project.testrunner.listener.Coverage;
-import eu.stamp_project.testrunner.listener.TestCoveredResult;
+import eu.stamp_project.testrunner.listener.CoveredTestResult;
 import eu.stamp_project.testrunner.listener.impl.CoverageImpl;
 
 
@@ -12,7 +12,7 @@ import java.io.Serializable;
  * benjamin.danglot@inria.fr
  * on 14/11/18
  */
-public class JUnit5Coverage extends JUnit5TestResult implements Coverage, Serializable, TestCoveredResult {
+public class JUnit5Coverage extends JUnit5TestResult implements Coverage, Serializable, CoveredTestResult {
 
     private static final long serialVersionUID = -2873920196510405923L;
 

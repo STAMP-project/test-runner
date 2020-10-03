@@ -1,14 +1,14 @@
 package eu.stamp_project.testrunner.listener.junit4;
 
 import eu.stamp_project.testrunner.listener.Coverage;
-import eu.stamp_project.testrunner.listener.TestCoveredResult;
+import eu.stamp_project.testrunner.listener.CoveredTestResult;
 import eu.stamp_project.testrunner.listener.impl.CoverageImpl;
 import java.io.Serializable;
 
 /**
  * This class represents the instruction coverage of source.
  */
-public class JUnit4Coverage extends JUnit4TestResult implements Coverage, Serializable, TestCoveredResult {
+public class JUnit4Coverage extends JUnit4TestResult implements Coverage, Serializable, CoveredTestResult {
 
     private static final long serialVersionUID = 109548359596802378L;
 
