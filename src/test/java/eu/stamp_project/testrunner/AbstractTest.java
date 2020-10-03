@@ -34,15 +34,21 @@ public class AbstractTest {
     public static String JUNIT5_CP;
 
     {
-        System.out.println(Arrays.stream(((URLClassLoader) URLClassLoader.getSystemClassLoader()).getURLs())
-                .map(URL::getPath).collect(Collectors.toList()));
+        List<String> classPath = Arrays.stream(((URLClassLoader) URLClassLoader.getSystemClassLoader()).getURLs())
+                .map(URL::getPath).collect(Collectors.toList());
 
-        MAVEN_HOME = Arrays.stream(((URLClassLoader) URLClassLoader.getSystemClassLoader()).getURLs())
-                .map(URL::getPath)
-                .filter(path -> path.contains("/.m2/repository/"))
-                .findFirst()
-                .map(s -> s.substring(0, s.indexOf("/.m2/repository/") + "/.m2/repository/".length()))
-                .get();
+        System.out.println(classPath);
+        if (classPath.size() == 1) {
+            // we only have the surefire booter
+            MAVEN_HOME = "/home/martin/.m2/repository/";
+        } else {
+            MAVEN_HOME = classPath.stream()
+                    .filter(path -> path.contains("/.m2/repository/"))
+                    .findFirst()
+                    .map(s -> s.substring(0, s.indexOf("/.m2/repository/") + "/.m2/repository/".length()))
+                    .get();
+        }
+
         TEST_PROJECT_CLASSES = "src/test/resources/test-projects/target/classes/" + ConstantsHelper.PATH_SEPARATOR +
                 "src/test/resources/test-projects/target/test-classes/";
         JUNIT_CP = MAVEN_HOME + "junit/junit/4.12/junit-4.12.jar" + ConstantsHelper.PATH_SEPARATOR
