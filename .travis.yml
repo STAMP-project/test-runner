@@ -14,6 +14,9 @@ install:
 script:
   - mvn clean test
 
+after_success:
+  - ./.travis/travis-deploy.sh
+
 branch:
   only:
     - master
