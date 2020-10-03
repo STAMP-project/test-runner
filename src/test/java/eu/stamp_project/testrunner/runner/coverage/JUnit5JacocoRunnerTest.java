@@ -1,6 +1,7 @@
 package eu.stamp_project.testrunner.runner.coverage;
 
 import eu.stamp_project.testrunner.AbstractTest;
+import eu.stamp_project.testrunner.EntryPointTest;
 import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.impl.CoverageImpl;
 import eu.stamp_project.testrunner.runner.JUnit4Runner;
@@ -32,7 +33,7 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
         );
         final Coverage load = CoverageImpl.load();
         assertEquals(30, load.getInstructionsCovered());
-        assertEquals(107, load.getInstructionsTotal());
+        assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, load.getInstructionsTotal());
         assertEquals(expectedExecutionPath , load.getExecutionPath());
     }
 
@@ -53,7 +54,7 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
         );
         final Coverage load = CoverageImpl.load();
         assertEquals(23, load.getInstructionsCovered());
-        assertEquals(107, load.getInstructionsTotal());
+        assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, load.getInstructionsTotal());
     }
 
     @Ignore
@@ -72,7 +73,7 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
         );
         final Coverage load = CoverageImpl.load();
         assertEquals(23, load.getInstructionsCovered());
-        assertEquals(107, load.getInstructionsTotal());
+        assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, load.getInstructionsTotal());
     }
 
 }
