@@ -40,8 +40,10 @@ public class AbstractTest {
         System.out.println(classPath);
         if (classPath.size() == 1) {
             // we only have the surefire booter
-            MAVEN_HOME = "/home/martin/.m2/repository/";
+            // so we take a value by default
+            MAVEN_HOME = System.getProperty("user.home") + "/.m2/repository/";
         } else {
+            // we infer it from the classpath
             MAVEN_HOME = classPath.stream()
                     .filter(path -> path.contains("/.m2/repository/"))
                     .findFirst()
