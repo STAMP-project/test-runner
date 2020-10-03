@@ -37,7 +37,7 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
         assertEquals(expectedExecutionPath , load.getExecutionPath());
     }
 
-    private static final String expectedExecutionPath = "tobemocked/LoginDao:0,0;tobemocked/LoginController:0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;tobemocked/LoginService:0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;example/Example:2,0,0,4,4,0,7,2,0,2,5,1,0,3;tobemocked/UserForm:0,0;";
+    private static final String expectedExecutionPath = "tobemocked/LoginDao:0,0;tobemocked/LoginController:0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;tobemocked/LoginService:0,0,0,0,0,0,0,0,0,0,0,0,0,0;example/Example:2,0,0,4,4,0,7,2,0,2,5,1,0,3;tobemocked/UserForm:0,0;";
 
     @Test
     public void testWithoutNewJvmOnTestCases() throws Exception {
