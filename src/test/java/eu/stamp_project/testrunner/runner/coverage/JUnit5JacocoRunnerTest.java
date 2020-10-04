@@ -1,6 +1,7 @@
 package eu.stamp_project.testrunner.runner.coverage;
 
 import eu.stamp_project.testrunner.AbstractTest;
+import eu.stamp_project.testrunner.EntryPointTest;
 import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.impl.CoverageImpl;
 import eu.stamp_project.testrunner.runner.JUnit4Runner;
@@ -32,11 +33,11 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
         );
         final Coverage load = CoverageImpl.load();
         assertEquals(30, load.getInstructionsCovered());
-        assertEquals(107, load.getInstructionsTotal());
+        assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, load.getInstructionsTotal());
         assertEquals(expectedExecutionPath , load.getExecutionPath());
     }
 
-    private static final String expectedExecutionPath = "tobemocked/LoginDao:0,0;tobemocked/LoginController:0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;tobemocked/LoginService:0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;example/Example:2,0,0,4,4,0,7,2,0,2,5,1,0,3;tobemocked/UserForm:0,0;";
+    private static final String expectedExecutionPath = "tobemocked/LoginDao:0,0;tobemocked/LoginController:0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;tobemocked/LoginService:0,0,0,0,0,0,0,0,0,0,0,0,0,0;example/Example:2,0,0,4,4,0,7,2,0,2,5,1,0,3;tobemocked/UserForm:0,0;";
 
     @Test
     public void testWithoutNewJvmOnTestCases() throws Exception {
@@ -53,7 +54,7 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
         );
         final Coverage load = CoverageImpl.load();
         assertEquals(23, load.getInstructionsCovered());
-        assertEquals(107, load.getInstructionsTotal());
+        assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, load.getInstructionsTotal());
     }
 
     @Ignore
@@ -72,7 +73,7 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
         );
         final Coverage load = CoverageImpl.load();
         assertEquals(23, load.getInstructionsCovered());
-        assertEquals(107, load.getInstructionsTotal());
+        assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, load.getInstructionsTotal());
     }
 
 }

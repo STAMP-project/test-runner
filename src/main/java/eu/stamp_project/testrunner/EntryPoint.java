@@ -15,7 +15,7 @@ import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.apache.commons.io.FileUtils;
 import org.jacoco.core.runtime.IRuntime;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.objectweb.asm.xml.Processor;
+import org.objectweb.asm.ClassReader;
 import org.opentest4j.TestAbortedException;
 import org.pitest.junit5.JUnit5Configuration;
 import org.pitest.mutationtest.config.PluginServices;
@@ -475,7 +475,7 @@ public class EntryPoint {
                     pb.redirectOutput(Redirect.PIPE);
                     pb.redirectError(Redirect.PIPE);
                 } else {
-                    // Redirecting to main process IO (System.out/err)
+                    // Redirecting to main process IO (System out/err)
                     pb.inheritIO();
                 }
             } else {
@@ -586,8 +586,7 @@ public class EntryPoint {
             .peek(path -> LOGGER.info("{}", path))
             .collect(Collectors.joining(ConstantsHelper.PATH_SEPARATOR));
 
-    private static final List<Class<?>> JACOCO_DEPENDENCIES = Arrays.asList(IRuntime.class, Processor.class,
-            FileUtils.class);
+    private static final List<Class<?>> JACOCO_DEPENDENCIES = Arrays.asList(IRuntime.class, FileUtils.class, ClassReader.class);
 
     private static final String ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES = CLASSES_TO_PATH_OF_DEPENDENCIES
             .apply(JACOCO_DEPENDENCIES);

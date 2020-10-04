@@ -2,8 +2,10 @@ package eu.stamp_project.testrunner.runner.coverage;
 
 import eu.stamp_project.testrunner.EntryPoint;
 import eu.stamp_project.testrunner.listener.Coverage;
-import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
+import eu.stamp_project.testrunner.listener.CoverageTransformer;
+import eu.stamp_project.testrunner.listener.CoveredTestResult;
 import eu.stamp_project.testrunner.listener.TestResult;
+import eu.stamp_project.testrunner.listener.impl.CoverageCollectorSummarization;
 import eu.stamp_project.testrunner.runner.Failure;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.apache.commons.io.FileUtils;
@@ -24,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.ResourceBundle.clearCache;
@@ -74,6 +77,36 @@ public abstract class JacocoRunner {
         instrumentAll(classesDirectory);
     }
 
+    
+	protected void recreateInstrumentedClassloaded(String classpath, String classesDirectory, Map<String, byte[]> definitions) {
+
+		URLClassLoader urlloader = getUrlClassloaderFromClassPath(classpath);
+
+		recreateInstrumentedClassloaded(urlloader, classesDirectory, definitions);
+
+	}
+
+	protected void recreateInstrumentedClassloaded(ClassLoader urlloader, String classesDirectory, Map<String, byte[]> definitions) {
+		try {
+
+			String[] dirs = classesDirectory.split(File.pathSeparator);
+
+			URL[] urls = new URL[dirs.length];
+
+			for (int i = 0; i < dirs.length; i++) {
+				String dir = dirs[i];
+				urls[i] = new File(dir).toURI().toURL();
+			}
+
+			this.instrumentedClassLoader = new MemoryClassLoader(urls, urlloader);
+			this.instrumentedClassLoader.setDefinitions(definitions);
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
+	}
+    
     /**
      * Compute the instruction coverage of the given tests
      * Using directly this method is discouraged, since it won't avoid class loading conflict. Use {@link EntryPoint#runCoverage(String, String, String[], String[])} instead.
@@ -105,7 +138,7 @@ public abstract class JacocoRunner {
                     IOUtils.toByteArray(classLoader.getResourceAsStream(resource))
             );
             runtime.startup(data);
-            final Coverage listener = this.executeTest(new String[]{fullQualifiedNameOfTestClass}, testMethodNames, Collections.emptyList());
+            final TestResult listener = this.executeTest(new String[]{fullQualifiedNameOfTestClass}, testMethodNames, Collections.emptyList());
             if (!((TestResult) listener).getFailingTests().isEmpty()) {
                 System.err.println("Some test(s) failed during computation of coverage:\n" +
                         ((TestResult) listener).getFailingTests()
@@ -117,16 +150,24 @@ public abstract class JacocoRunner {
             data.collect(executionData, sessionInfos, false);
             runtime.shutdown();
             clearCache(this.instrumentedClassLoader);
-            listener.collectData(executionData, classesDirectory);
-            return listener;
+            
+            CoverageTransformer coverageCollector = new CoverageCollectorSummarization();
+            
+            Coverage computedCoverage =  coverageCollector.transformJacocoObject(executionData, classesDirectory);
+            return computedCoverage;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    protected abstract Coverage executeTest(String[] testClassNames,
-                                            String[] testMethodNames,
-                                            List<String> blackList);
+    protected abstract CoveredTestResult executeTest(String[] testClassNames,
+													 String[] testMethodNames,
+													 List<String> blackList);
+    
+    
+    
+    
+
 
     /**
      * Compute the instruction coverage of the given tests
@@ -162,8 +203,9 @@ public abstract class JacocoRunner {
         });
         try {
             runtime.startup(data);
-            final Coverage listener = this.executeTest(fullQualifiedNameOfTestClasses, new String[0], this.blackList);
-            if (!((TestResult) listener).getFailingTests().isEmpty()) {
+            CoveredTestResult listener = this.executeTest(fullQualifiedNameOfTestClasses, new String[0], this.blackList);
+
+            if (!listener.getFailingTests().isEmpty()) {
                 System.err.println("Some test(s) failed during computation of coverage:\n" +
                         ((TestResult) listener).getFailingTests()
                                 .stream()
@@ -174,15 +216,73 @@ public abstract class JacocoRunner {
             data.collect(executionData, sessionInfos, false);
             runtime.shutdown();
             clearCache(this.instrumentedClassLoader);
-            listener.collectData(executionData, classesDirectory);
+            CoverageTransformer coverageCollector = new CoverageCollectorSummarization();
+            Coverage coverage = coverageCollector.transformJacocoObject(executionData, classesDirectory);
+            
+            listener.setCoverageInformation(coverage);
+            
             return listener;
+            
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+    /**
+     * We indicate the method to compute the coverage
+     * @param parentClassloader 
+     * @return
+     */
+    public CoveredTestResult run(CoverageTransformer coverageCollector, ClassLoader parentClassloader, String classesDirectory, String testClassesDirectory,
+								 String fullQualifiedNameOfTestClass, boolean coverTest, String... testMethodNames) {
 
+		final RuntimeData data = new RuntimeData();
+		final ExecutionDataStore executionData = new ExecutionDataStore();
+		final SessionInfoStore sessionInfos = new SessionInfoStore();
+		
+		try {
+		
+			runtime.startup(data);
+			
+			//TODO: I dont understand why to re-generate the class loader each time we execute the test. If I remove it, it does not compute the coverage  from the second execution
+			String classesToInstrument =classesDirectory +File.pathSeparator+ testClassesDirectory ;
+			
+			this.recreateInstrumentedClassloaded(parentClassloader, classesToInstrument,
+					this.instrumentedClassLoader.getDefinitions());
 
-    private void instrumentAll(String classesDirectory) {
+			final CoveredTestResult listener = executeTest(new String[] { fullQualifiedNameOfTestClass }, testMethodNames,
+					Collections.emptyList());
+
+			if (!listener.getFailingTests().isEmpty()) {
+				System.err.println("Some test(s) failed during computation of coverage:\n" + ((TestResult) listener)
+						.getFailingTests().stream().map(Failure::toString).collect(Collectors.joining("\n")));
+			}
+
+		
+			data.collect(executionData, sessionInfos, false);
+
+			runtime.shutdown();
+
+			clearCache(this.instrumentedClassLoader);
+
+	        String pathToCover = (coverTest)? classesToInstrument: classesDirectory;
+			
+			Coverage coverageSource = coverageCollector.transformJacocoObject(executionData, pathToCover);
+	
+			listener.setCoverageInformation(coverageSource);
+			return listener;
+
+		} catch (
+
+		Exception e) {
+			System.out.println("Error: could not collect test data");
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+    
+	
+    public void instrumentAll(String classesDirectory) {
         final Iterator<File> iterator = FileUtils.iterateFiles(new File(classesDirectory), new String[]{"class"}, true);
         while (iterator.hasNext()) {
             final File next = iterator.next();
@@ -198,6 +298,62 @@ public abstract class JacocoRunner {
         }
         clearCache(instrumentedClassLoader);
     }
+    
+    public MemoryClassLoader getInstrumentedClassLoader() {
+		return instrumentedClassLoader;
+	}
 
+  	public URLClassLoader getUrlClassloader(String[] classpath, String classesDirectory, String testClassesDirectory) {
+  		URLClassLoader classLoader;
+  		URL[] urls = new URL[classpath.length + 2];
+
+  		try {
+
+  			for (int i = 0; i < classpath.length; i++) {
+  				urls[i] = new File(classpath[i]).toURI().toURL();
+  			}
+
+  			urls[classpath.length] = new File(classesDirectory).toURI().toURL();
+
+  			urls[classpath.length + 1] = new File(testClassesDirectory).toURI().toURL();
+
+  			classLoader = new URLClassLoader(urls, ClassLoader.getSystemClassLoader()// this.instrumentedClassLoader
+  			);
+
+
+  		} catch (MalformedURLException e) {
+  			throw new RuntimeException(e);
+  		}
+  		return classLoader;
+  	}
+  	
+  	/**
+  	 * Return a classpath with all the dependencies.
+  	 * 
+  	 * @param classpath
+  	 * @param classesDirectory
+  	 * @param testClassesDirectory
+  	 * @return
+  	 */
+  	public URLClassLoader getUrlClassloaderFromClassPath(String classpath) {
+  		URLClassLoader classLoader;
+  		String[] cps = classpath.split(File.pathSeparator);
+  		URL[] urls = new URL[cps.length];
+
+  		try {
+
+  			for (int i = 0; i < cps.length; i++) {
+  	
+  				urls[i] = new File(cps[i]).toURI().toURL();
+  			}
+
+  			classLoader = new URLClassLoader(urls, ClassLoader.getSystemClassLoader());
+
+  		} catch (MalformedURLException e) {
+  			throw new RuntimeException(e);
+  		}
+  		return classLoader;
+  	}
+    
 
 }

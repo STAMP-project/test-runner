@@ -7,9 +7,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * created by Benjamin DANGLOT
- * benjamin.danglot@inria.fr
- * on 13/11/18
+ * High level abstraction representing a test execution result.
  */
 public interface TestResult extends Serializable {
 

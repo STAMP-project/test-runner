@@ -29,6 +29,9 @@ import static org.junit.Assert.fail;
  */
 public class EntryPointTest extends AbstractTest {
 
+    // depends on the compiler and compiler version that is used on the test project
+    public static final int NUMBER_OF_INSTRUCTIONS = 104;
+
     @Before
     public void setUp() {
         EntryPoint.persistence = true;
@@ -323,7 +326,7 @@ public class EntryPointTest extends AbstractTest {
                 new String[]{"test8", "test3"}
         );
         assertEquals(23, coverage.getInstructionsCovered());
-        assertEquals(107, coverage.getInstructionsTotal());
+        assertEquals(NUMBER_OF_INSTRUCTIONS, coverage.getInstructionsTotal());
     }
 
     @Test
@@ -345,7 +348,7 @@ public class EntryPointTest extends AbstractTest {
         );
 
         assertEquals(30, coverage.getInstructionsCovered());
-        assertEquals(107, coverage.getInstructionsTotal());
+        assertEquals(NUMBER_OF_INSTRUCTIONS, coverage.getInstructionsTotal());
     }
 
     @Test
@@ -374,7 +377,7 @@ public class EntryPointTest extends AbstractTest {
         );
 
         assertEquals(23, coverage.getInstructionsCovered());
-        assertEquals(107, coverage.getInstructionsTotal());
+        assertEquals(NUMBER_OF_INSTRUCTIONS, coverage.getInstructionsTotal());
     }
 
     @Test
@@ -397,9 +400,9 @@ public class EntryPointTest extends AbstractTest {
         );
 
         assertEquals(23, coveragePerTestMethod.getCoverageOf("test3").getInstructionsCovered());
-        assertEquals(107, coveragePerTestMethod.getCoverageOf("test3").getInstructionsTotal());
+        assertEquals(NUMBER_OF_INSTRUCTIONS, coveragePerTestMethod.getCoverageOf("test3").getInstructionsTotal());
         assertEquals(23, coveragePerTestMethod.getCoverageOf("test8").getInstructionsCovered());
-        assertEquals(107, coveragePerTestMethod.getCoverageOf("test8").getInstructionsTotal());
+        assertEquals(NUMBER_OF_INSTRUCTIONS, coveragePerTestMethod.getCoverageOf("test8").getInstructionsTotal());
     }
 
     @Test

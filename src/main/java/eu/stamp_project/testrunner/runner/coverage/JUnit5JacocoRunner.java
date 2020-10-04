@@ -1,7 +1,7 @@
 package eu.stamp_project.testrunner.runner.coverage;
 
 import eu.stamp_project.testrunner.EntryPoint;
-import eu.stamp_project.testrunner.listener.Coverage;
+import eu.stamp_project.testrunner.listener.CoveredTestResult;
 import eu.stamp_project.testrunner.listener.junit5.JUnit5Coverage;
 import eu.stamp_project.testrunner.runner.JUnit5Runner;
 import eu.stamp_project.testrunner.runner.ParserOptions;
@@ -16,14 +16,17 @@ import java.util.List;
  */
 public class JUnit5JacocoRunner extends JacocoRunner {
 
+	
     public JUnit5JacocoRunner(String classesDirectory, String testClassesDirectory) {
         super(classesDirectory, testClassesDirectory);
     }
-
+    
     public JUnit5JacocoRunner(String classesDirectory, String testClassesDirectory, List<String> blackList) {
-        super(classesDirectory, testClassesDirectory, blackList);
+        super(classesDirectory, testClassesDirectory, blackList);;
     }
 
+    
+    
     /**
      * The entry method to execute junit tests.
      * This method is not meant to be used directly, but rather using {@link EntryPoint}
@@ -62,7 +65,7 @@ public class JUnit5JacocoRunner extends JacocoRunner {
     }
 
     @Override
-    protected Coverage executeTest(String[] testClassNames, String[] testMethodNames, List<String> blackList) {
+    protected CoveredTestResult executeTest(String[] testClassNames, String[] testMethodNames, List<String> blackList) {
         final JUnit5Coverage listener = new JUnit5Coverage();
         JUnit5Runner.run(
                 testClassNames,
@@ -73,4 +76,5 @@ public class JUnit5JacocoRunner extends JacocoRunner {
         );
         return listener;
     }
+    
 }

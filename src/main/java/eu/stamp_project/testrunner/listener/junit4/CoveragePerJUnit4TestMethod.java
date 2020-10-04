@@ -2,6 +2,7 @@ package eu.stamp_project.testrunner.listener.junit4;
 
 import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
+import eu.stamp_project.testrunner.listener.impl.CoverageCollectorSummarization;
 import eu.stamp_project.testrunner.listener.impl.CoverageImpl;
 import eu.stamp_project.testrunner.listener.impl.CoveragePerTestMethodImpl;
 import org.jacoco.core.analysis.*;
@@ -72,8 +73,8 @@ public class CoveragePerJUnit4TestMethod extends JUnit4TestResult implements Cov
                 this.internalCoverage.getSessionInfos(),
                 false
         );
-        final JUnit4Coverage jUnit4Coverage = new JUnit4Coverage();
-        jUnit4Coverage.collectData(this.internalCoverage.getExecutionData(), this.internalCoverage.getClassesDirectory());
+        CoverageCollectorSummarization coverageBilder = new CoverageCollectorSummarization();     
+        Coverage jUnit4Coverage =  coverageBilder.transformJacocoObject(this.internalCoverage.getExecutionData(), this.internalCoverage.getClassesDirectory());
         this.internalCoverage.getCoverageResultsMap().put(description.getMethodName(), jUnit4Coverage);
         if (isParametrized.test(description.getMethodName())) {
             this.collectForParametrizedTest(fromParametrizedToSimpleName.apply(description.getMethodName()));
