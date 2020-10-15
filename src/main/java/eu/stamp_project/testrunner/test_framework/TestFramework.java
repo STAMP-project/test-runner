@@ -78,6 +78,7 @@ public class TestFramework implements TestFrameworkSupport {
     public boolean isIgnored (CtElement candidate) {
         for (TestFrameworkSupport testFrameworkSupport : this.testFrameworkSupportList) {
             if (testFrameworkSupport.isIgnored(candidate)) {
+            	candidate.putMetadata(getKeyOfTestFramework(testFrameworkSupport), Boolean.TRUE.toString());
                 return true;
             }
         }
@@ -88,6 +89,7 @@ public class TestFramework implements TestFrameworkSupport {
     public boolean isAssert(CtInvocation<?> invocation) {
         for (TestFrameworkSupport testFrameworkSupport : this.testFrameworkSupportList) {
             if (testFrameworkSupport.isAssert(invocation)) {
+            	invocation.putMetadata(getKeyOfTestFramework(testFrameworkSupport), Boolean.TRUE.toString());
                 return true;
             }
         }
@@ -116,6 +118,7 @@ public class TestFramework implements TestFrameworkSupport {
     public boolean isTest(CtMethod<?> candidate) {
         for (TestFrameworkSupport testFrameworkSupport : this.testFrameworkSupportList) {
             if (testFrameworkSupport.isTest(candidate)) {
+            	candidate.putMetadata(getKeyOfTestFramework(testFrameworkSupport), Boolean.TRUE.toString());
                 return true;
             }
         }
@@ -132,6 +135,10 @@ public class TestFramework implements TestFrameworkSupport {
         */
     }
 
+    public String getKeyOfTestFramework(TestFrameworkSupport testFrameworkSupport) {
+    	return testFrameworkSupport.getClass().getSimpleName();
+    }
+    
     // This method identify the test framework support used in the given test method
     // The idea is to generate assertions that look like the original one,
     // i.e. if the developer used JUnit4, we should generate JUnit4 assertions
