@@ -77,5 +77,4 @@ public class CoverageCollectorSummarization implements CoverageTransformer {
         return coverage;
     }
 
-
 }

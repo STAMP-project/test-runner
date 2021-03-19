@@ -1,3 +1,6 @@
+# Spoon files
+spooned/
+
 # Config files
 .idea/
 test-runner.iml

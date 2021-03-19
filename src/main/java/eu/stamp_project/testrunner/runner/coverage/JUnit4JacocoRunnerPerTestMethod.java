@@ -2,6 +2,7 @@ package eu.stamp_project.testrunner.runner.coverage;
 
 import eu.stamp_project.testrunner.EntryPoint;
 import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
+import eu.stamp_project.testrunner.listener.CoverageTransformer;
 import eu.stamp_project.testrunner.listener.junit4.CoveragePerJUnit4TestMethod;
 import eu.stamp_project.testrunner.listener.junit4.JUnit4TestResult;
 import eu.stamp_project.testrunner.runner.JUnit4Runner;
@@ -19,8 +20,8 @@ import java.util.List;
  */
 public class JUnit4JacocoRunnerPerTestMethod extends JacocoRunnerPerTestMethod {
 
-    public JUnit4JacocoRunnerPerTestMethod(String classesDirectory, String testClassesDirectory, List<String> blackList) {
-        super(classesDirectory, testClassesDirectory, blackList);
+    public JUnit4JacocoRunnerPerTestMethod(String classesDirectory, String testClassesDirectory, List<String> blackList, CoverageTransformer coverageTransformer) {
+        super(classesDirectory, testClassesDirectory, blackList, coverageTransformer);
     }
 
     @Override
@@ -28,7 +29,7 @@ public class JUnit4JacocoRunnerPerTestMethod extends JacocoRunnerPerTestMethod {
                                                              String classesDirectory,
                                                              String[] testClassNames,
                                                              String[] testMethodNames) {
-        final CoveragePerTestMethod listener = new CoveragePerJUnit4TestMethod(data, classesDirectory);
+        final CoveragePerTestMethod listener = new CoveragePerJUnit4TestMethod(data, classesDirectory, coverageTransformer);
         JUnit4Runner.run(
                 testClassNames,
                 testMethodNames,
@@ -52,7 +53,8 @@ public class JUnit4JacocoRunnerPerTestMethod extends JacocoRunnerPerTestMethod {
         new JUnit4JacocoRunnerPerTestMethod(
                 classesDirectory,
                 testClassesDirectory,
-                options.getBlackList()
+                options.getBlackList(),
+                options.getCoverageTransformer()
         ).runCoveragePerTestMethod(classesDirectory,
                 testClassesDirectory,
                 options.getFullQualifiedNameOfTestClassesToRun()[0],

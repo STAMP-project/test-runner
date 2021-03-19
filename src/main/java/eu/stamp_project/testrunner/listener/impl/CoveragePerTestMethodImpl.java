@@ -2,6 +2,7 @@ package eu.stamp_project.testrunner.listener.impl;
 
 import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
+import eu.stamp_project.testrunner.listener.CoverageTransformer;
 import eu.stamp_project.testrunner.listener.TestResult;
 import eu.stamp_project.testrunner.runner.Loader;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
@@ -35,15 +36,19 @@ public class CoveragePerTestMethodImpl implements CoveragePerTestMethod {
 
     protected transient SessionInfoStore sessionInfos;
 
+    protected transient CoverageTransformer coverageTransformer;
+
     public CoveragePerTestMethodImpl() {
         coverageResultsMap = null;
         classesDirectory = null;
+        this.coverageTransformer = new CoverageCollectorSummarization();
     }
 
-    public CoveragePerTestMethodImpl(RuntimeData data, String classesDirectory) {
+    public CoveragePerTestMethodImpl(RuntimeData data, String classesDirectory, CoverageTransformer coverageTransformer) {
         this.data = data;
         this.classesDirectory = classesDirectory;
         this.coverageResultsMap = new HashMap<>();
+        this.coverageTransformer = coverageTransformer;
     }
 
     public String getClassesDirectory() {
@@ -60,6 +65,10 @@ public class CoveragePerTestMethodImpl implements CoveragePerTestMethod {
 
     public SessionInfoStore getSessionInfos() {
         return sessionInfos;
+    }
+
+    public CoverageTransformer getCoverageTransformer() {
+        return coverageTransformer;
     }
 
     public void setData(RuntimeData data) {

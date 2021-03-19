@@ -5,6 +5,8 @@ import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.CoverageTransformer;
 import eu.stamp_project.testrunner.listener.CoveredTestResult;
 import eu.stamp_project.testrunner.listener.TestResult;
+import eu.stamp_project.testrunner.listener.impl.CoverageCollectorDetailed;
+import eu.stamp_project.testrunner.listener.impl.CoverageCollectorMethodDetailed;
 import eu.stamp_project.testrunner.listener.impl.CoverageCollectorSummarization;
 import eu.stamp_project.testrunner.runner.Failure;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
@@ -46,12 +48,14 @@ public abstract class JacocoRunner {
 
     protected List<String> blackList;
 
+    protected CoverageTransformer coverageTransformer;
+
     /**
      * @param classesDirectory     the path to the directory that contains the .class file of sources
      * @param testClassesDirectory the path to the directory that contains the .class file of test sources
      */
-    public JacocoRunner(String classesDirectory, String testClassesDirectory) {
-        this(classesDirectory, testClassesDirectory, Collections.emptyList());
+    public JacocoRunner(String classesDirectory, String testClassesDirectory, CoverageTransformer coverageTransformer) {
+        this(classesDirectory, testClassesDirectory, Collections.emptyList(), coverageTransformer);
     }
 
     /**
@@ -59,7 +63,7 @@ public abstract class JacocoRunner {
      * @param testClassesDirectory the path to the directory that contains the .class file of test sources
      * @param blackList            the names of the test methods to NOT be run.
      */
-    public JacocoRunner(String classesDirectory, String testClassesDirectory, List<String> blackList) {
+    public JacocoRunner(String classesDirectory, String testClassesDirectory, List<String> blackList, CoverageTransformer coverageTransformer) {
         try {
             this.instrumentedClassLoader = new MemoryClassLoader(
                     new URL[]{
@@ -73,6 +77,7 @@ public abstract class JacocoRunner {
         this.blackList = blackList;
         this.runtime = new LoggerRuntime();
         this.instrumenter = new Instrumenter(this.runtime);
+        this.coverageTransformer = coverageTransformer;
         // instrument source code
         instrumentAll(classesDirectory);
     }
@@ -150,10 +155,8 @@ public abstract class JacocoRunner {
             data.collect(executionData, sessionInfos, false);
             runtime.shutdown();
             clearCache(this.instrumentedClassLoader);
-            
-            CoverageTransformer coverageCollector = new CoverageCollectorSummarization();
-            
-            Coverage computedCoverage =  coverageCollector.transformJacocoObject(executionData, classesDirectory);
+
+            Coverage computedCoverage =  coverageTransformer.transformJacocoObject(executionData, classesDirectory);
             return computedCoverage;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -164,9 +167,9 @@ public abstract class JacocoRunner {
 													 String[] testMethodNames,
 													 List<String> blackList);
     
-    
-    
-    
+
+
+
 
 
     /**
@@ -216,8 +219,7 @@ public abstract class JacocoRunner {
             data.collect(executionData, sessionInfos, false);
             runtime.shutdown();
             clearCache(this.instrumentedClassLoader);
-            CoverageTransformer coverageCollector = new CoverageCollectorSummarization();
-            Coverage coverage = coverageCollector.transformJacocoObject(executionData, classesDirectory);
+            Coverage coverage = coverageTransformer.transformJacocoObject(executionData, classesDirectory);
             
             listener.setCoverageInformation(coverage);
             
@@ -227,6 +229,7 @@ public abstract class JacocoRunner {
             throw new RuntimeException(e);
         }
     }
+
     /**
      * We indicate the method to compute the coverage
      * @param parentClassloader 
@@ -354,6 +357,5 @@ public abstract class JacocoRunner {
   		}
   		return classLoader;
   	}
-    
 
 }

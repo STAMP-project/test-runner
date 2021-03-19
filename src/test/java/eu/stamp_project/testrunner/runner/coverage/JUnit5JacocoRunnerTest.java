@@ -34,7 +34,7 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
         final Coverage load = CoverageImpl.load();
         assertEquals(30, load.getInstructionsCovered());
         assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, load.getInstructionsTotal());
-        assertEquals(expectedExecutionPath , load.getExecutionPath());
+        assertEquals(expectedExecutionPath, load.getExecutionPath());
     }
 
     private static final String expectedExecutionPath = "tobemocked/LoginDao:0,0;tobemocked/LoginController:0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;tobemocked/LoginService:0,0,0,0,0,0,0,0,0,0,0,0,0,0;example/Example:2,0,0,4,4,0,7,2,0,2,5,1,0,3;tobemocked/UserForm:0,0;";
@@ -74,6 +74,29 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
         final Coverage load = CoverageImpl.load();
         assertEquals(23, load.getInstructionsCovered());
         assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, load.getInstructionsTotal());
+    }
+
+
+    private static final String expectedMethodDetailedExecutionPath = "tobemocked/LoginDao:<init>+()V+0|login+" +
+            "(Ltobemocked/UserForm;)I+0-tobemocked/LoginController:<init>+()V+0|" +
+            "login+(Ltobemocked/UserForm;)Ljava/lang/String;+0,0,0,0,0,0,0,0,0,0,0,0,0,0" +
+            "-tobemocked/LoginService:<init>+()V+0|login+(Ltobemocked/UserForm;)Z+0,0,0,0,0,0,0|" +
+            "setCurrentUser+(Ljava/lang/String;)V+0,0,0,0|setLoginDao+(Ltobemocked/LoginDao;)V+0,0" +
+            "-example/Example:charAt+(Ljava/lang/String;I)C+2,0,0,4,4,0,7|<init>+()V+2,0,2,5,1,0,3" +
+            "-tobemocked/UserForm:<init>+()V+0|getUsername+()Ljava/lang/String;+0-";
+
+
+    @Test
+    public void testMethodDetailedCoverageDetail() throws Exception {
+
+        JUnit5JacocoRunner.main(new String[]{
+                        ParserOptions.FLAG_pathToCompiledClassesOfTheProject, TEST_PROJECT_CLASSES,
+                        ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, "junit5.TestSuiteExample",
+                        ParserOptions.FLAG_coverage_detail, ParserOptions.CoverageTransformerDetail.METHOD_DETAIL.name(),
+                }
+        );
+        final Coverage load = CoverageImpl.load();
+        assertEquals(expectedMethodDetailedExecutionPath, load.getExecutionPath());
     }
 
 }

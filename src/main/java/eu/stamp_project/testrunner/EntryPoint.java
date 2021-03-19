@@ -63,6 +63,7 @@ import java.util.stream.Stream;
  * This class has options accessible from the outside:
  * </p>
  * <ul>
+ * <li>jUnit5Mode: switches from JUnit 4 to the JUnit 5 test runner</li>
  * <li>verbose: boolean to enable traces to track the progress</li>
  * <li>timeoutInMs: integer timeout time in milliseconds for the whole requested
  * process.</li>
@@ -75,6 +76,8 @@ import java.util.stream.Stream;
  * stream</li>
  * <li>persistence: if enable, keeps the configuration between runs, else reset
  * it</li>
+ * <li>blackList: allows to blacklist specific test methods of a test class/li>
+ * <li>coverageDetail: the level of detail in which coverage should be reported</li>
  * </ul>
  */
 public class EntryPoint {
@@ -139,6 +142,12 @@ public class EntryPoint {
      */
     public static List<String> blackList = new ArrayList<>();
 
+    /**
+     * Allows to set the level of detail at which coverage information should be reported.
+     * see {@link ParserOptions.CoverageTransformerDetail}
+     */
+    public static ParserOptions.CoverageTransformerDetail coverageDetail =
+            ParserOptions.CoverageTransformerDetail.SUMMARIZED;
 
     // PIT OPTIONS
 
@@ -305,6 +314,9 @@ public class EntryPoint {
                         EntryPoint.blackList.isEmpty() ? "" :
                                 (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE
                                         + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
+                        EntryPoint.coverageDetail == ParserOptions.CoverageTransformerDetail.SUMMARIZED ? "" :
+                                (ParserOptions.FLAG_coverage_detail + ConstantsHelper.WHITE_SPACE
+                                        + EntryPoint.coverageDetail.name()),
                 });
         return EntryPoint.runCoverage(javaCommand);
     }
@@ -390,6 +402,9 @@ public class EntryPoint {
                         EntryPoint.blackList.isEmpty() ? ""
                                 : (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE
                                 + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
+                        EntryPoint.coverageDetail == ParserOptions.CoverageTransformerDetail.SUMMARIZED ? "" :
+                                (ParserOptions.FLAG_coverage_detail + ConstantsHelper.WHITE_SPACE
+                                 + EntryPoint.coverageDetail.name()),
                 });
         try {
             EntryPoint.runGivenCommandLine(javaCommand);
