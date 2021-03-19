@@ -1,5 +1,10 @@
 package eu.stamp_project.testrunner.runner;
 
+import eu.stamp_project.testrunner.listener.Coverage;
+import eu.stamp_project.testrunner.listener.CoverageTransformer;
+import eu.stamp_project.testrunner.listener.impl.CoverageCollectorDetailed;
+import eu.stamp_project.testrunner.listener.impl.CoverageCollectorMethodDetailed;
+import eu.stamp_project.testrunner.listener.impl.CoverageCollectorSummarization;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
 
 import java.util.ArrayList;
@@ -37,6 +42,9 @@ public class ParserOptions {
                 case FLAG_blackList:
                     parserOptions.blackList = convertArrayToList.apply(args[++i]);
                     break;
+                case FLAG_coverage_detail:
+                    parserOptions.coverageTransformerDetail = CoverageTransformerDetail.valueOf(args[++i]);
+                    break;
                 case " ":
                 case "":
                     break;
@@ -63,6 +71,9 @@ public class ParserOptions {
 
         usage.append(FLAG_blackList).append(ConstantsHelper.WHITE_SPACE)
                 .append(FLAG_HELP_blackList).append(ConstantsHelper.LINE_SEPARATOR);
+
+        usage.append(FLAG_coverage_detail).append(ConstantsHelper.WHITE_SPACE)
+             .append(FLAG_HELP_coverage_detail).append(ConstantsHelper.LINE_SEPARATOR);
 
         System.out.println(usage.toString());
     }
@@ -107,11 +118,31 @@ public class ParserOptions {
 
     public static final String FLAG_HELP_blackList = "This flag must be followed by the list of simple names of test methods to NOT be run. Names must be separated by the system path separator, e.g. ':' on Linux";
 
+
+
+    public enum CoverageTransformerDetail {
+        SUMMARIZED,
+        DETAIL,
+        METHOD_DETAIL
+    }
+    /**
+     * This value represents at which level of detail coverage information should be provided
+     */
+    private CoverageTransformerDetail coverageTransformerDetail;
+
+    public static final String FLAG_coverage_detail = "--coverage-detail";
+
+    public static final String FLAG_HELP_coverage_detail = "The value following this flag defines the level of detail" +
+                                                           " provided in the coverage information. Valid values:" +
+                                                           "'SUMMARIZED' (default), 'DETAIL' or 'METHOD_DETAIL'.";
+
+
     private ParserOptions() {
         this.pathToCompiledClassesOfTheProject = "";
         this.fullQualifiedNameOfTestClassesToRun = new String[]{};
         this.testMethodNamesToRun = new String[]{};
         this.blackList = new ArrayList<>();
+        this.coverageTransformerDetail = CoverageTransformerDetail.SUMMARIZED;
     }
 
     public String getPathToCompiledClassesOfTheProject() {
@@ -128,6 +159,19 @@ public class ParserOptions {
 
     public List<String> getBlackList() {
         return blackList;
+    }
+
+    public CoverageTransformer getCoverageTransformer() {
+        switch (coverageTransformerDetail) {
+            case DETAIL:
+                return new CoverageCollectorDetailed();
+            case METHOD_DETAIL:
+                return new CoverageCollectorMethodDetailed();
+            case SUMMARIZED:
+            default:
+                return new CoverageCollectorSummarization();
+        }
+
     }
 
 }

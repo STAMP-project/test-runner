@@ -2,6 +2,7 @@ package eu.stamp_project.testrunner.listener.junit4;
 
 import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
+import eu.stamp_project.testrunner.listener.CoverageTransformer;
 import eu.stamp_project.testrunner.listener.impl.CoverageCollectorSummarization;
 import eu.stamp_project.testrunner.listener.impl.CoverageImpl;
 import eu.stamp_project.testrunner.listener.impl.CoveragePerTestMethodImpl;
@@ -43,8 +44,8 @@ public class CoveragePerJUnit4TestMethod extends JUnit4TestResult implements Cov
      */
     private Map<String, List<IClassCoverage>> coveragesPerMethodName;
 
-    public CoveragePerJUnit4TestMethod(RuntimeData data, String classesDirectory) {
-        this.internalCoverage = new CoveragePerTestMethodImpl(data, classesDirectory);
+    public CoveragePerJUnit4TestMethod(RuntimeData data, String classesDirectory, CoverageTransformer coverageTransformer) {
+        this.internalCoverage = new CoveragePerTestMethodImpl(data, classesDirectory, coverageTransformer);
         this.coveragesPerMethodName = new HashMap<>();
     }
 
@@ -73,8 +74,10 @@ public class CoveragePerJUnit4TestMethod extends JUnit4TestResult implements Cov
                 this.internalCoverage.getSessionInfos(),
                 false
         );
-        CoverageCollectorSummarization coverageBilder = new CoverageCollectorSummarization();     
-        Coverage jUnit4Coverage =  coverageBilder.transformJacocoObject(this.internalCoverage.getExecutionData(), this.internalCoverage.getClassesDirectory());
+
+        Coverage jUnit4Coverage =
+                internalCoverage.getCoverageTransformer().transformJacocoObject(this.internalCoverage.getExecutionData(),
+                        this.internalCoverage.getClassesDirectory());
         this.internalCoverage.getCoverageResultsMap().put(description.getMethodName(), jUnit4Coverage);
         if (isParametrized.test(description.getMethodName())) {
             this.collectForParametrizedTest(fromParametrizedToSimpleName.apply(description.getMethodName()));

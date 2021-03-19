@@ -2,6 +2,7 @@ package eu.stamp_project.testrunner.listener.junit5;
 
 import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
+import eu.stamp_project.testrunner.listener.CoverageTransformer;
 import eu.stamp_project.testrunner.listener.impl.CoverageCollectorSummarization;
 import eu.stamp_project.testrunner.listener.impl.CoveragePerTestMethodImpl;
 import eu.stamp_project.testrunner.runner.Failure;
@@ -27,8 +28,8 @@ public class CoveragePerJUnit5TestMethod extends JUnit5TestResult implements Cov
     private CoveragePerTestMethodImpl internalCoverage;
 
 
-    public CoveragePerJUnit5TestMethod(RuntimeData data, String classesDirectory) {
-        this.internalCoverage = new CoveragePerTestMethodImpl(data, classesDirectory);
+    public CoveragePerJUnit5TestMethod(RuntimeData data, String classesDirectory, CoverageTransformer coverageTransformer) {
+        this.internalCoverage = new CoveragePerTestMethodImpl(data, classesDirectory, coverageTransformer);
     }
 
     @Override
@@ -54,9 +55,10 @@ public class CoveragePerJUnit5TestMethod extends JUnit5TestResult implements Cov
                     this.internalCoverage.getSessionInfos(),
                     false
             );
-       
-            CoverageCollectorSummarization coverageBuilder = new CoverageCollectorSummarization();
-            Coverage jUnit5Coverage =  coverageBuilder.transformJacocoObject(this.internalCoverage.getExecutionData(), this.internalCoverage.getClassesDirectory());
+
+            Coverage jUnit5Coverage =
+                    internalCoverage.getCoverageTransformer().transformJacocoObject(this.internalCoverage.getExecutionData(),
+                            this.internalCoverage.getClassesDirectory());
             this.internalCoverage.getCoverageResultsMap().put(this.toString.apply(testIdentifier), jUnit5Coverage);
             switch (testExecutionResult.getStatus()) {
                 case FAILED:

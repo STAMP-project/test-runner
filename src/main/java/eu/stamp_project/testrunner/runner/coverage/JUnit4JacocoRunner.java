@@ -1,6 +1,7 @@
 package eu.stamp_project.testrunner.runner.coverage;
 
 import eu.stamp_project.testrunner.EntryPoint;
+import eu.stamp_project.testrunner.listener.CoverageTransformer;
 import eu.stamp_project.testrunner.listener.CoveredTestResult;
 import eu.stamp_project.testrunner.listener.junit4.JUnit4Coverage;
 import eu.stamp_project.testrunner.listener.junit4.JUnit4TestResult;
@@ -17,12 +18,12 @@ import java.util.List;
  */
 public class JUnit4JacocoRunner extends JacocoRunner {
 
-    public JUnit4JacocoRunner(String classesDirectory, String testClassesDirectory) {
-        super(classesDirectory, testClassesDirectory);
+    public JUnit4JacocoRunner(String classesDirectory, String testClassesDirectory, CoverageTransformer coverageTransformer) {
+        super(classesDirectory, testClassesDirectory, coverageTransformer);
     }
     
-    public JUnit4JacocoRunner(String classesDirectory, String testClassesDirectory, List<String> blackList) {
-        super(classesDirectory, testClassesDirectory, blackList);
+    public JUnit4JacocoRunner(String classesDirectory, String testClassesDirectory, List<String> blackList, CoverageTransformer coverageTransformer) {
+        super(classesDirectory, testClassesDirectory, blackList, coverageTransformer);
     }
 
     /**
@@ -38,7 +39,8 @@ public class JUnit4JacocoRunner extends JacocoRunner {
         final JacocoRunner jacocoRunner =
                 new JUnit4JacocoRunner(classesDirectory,
                         testClassesDirectory,
-                        options.getBlackList()
+                        options.getBlackList(),
+                        options.getCoverageTransformer()
                 );
         final String[] testClassesToRun = options.getFullQualifiedNameOfTestClassesToRun();
         if (testClassesToRun.length > 1) {

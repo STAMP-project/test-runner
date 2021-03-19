@@ -2,6 +2,7 @@ package eu.stamp_project.testrunner.runner.coverage;
 
 import eu.stamp_project.testrunner.EntryPoint;
 import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
+import eu.stamp_project.testrunner.listener.CoverageTransformer;
 import eu.stamp_project.testrunner.listener.CoveredTestResult;
 import eu.stamp_project.testrunner.listener.TestResult;
 import eu.stamp_project.testrunner.runner.Failure;
@@ -85,8 +86,8 @@ public abstract class JacocoRunnerPerTestMethod extends JacocoRunner {
      * @param classesDirectory     the path to the directory that contains the .class file of sources
      * @param testClassesDirectory the path to the directory that contains the .class file of test sources
      */
-    public JacocoRunnerPerTestMethod(String classesDirectory, String testClassesDirectory) {
-        super(classesDirectory, testClassesDirectory);
+    public JacocoRunnerPerTestMethod(String classesDirectory, String testClassesDirectory, CoverageTransformer coverageTransformer) {
+        super(classesDirectory, testClassesDirectory, coverageTransformer);
     }
 
     /**
@@ -94,7 +95,7 @@ public abstract class JacocoRunnerPerTestMethod extends JacocoRunner {
      * @param testClassesDirectory the path to the directory that contains the .class file of test sources
      * @param blackList            the names of the test methods to NOT be run.
      */
-    public JacocoRunnerPerTestMethod(String classesDirectory, String testClassesDirectory, List<String> blackList) {
-        super(classesDirectory, testClassesDirectory, blackList);
+    public JacocoRunnerPerTestMethod(String classesDirectory, String testClassesDirectory, List<String> blackList, CoverageTransformer coverageTransformer) {
+        super(classesDirectory, testClassesDirectory, blackList, coverageTransformer);
     }
 }
