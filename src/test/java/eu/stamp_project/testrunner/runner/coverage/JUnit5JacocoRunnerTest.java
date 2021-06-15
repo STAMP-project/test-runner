@@ -11,6 +11,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Benjamin DANGLOT
@@ -34,10 +35,18 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
         final Coverage load = CoverageImpl.load();
         assertEquals(30, load.getInstructionsCovered());
         assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, load.getInstructionsTotal());
-        assertEquals(expectedExecutionPath, load.getExecutionPath());
+        for (String expectedExecutionPath : expectedExecutionPaths) {
+            assertTrue(load.getExecutionPath().contains(expectedExecutionPath));
+        }
     }
 
-    private static final String expectedExecutionPath = "tobemocked/LoginDao:0,0;tobemocked/LoginController:0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;tobemocked/LoginService:0,0,0,0,0,0,0,0,0,0,0,0,0,0;example/Example:2,0,0,4,4,0,7,2,0,2,5,1,0,3;tobemocked/UserForm:0,0;";
+    private static final String[] expectedExecutionPaths = {
+            "tobemocked/LoginDao:0,0",
+            "tobemocked/LoginController:0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
+            "tobemocked/LoginService:0,0,0,0,0,0,0,0,0,0,0,0,0,0",
+            "example/Example:2,0,0,4,4,0,7,2,0,2,5,1,0,3",
+            "tobemocked/UserForm:0,0"
+    };
 
     @Test
     public void testWithoutNewJvmOnTestCases() throws Exception {
@@ -77,13 +86,13 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
     }
 
 
-    private static final String expectedMethodDetailedExecutionPath = "tobemocked/LoginDao:<init>+()V+0|login+" +
-            "(Ltobemocked/UserForm;)I+0-tobemocked/LoginController:<init>+()V+0|" +
-            "login+(Ltobemocked/UserForm;)Ljava/lang/String;+0,0,0,0,0,0,0,0,0,0,0,0,0,0" +
-            "-tobemocked/LoginService:<init>+()V+0|login+(Ltobemocked/UserForm;)Z+0,0,0,0,0,0,0|" +
-            "setCurrentUser+(Ljava/lang/String;)V+0,0,0,0|setLoginDao+(Ltobemocked/LoginDao;)V+0,0" +
-            "-example/Example:charAt+(Ljava/lang/String;I)C+2,0,0,4,4,0,7|<init>+()V+2,0,2,5,1,0,3" +
-            "-tobemocked/UserForm:<init>+()V+0|getUsername+()Ljava/lang/String;+0-";
+    private static final String[] expectedMethodDetailedExecutionPaths = {
+            "tobemocked/LoginDao:<init>+()V+0|login+(Ltobemocked/UserForm;)I+0",
+            "tobemocked/LoginController:<init>+()V+0|login+(Ltobemocked/UserForm;)Ljava/lang/String;+0,0,0,0,0,0,0,0,0,0,0,0,0,0",
+            "tobemocked/LoginService:<init>+()V+0|login+(Ltobemocked/UserForm;)Z+0,0,0,0,0,0,0|setCurrentUser+(Ljava/lang/String;)V+0,0,0,0|setLoginDao+(Ltobemocked/LoginDao;)V+0,0",
+            "example/Example:charAt+(Ljava/lang/String;I)C+2,0,0,4,4,0,7|<init>+()V+2,0,2,5,1,0,3",
+            "tobemocked/UserForm:<init>+()V+0|getUsername+()Ljava/lang/String;+0-"
+    };
 
 
     @Test
@@ -96,7 +105,9 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
                 }
         );
         final Coverage load = CoverageImpl.load();
-        assertEquals(expectedMethodDetailedExecutionPath, load.getExecutionPath());
+        for (String expectedMethodDetailedExecutionPath : expectedMethodDetailedExecutionPaths) {
+            assertTrue(load.getExecutionPath().contains(expectedMethodDetailedExecutionPath));
+        }
     }
 
 }
