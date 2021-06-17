@@ -16,7 +16,7 @@ jobs:
       - name: Build with Maven
         run: mvn install -DskipTests
       - name: Export Maven Home
-        run: export MAVEN_HOME=/usr/local/maven-3.5.0
+        run: export MAVEN_HOME=`mvn --version | grep 'Maven home' | sed -e 's/Maven h.* //'` && echo "🎉 ${MAVEN_HOME} "
       - name: Prepare resources binaries
         run: ./src/compile-and-clean-test-projects.sh
       - name: Test with Maven
