@@ -180,7 +180,6 @@ public class EntryPoint {
         LOGGER.warn("Trying to lookup for maven home.");
         LOGGER.warn("This can fail, and thus lead to a crash of the application.");
         LOGGER.warn("You can set this value using the field mavenHome or defining the following property: MAVEN_HOME or M2_HOME");
-        LOGGER.debug("{}", System.getenv().get("MAVEN_HOME"));
         mavenHome = getMavenHome(envVariable -> System.getenv().get(envVariable) != null,
                 envVariable -> System.getenv().get(envVariable),
                 "MAVEN_HOME", "M2_HOME");
