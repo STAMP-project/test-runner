@@ -14,11 +14,9 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
-          server-id: ossrh
+          server-id: ossrh-test-runner-snapshots
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
-      - name: Setup Maven Settings
-        run: cp .travis/travis-settings.xml $HOME/.m2/settings.xml
       - name: Publish package
         run: mvn deploy -DskipTests
         env:
