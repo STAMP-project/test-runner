@@ -14,7 +14,7 @@ jobs:
           java-version: '8'
           distribution: 'adopt'
       - name: Build with Maven
-        run: mvn install -DskipTests
+        run: ./src/update-classes-in-resources.sh
       - name: Export Maven Home
         run: export MAVEN_HOME=`mvn --version | grep 'Maven home' | sed -e 's/Maven h.* //'` && echo "🎉 ${MAVEN_HOME} "
       - name: Prepare resources binaries
