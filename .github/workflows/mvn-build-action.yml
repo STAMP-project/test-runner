@@ -20,7 +20,15 @@ jobs:
       - name: Prepare resources binaries
         run: ./src/compile-and-clean-test-projects.sh
       - name: Test and Coverage with Maven
-        run: mvn test jacoco:report coveralls:report
+        run: mvn test
+      - name: "Report: Coverage via coveralls.io"
+        run: |
+          export CI_BRANCH=${BRANCH_NAME_OR_REF#refs/heads/}
+          export CI_PULL_REQUEST=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          mvn coveralls:report --settings $SETTINGS_FILE --no-transfer-progress -DrepoToken=$COVERALLS_SECRET
         env:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
+          CI_NAME: github
+          BRANCH_NAME_OR_REF: ${{ github.head_ref || github.ref }}
+          CI_BUILD_NUMBER: ${{ github.run_id }}
+          CI_BUILD_URL: https://github.com/${{ github.repository }}/commit/${{ github.event.after }}/checks
+          COVERALLS_SECRET: ${{ secrets.GITHUB_TOKEN }}
