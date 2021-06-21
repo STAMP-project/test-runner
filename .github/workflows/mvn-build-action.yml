@@ -25,7 +25,7 @@ jobs:
         run: |
           export CI_BRANCH=${BRANCH_NAME_OR_REF#refs/heads/}
           export CI_PULL_REQUEST=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
-          mvn coveralls:report --settings $SETTINGS_FILE --no-transfer-progress -DrepoToken=$COVERALLS_SECRET
+          mvn coveralls:report --no-transfer-progress -DrepoToken=$COVERALLS_SECRET
         env:
           CI_NAME: github
           BRANCH_NAME_OR_REF: ${{ github.head_ref || github.ref }}
