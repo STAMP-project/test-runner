@@ -14,11 +14,21 @@ jobs:
           java-version: '8'
           distribution: 'adopt'
       - name: Build with Maven
-        run: mvn install -DskipTests
+        run: ./src/update-classes-in-resources.sh
       - name: Export Maven Home
         run: export MAVEN_HOME=`mvn --version | grep 'Maven home' | sed -e 's/Maven h.* //'` && echo "🎉 ${MAVEN_HOME} "
       - name: Prepare resources binaries
         run: ./src/compile-and-clean-test-projects.sh
-      - name: Test with Maven
-        run: mvn test
-
+      - name: Test and Coverage with Maven
+        run: mvn test jacoco:report
+      - name: "Report: Coverage via coveralls.io"
+        run: |
+          export CI_BRANCH=${BRANCH_NAME_OR_REF#refs/heads/}
+          export CI_PULL_REQUEST=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          mvn coveralls:report --no-transfer-progress -DrepoToken=$COVERALLS_SECRET
+        env:
+          CI_NAME: github
+          BRANCH_NAME_OR_REF: ${{ github.head_ref || github.ref }}
+          CI_BUILD_NUMBER: ${{ github.run_id }}
+          CI_BUILD_URL: https://github.com/${{ github.repository }}/commit/${{ github.event.after }}/checks
+          COVERALLS_SECRET: ${{ secrets.GITHUB_TOKEN }}
