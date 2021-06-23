@@ -636,9 +636,9 @@ public class EntryPoint {
 
     private static final String JUNIT5_JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JUnit5JacocoRunnerPerTestMethod";
 
-    private static final String JUNIT4_JACOCO_RUNNER_RESULT_PER_TEST_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JUnit4JacocoRunnerResultPerTestMethod";
+    private static final String JUNIT4_JACOCO_RUNNER_RESULT_PER_TEST_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JUnit4JacocoRunnerCoveredResultPerTestMethod";
 
-    private static final String JUNIT5_JACOCO_RUNNER_RESULT_PER_TEST_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JUnit5JacocoRunnerResultPerTestMethod";
+    private static final String JUNIT5_JACOCO_RUNNER_RESULT_PER_TEST_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JUnit5JacocoRunnerCoveredResultPerTestMethod";
 
     private static final String ABSOLUTE_PATH_TO_RUNNER_CLASSES = initAbsolutePathToRunnerClasses();
 
