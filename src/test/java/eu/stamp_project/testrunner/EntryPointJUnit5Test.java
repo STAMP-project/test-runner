@@ -426,6 +426,7 @@ public class EntryPointJUnit5Test extends AbstractTest {
         assertEquals(0, coveredTestResultPerTestMethod.getIgnoredTests().size());
 
         // Assert coverage
+        assertEquals(2, coveredTestResultPerTestMethod.getCoverageResultsMap().size());
         assertEquals(23, coveredTestResultPerTestMethod.getCoverageOf("test3").getInstructionsCovered());
         assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, coveredTestResultPerTestMethod.getCoverageOf("test3").getInstructionsTotal());
         assertEquals(23, coveredTestResultPerTestMethod.getCoverageOf("test8").getInstructionsCovered());
