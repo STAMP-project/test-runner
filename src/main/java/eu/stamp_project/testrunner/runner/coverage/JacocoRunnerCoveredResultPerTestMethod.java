@@ -18,14 +18,14 @@ import java.util.stream.Collectors;
 
 import static java.util.ResourceBundle.clearCache;
 
-public abstract class JacocoRunnerResultPerTestMethod extends JacocoRunnerPerTestMethod {
+public abstract class JacocoRunnerCoveredResultPerTestMethod extends JacocoRunnerPerTestMethod {
 
 
-	public JacocoRunnerResultPerTestMethod(String classesDirectory, String testClassesDirectory, CoverageTransformer coverageTransformer) {
+	public JacocoRunnerCoveredResultPerTestMethod(String classesDirectory, String testClassesDirectory, CoverageTransformer coverageTransformer) {
 		super(classesDirectory, testClassesDirectory, coverageTransformer);
 	}
 
-	public JacocoRunnerResultPerTestMethod(String classesDirectory, String testClassesDirectory, List<String> blackList, CoverageTransformer coverageTransformer) {
+	public JacocoRunnerCoveredResultPerTestMethod(String classesDirectory, String testClassesDirectory, List<String> blackList, CoverageTransformer coverageTransformer) {
 		super(classesDirectory, testClassesDirectory, blackList, coverageTransformer);
 	}
 

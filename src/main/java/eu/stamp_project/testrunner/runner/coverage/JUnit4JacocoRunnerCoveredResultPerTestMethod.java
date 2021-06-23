@@ -12,13 +12,13 @@ import org.jacoco.core.runtime.RuntimeData;
 import java.util.Collections;
 import java.util.List;
 
-public class JUnit4JacocoRunnerResultPerTestMethod extends JacocoRunnerResultPerTestMethod {
+public class JUnit4JacocoRunnerCoveredResultPerTestMethod extends JacocoRunnerCoveredResultPerTestMethod {
 
-	public JUnit4JacocoRunnerResultPerTestMethod(String classesDirectory, String testClassesDirectory, CoverageTransformer coverageTransformer) {
+	public JUnit4JacocoRunnerCoveredResultPerTestMethod(String classesDirectory, String testClassesDirectory, CoverageTransformer coverageTransformer) {
 		super(classesDirectory, testClassesDirectory, coverageTransformer);
 	}
 
-	public JUnit4JacocoRunnerResultPerTestMethod(String classesDirectory, String testClassesDirectory, List<String> blackList, CoverageTransformer coverageTransformer) {
+	public JUnit4JacocoRunnerCoveredResultPerTestMethod(String classesDirectory, String testClassesDirectory, List<String> blackList, CoverageTransformer coverageTransformer) {
 		super(classesDirectory, testClassesDirectory, blackList, coverageTransformer);
 	}
 
@@ -40,7 +40,7 @@ public class JUnit4JacocoRunnerResultPerTestMethod extends JacocoRunnerResultPer
 		final String[] splittedArgs0 = options.getPathToCompiledClassesOfTheProject().split(ConstantsHelper.PATH_SEPARATOR);
 		final String classesDirectory = splittedArgs0[0];
 		final String testClassesDirectory = splittedArgs0[1];
-		new JUnit4JacocoRunnerResultPerTestMethod(
+		new JUnit4JacocoRunnerCoveredResultPerTestMethod(
 				classesDirectory,
 				testClassesDirectory,
 				options.getBlackList(),
