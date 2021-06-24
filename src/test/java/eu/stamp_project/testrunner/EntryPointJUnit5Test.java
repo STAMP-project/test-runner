@@ -36,6 +36,7 @@ public class EntryPointJUnit5Test extends AbstractTest {
         EntryPoint.outPrintStream = null;
         EntryPoint.errPrintStream = null;
         EntryPoint.jUnit5Mode = true;
+        EntryPoint.coverageDetail = ParserOptions.CoverageTransformerDetail.SUMMARIZED;
     }
 
     @After

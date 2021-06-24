@@ -43,6 +43,7 @@ public class EntryPointTest extends AbstractTest {
         EntryPoint.errPrintStream = null;
         EntryPoint.verbose = true;
         EntryPoint.setMutationEngine(ConstantsHelper.MutationEngine.DESCARTES);
+        EntryPoint.coverageDetail = ParserOptions.CoverageTransformerDetail.SUMMARIZED;
     }
 
     @After
