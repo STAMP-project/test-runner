@@ -1,5 +1,6 @@
 package eu.stamp_project.testrunner.listener.impl;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,7 +9,9 @@ import java.util.Map;
  * @author Matias Martinez
  *
  */
-public class CoverageFromClass {
+public class CoverageFromClass implements Serializable {
+
+	private static final long serialVersionUID = 4955729621536496728L;
 
 	private String classname;
 	private String packageName;

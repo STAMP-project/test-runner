@@ -125,7 +125,23 @@ The output of all `runCoveragePerTestMethods()` API is a [`eu.stamp_project.test
 
    * `Map<String, Coverage> getCoverageResultsMap()`: returns a map that associate the simple of a test method to its instruction coverage.
    * `Coverage getCoverageOf(String testMethodName)`: returns the instruction coverage of a test method, specified by its simple name. 
-   
+
+#### Covered results per test method
+
+In the same way, you can have the covered results per test method using `runCoveredTestResultPerTestMethods()` API of `EntryPoint` class.
+
+##### Output
+
+The output of all `runCoveredTestResultPerTestMethods()` API is a [`eu.stamp_project.testrunner.listener.CoveredTestResultPerTestMethod`](https://github.com/STAMP-project/testrunner/blob/master/src/main/java/eu/stamp_project/testrunner/listener/CoveragePerTestMethod.java#L13).
+
+* `Map<String, Coverage> getCoverageResultsMap()`: returns a map that associate the simple of a test method to its instruction coverage.
+* `Coverage getCoverageOf(String testMethodName)`: returns the instruction coverage of a test method, specified by its simple name.
+* `getRunningTests()`: returns the list of test methods that have been executed.
+* `getPassingTests()`: returns the list of test methods that succeed.
+* `getFailingTests()`: returns the list of test methods that failed.
+* `getAssumptionFailingTests()`: returns the list of test methods that have a failing assumption. For example, in JUnit4 one can make assumptions using `org.junit.Assume` API, _e.g._ `Assume.assumeTrue(myBoolean)`. If the assumption does not hold, it is not necessary because the program is broken but rather than the test is irrelevant in the current state, _e.g._ one can make dedicated test to a platform.
+* `getIgnoredTests()`: returns the list of test methods that are ignored.
+
 #### Mutation Score
 
 The test runner can now compute the mutation using [PIT](http://pitest.org).

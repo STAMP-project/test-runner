@@ -2,9 +2,12 @@ package eu.stamp_project.testrunner;
 
 import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
+import eu.stamp_project.testrunner.listener.CoveredTestResultPerTestMethod;
 import eu.stamp_project.testrunner.listener.TestResult;
+import eu.stamp_project.testrunner.listener.impl.CoverageDetailed;
 import eu.stamp_project.testrunner.listener.pit.AbstractPitResult;
 import eu.stamp_project.testrunner.runner.Failure;
+import eu.stamp_project.testrunner.runner.ParserOptions;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.junit.After;
 import org.junit.Before;
@@ -33,6 +36,7 @@ public class EntryPointJUnit5Test extends AbstractTest {
         EntryPoint.outPrintStream = null;
         EntryPoint.errPrintStream = null;
         EntryPoint.jUnit5Mode = true;
+        EntryPoint.coverageDetail = ParserOptions.CoverageTransformerDetail.SUMMARIZED;
     }
 
     @After
@@ -398,4 +402,103 @@ public class EntryPointJUnit5Test extends AbstractTest {
         assertEquals(23, coveragePerTestMethod.getCoverageOf("test8").getInstructionsCovered());// TODO something may be wrong here. The instruction coverage of test 8 is 23
         assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, coveragePerTestMethod.getCoverageOf("test8").getInstructionsTotal());
     }
+
+    @Test
+    public void testRunCoveredTestResultPerTestMethods() throws Exception {
+
+        /*
+            Test the runCoveredTestResultPerTestMethods() of EntryPoint.
+                It should return the CoveredTestResultPerTestMethod with the instruction coverage computed by Jacoco.
+         */
+        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + ConstantsHelper.PATH_SEPARATOR +
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP;
+
+        final CoveredTestResultPerTestMethod coveredTestResultPerTestMethod = EntryPoint.runCoveredTestResultPerTestMethods(
+                classpath + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                TEST_PROJECT_CLASSES,
+                "junit5.TestSuiteExample",
+                new String[]{"test8", "test3"}
+        );
+
+        // Assert test results
+        assertEquals(2, coveredTestResultPerTestMethod.getRunningTests().size());
+        assertEquals(2, coveredTestResultPerTestMethod.getPassingTests().size());
+        assertEquals(0, coveredTestResultPerTestMethod.getFailingTests().size());
+        assertEquals(0, coveredTestResultPerTestMethod.getIgnoredTests().size());
+
+        // Assert coverage
+        assertEquals(2, coveredTestResultPerTestMethod.getCoverageResultsMap().size());
+        assertEquals(23, coveredTestResultPerTestMethod.getCoverageOf("test3").getInstructionsCovered());
+        assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, coveredTestResultPerTestMethod.getCoverageOf("test3").getInstructionsTotal());
+        assertEquals(23, coveredTestResultPerTestMethod.getCoverageOf("test8").getInstructionsCovered());
+        assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, coveredTestResultPerTestMethod.getCoverageOf("test8").getInstructionsTotal());
+    }
+
+    // FIXME: This test highlights a bug where same named test methods from different classes are mapped to the same key
+    // See: https://github.com/STAMP-project/test-runner/issues/86
+    @Test
+    @Ignore
+    public void testRunCoveredTestResultPerTestMethodsSameNameMethods() throws Exception {
+
+        /*
+            Test the runCoveredTestResultPerTestMethods() of EntryPoint.
+                It should return the CoveredTestResultPerTestMethod with the instruction coverage computed by Jacoco.
+         */
+        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + ConstantsHelper.PATH_SEPARATOR +
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP;
+
+        final CoveredTestResultPerTestMethod coveredTestResultPerTestMethod = EntryPoint.runCoveredTestResultPerTestMethods(
+                classpath + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                TEST_PROJECT_CLASSES,
+                new String[]{"junit5.TestSuiteExample", "junit5.TestSuiteExample2"},
+                new String[]{"junit5.TestSuiteExample#test3", "junit5.TestSuiteExample2#test3"}
+        );
+
+        System.out.println(coveredTestResultPerTestMethod);
+    }
+
+    @Test
+    public void testRunCoveredTestResultPerTestMethodsDetailedCoverage() throws Exception {
+        EntryPoint.coverageDetail = ParserOptions.CoverageTransformerDetail.DETAIL;
+
+        /*
+            Test the runCoveredTestResultPerTestMethods() of EntryPoint.
+                It should return the CoveredTestResultPerTestMethod with the instruction coverage computed by Jacoco.
+         */
+        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + ConstantsHelper.PATH_SEPARATOR +
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP;
+
+        final CoveredTestResultPerTestMethod coveredTestResultPerTestMethod = EntryPoint.runCoveredTestResultPerTestMethods(
+                classpath + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                TEST_PROJECT_CLASSES,
+                "junit5.TestSuiteExample",
+                new String[]{"test8", "test3"}
+        );
+
+        // Assert test results
+        assertEquals(2, coveredTestResultPerTestMethod.getRunningTests().size());
+        assertEquals(2, coveredTestResultPerTestMethod.getPassingTests().size());
+        assertEquals(0, coveredTestResultPerTestMethod.getFailingTests().size());
+        assertEquals(0, coveredTestResultPerTestMethod.getIgnoredTests().size());
+
+        // Assert detailed coverage
+        assertEquals(2, coveredTestResultPerTestMethod.getCoverageResultsMap().size());
+
+        assertTrue(coveredTestResultPerTestMethod.getCoverageOf("test3") instanceof CoverageDetailed);
+        CoverageDetailed coverageDetailed = (CoverageDetailed) coveredTestResultPerTestMethod.getCoverageOf("test3");
+        assertNotNull(coverageDetailed.getDetailedCoverage());
+        assertEquals(5, coverageDetailed.getDetailedCoverage().size());
+
+        assertTrue(coveredTestResultPerTestMethod.getCoverageOf("test8") instanceof CoverageDetailed);
+        coverageDetailed = (CoverageDetailed) coveredTestResultPerTestMethod.getCoverageOf("test8");
+        assertNotNull(coverageDetailed.getDetailedCoverage());
+        assertEquals(5, coverageDetailed.getDetailedCoverage().size());
+    }
+
 }

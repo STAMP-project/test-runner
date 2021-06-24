@@ -4,6 +4,7 @@ import eu.stamp_project.mutationtest.descartes.DescartesMutationEngine;
 import eu.stamp_project.testrunner.listener.*;
 import eu.stamp_project.testrunner.listener.impl.CoverageImpl;
 import eu.stamp_project.testrunner.listener.impl.CoveragePerTestMethodImpl;
+import eu.stamp_project.testrunner.listener.impl.CoveredTestResultPerTestMethodImpl;
 import eu.stamp_project.testrunner.listener.impl.TestResultImpl;
 import eu.stamp_project.testrunner.listener.junit4.JUnit4Coverage;
 import eu.stamp_project.testrunner.listener.pit.AbstractParser;
@@ -420,6 +421,91 @@ public class EntryPoint {
         return load;
     }
 
+    /* COMPUTE COVERED TEST RESULT PER TEST METHOD API */
+
+    public static CoveredTestResultPerTestMethod runCoveredTestResultPerTestMethods(String classpath, String targetProjectClasses,
+                                                                  String fullQualifiedNameOfTestClass) throws TimeoutException {
+        return EntryPoint.runCoveredTestResultPerTestMethods(classpath, targetProjectClasses,
+                new String[]{fullQualifiedNameOfTestClass}, new String[0]);
+    }
+
+    public static CoveredTestResultPerTestMethod runCoveredTestResultPerTestMethods(String classpath, String targetProjectClasses,
+                                                                  String fullQualifiedNameOfTestClass, String testMethodName) throws TimeoutException {
+        return EntryPoint.runCoveredTestResultPerTestMethods(classpath, targetProjectClasses,
+                new String[]{fullQualifiedNameOfTestClass}, new String[]{testMethodName});
+    }
+
+    public static CoveredTestResultPerTestMethod runCoveredTestResultPerTestMethods(String classpath, String targetProjectClasses,
+                                                                  String fullQualifiedNameOfTestClass, String[] testMethodNames) throws TimeoutException {
+        return EntryPoint.runCoveredTestResultPerTestMethods(classpath, targetProjectClasses,
+                new String[]{fullQualifiedNameOfTestClass}, testMethodNames);
+    }
+
+    public static CoveredTestResultPerTestMethod runCoveredTestResultPerTestMethods(String classpath, String targetProjectClasses,
+                                                                  String[] fullQualifiedNameOfTestClasses) throws TimeoutException {
+        return EntryPoint.runCoveredTestResultPerTestMethods(classpath, targetProjectClasses, fullQualifiedNameOfTestClasses,
+                new String[0]);
+    }
+
+    /**
+     * Compute the test result and instruction coverage  using <a
+     * href=http://www.eclemma.org/jacoco/>JaCoCo</a> for various test methods
+     * inside the given test classes.
+     * <p>
+     * This method computes the instruction coverage, using <a
+     * href=http://www.eclemma.org/jacoco/>JaCoCo</a> obtained by executing the
+     * given test methods inside the given test classes. This method requires the
+     * path to the binaries, i.e. .class, of the source code on which the
+     * instruction must be computed. This method computes the per test method
+     * coverage, <i>i.e.</i> the coverage obtained by each test methods, separately.
+     * It does not run one by one test methods, but rather use a specific
+     * implementation of {@link org.junit.runner.notification.RunListener}.
+     * </p>
+     *
+     * @param classpath                      the classpath required to run the given tests classes.
+     * @param targetProjectClasses           path to the folder that contains binaries, i.e. .class, on which
+     *                                       Jacoco computes the coverage.
+     * @param fullQualifiedNameOfTestClasses test classes to be run.
+     * @param methodNames                    test methods to be run.
+     * @return a Map that associate each test method name to its instruction
+     * coverage, as an instance of CoveredTestResultPerTestMethod {@link CoveredTestResultPerTestMethod} of
+     * test classes.
+     * @throws TimeoutException when the execution takes longer than timeoutInMs
+     */
+    public static CoveredTestResultPerTestMethod runCoveredTestResultPerTestMethods(String classpath, String targetProjectClasses,
+                                                                  String[] fullQualifiedNameOfTestClasses, String[] methodNames) throws TimeoutException {
+        final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
+                new String[]{
+                        getJavaCommand(),
+                        (classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES
+                                + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES).replaceAll(" ", "%20"),
+                        EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_JACOCO_RUNNER_COVERED_RESULT_PER_TEST_QUALIFIED_NAME : EntryPoint.JUNIT4_JACOCO_RUNNER_COVERED_RESULT_PER_TEST_QUALIFIED_NAME,
+                        ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
+                        (targetProjectClasses).replaceAll(" ", "%20"), ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun,
+                        String.join(ConstantsHelper.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
+                        methodNames.length == 0 ? "" : ParserOptions.FLAG_testMethodNamesToRun + ConstantsHelper.WHITE_SPACE +
+                                String.join(ConstantsHelper.PATH_SEPARATOR, methodNames),
+                        EntryPoint.blackList.isEmpty() ? ""
+                                : (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE
+                                + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
+                        EntryPoint.coverageDetail == ParserOptions.CoverageTransformerDetail.SUMMARIZED ? "" :
+                                (ParserOptions.FLAG_coverage_detail + ConstantsHelper.WHITE_SPACE
+                                        + EntryPoint.coverageDetail.name()),
+                });
+        try {
+            EntryPoint.runGivenCommandLine(javaCommand);
+        } catch (TimeoutException e) {
+            LOGGER.warn("Timeout when running {}", javaCommand);
+            throw e;
+        }
+        final CoveredTestResultPerTestMethod load = CoveredTestResultPerTestMethodImpl.load();
+        if (EntryPoint.verbose) {
+            LOGGER.info("Coverage per test methods has been computed {}{}", ConstantsHelper.LINE_SEPARATOR,
+                    load.toString());
+        }
+        return load;
+    }
+
     /* COMPUTE MUTATION SCORE WITH PIT API */
 
     /**
@@ -574,6 +660,10 @@ public class EntryPoint {
     private static final String JUNIT4_JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JUnit4JacocoRunnerPerTestMethod";
 
     private static final String JUNIT5_JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JUnit5JacocoRunnerPerTestMethod";
+
+    private static final String JUNIT4_JACOCO_RUNNER_COVERED_RESULT_PER_TEST_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JUnit4JacocoRunnerCoveredResultPerTestMethod";
+
+    private static final String JUNIT5_JACOCO_RUNNER_COVERED_RESULT_PER_TEST_QUALIFIED_NAME = "eu.stamp_project.testrunner.runner.coverage.JUnit5JacocoRunnerCoveredResultPerTestMethod";
 
     private static final String ABSOLUTE_PATH_TO_RUNNER_CLASSES = initAbsolutePathToRunnerClasses();
 
