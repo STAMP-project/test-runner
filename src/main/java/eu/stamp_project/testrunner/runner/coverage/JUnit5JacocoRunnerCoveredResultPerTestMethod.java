@@ -12,6 +12,11 @@ import org.jacoco.core.runtime.RuntimeData;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * JUnit5 implementation of {@link JacocoRunnerCoveredResultPerTestMethod}.
+ *
+ * @author andre15silva
+ */
 public class JUnit5JacocoRunnerCoveredResultPerTestMethod extends JacocoRunnerCoveredResultPerTestMethod {
 
 	public JUnit5JacocoRunnerCoveredResultPerTestMethod(String classesDirectory, String testClassesDirectory, CoverageTransformer coverageTransformer) {

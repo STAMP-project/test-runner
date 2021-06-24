@@ -18,6 +18,11 @@ import java.util.stream.Collectors;
 
 import static java.util.ResourceBundle.clearCache;
 
+/**
+ * Runs {@link JacocoRunnerPerTestMethod} but with a {@link CoveredTestResultPerTestMethod} listener
+ *
+ * @author andre15silva
+ */
 public abstract class JacocoRunnerCoveredResultPerTestMethod extends JacocoRunnerPerTestMethod {
 
 

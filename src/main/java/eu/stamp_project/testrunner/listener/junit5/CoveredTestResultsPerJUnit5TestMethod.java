@@ -13,6 +13,11 @@ import org.junit.platform.launcher.TestIdentifier;
 
 import java.util.Map;
 
+/**
+ * JUnit5 implementation of {@link CoveredTestResultPerTestMethod}
+ *
+ * @author andre15silva
+ */
 public class CoveredTestResultsPerJUnit5TestMethod extends JUnit5TestResult implements CoveredTestResultPerTestMethod {
 
 	private static final long serialVersionUID = 5003707306546430948L;

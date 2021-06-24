@@ -28,6 +28,11 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * JUnit4 implementation of {@link CoveredTestResultPerTestMethod}
+ *
+ * @author andre15silva
+ */
 public class CoveredTestResultsPerJUnit4TestMethod extends JUnit4TestResult implements CoveredTestResultPerTestMethod {
 
 	private static final long serialVersionUID = -6934847896187177463L;

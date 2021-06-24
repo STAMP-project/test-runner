@@ -5,6 +5,12 @@ import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import java.io.Serializable;
 import java.util.Map;
 
+/**
+ * Stores both the individual test unit (i.e. method) results as well as the individual coverage
+ * information for each of them.
+ *
+ * @author andre15silva
+ */
 public interface CoveredTestResultPerTestMethod extends TestResult, Serializable {
 
 	public static final String SERIALIZE_NAME = "CoveredTestResultPerTest";

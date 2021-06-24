@@ -20,6 +20,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Default implementation of the CoveredTestResultPerTestMethod interface
+ *
+ * @author andre15silva
+ */
 public class CoveredTestResultPerTestMethodImpl implements CoveredTestResultPerTestMethod {
 
 	private static final long serialVersionUID = -789740001022671146L;
