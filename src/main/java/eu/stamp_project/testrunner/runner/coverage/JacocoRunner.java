@@ -58,11 +58,11 @@ public abstract class JacocoRunner {
         this(classesDirectory, testClassesDirectory, Collections.emptyList(), coverageTransformer);
     }
 
-    /**
-     * @param classesDirectory     the path to the directory that contains the .class file of sources
-     * @param testClassesDirectory the path to the directory that contains the .class file of test sources
-     * @param blackList            the names of the test methods to NOT be run.
-     */
+	/**
+	 * @param classesDirectory     the path to the directory that contains the .class file of sources
+	 * @param testClassesDirectory the path to the directory that contains the .class file of test sources
+	 * @param blackList            the names of the test methods to NOT be run.
+	 */
     public JacocoRunner(String classesDirectory, String testClassesDirectory, List<String> blackList, CoverageTransformer coverageTransformer) {
         try {
             this.instrumentedClassLoader = new MemoryClassLoader(
@@ -79,7 +79,10 @@ public abstract class JacocoRunner {
         this.instrumenter = new Instrumenter(this.runtime);
         this.coverageTransformer = coverageTransformer;
         // instrument source code
-        instrumentAll(classesDirectory);
+	    String[] paths = classesDirectory.split(File.pathSeparator);
+	    for (String path : paths) {
+		    instrumentAll(path);
+	    }
     }
 
     

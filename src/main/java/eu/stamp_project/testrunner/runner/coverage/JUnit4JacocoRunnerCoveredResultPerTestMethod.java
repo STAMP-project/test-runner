@@ -25,10 +25,12 @@ public class JUnit4JacocoRunnerCoveredResultPerTestMethod extends JacocoRunnerCo
 
 	public JUnit4JacocoRunnerCoveredResultPerTestMethod(String classesDirectory, String testClassesDirectory, List<String> blackList, CoverageTransformer coverageTransformer) {
 		super(classesDirectory, testClassesDirectory, blackList, coverageTransformer);
+		System.out.println("I'M EVERYWHERE : " + classesDirectory);
 	}
 
 	@Override
 	protected CoveredTestResultPerTestMethod executeCoveredTestPerTestMethod(RuntimeData data, String classesDirectory, String[] testClassNames, String[] testMethodNames) {
+		System.out.println("I'M HERE : " + classesDirectory);
 		final CoveredTestResultsPerJUnit4TestMethod listener = new CoveredTestResultsPerJUnit4TestMethod(data, classesDirectory, coverageTransformer);
 		JUnit4Runner.run(
 				testClassNames,
@@ -43,7 +45,7 @@ public class JUnit4JacocoRunnerCoveredResultPerTestMethod extends JacocoRunnerCo
 	public static void main(String[] args) {
 		final ParserOptions options = ParserOptions.parse(args);
 		final String[] splittedArgs0 = options.getPathToCompiledClassesOfTheProject().split(ConstantsHelper.PATH_SEPARATOR);
-		final String classesDirectory = splittedArgs0[0];
+		final String classesDirectory = options.isCoverTests() ? options.getPathToCompiledClassesOfTheProject() : splittedArgs0[0];
 		final String testClassesDirectory = splittedArgs0[1];
 		new JUnit4JacocoRunnerCoveredResultPerTestMethod(
 				classesDirectory,
