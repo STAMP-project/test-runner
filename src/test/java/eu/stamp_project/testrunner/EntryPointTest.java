@@ -617,27 +617,32 @@ public class EntryPointTest extends AbstractTest {
                 classpath + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 TEST_PROJECT_CLASSES,
                 "example.TestSuiteExample",
-                new String[]{"test8", "test3"}
+                new String[]{"test8"}
+//                new String[]{"test8", "test3"}
         );
 
         // Assert test results
-        assertEquals(2, coveredTestResultPerTestMethod.getRunningTests().size());
-        assertEquals(2, coveredTestResultPerTestMethod.getPassingTests().size());
+        assertEquals(1, coveredTestResultPerTestMethod.getRunningTests().size());
+        assertEquals(1, coveredTestResultPerTestMethod.getPassingTests().size());
         assertEquals(0, coveredTestResultPerTestMethod.getFailingTests().size());
         assertEquals(0, coveredTestResultPerTestMethod.getIgnoredTests().size());
 
         // Assert detailed coverage
-        assertEquals(2, coveredTestResultPerTestMethod.getCoverageResultsMap().size());
+        assertEquals(1, coveredTestResultPerTestMethod.getCoverageResultsMap().size());
 
+        /*
         assertTrue(coveredTestResultPerTestMethod.getCoverageOf("test3") instanceof CoverageDetailed);
         CoverageDetailed coverageDetailed = (CoverageDetailed) coveredTestResultPerTestMethod.getCoverageOf("test3");
         assertNotNull(coverageDetailed.getDetailedCoverage());
         assertEquals(16, coverageDetailed.getDetailedCoverage().size());
+         */
 
         assertTrue(coveredTestResultPerTestMethod.getCoverageOf("test8") instanceof CoverageDetailed);
-        coverageDetailed = (CoverageDetailed) coveredTestResultPerTestMethod.getCoverageOf("test8");
+        CoverageDetailed coverageDetailed = (CoverageDetailed) coveredTestResultPerTestMethod.getCoverageOf("test8");
         assertNotNull(coverageDetailed.getDetailedCoverage());
         assertEquals(16, coverageDetailed.getDetailedCoverage().size());
+        // This assertion fails because the coverage returns 0, when it should be 2
+        assertEquals(java.util.Optional.of(2), coverageDetailed.getDetailedCoverage().get("example/TestSuiteExample").getCov().get(2));
     }
 
 }

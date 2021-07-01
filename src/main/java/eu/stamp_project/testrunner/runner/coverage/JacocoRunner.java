@@ -67,7 +67,6 @@ public abstract class JacocoRunner {
 				    }
 			    })
 			    .toArray(URL[]::new);
-    	Arrays.stream(dirs).peek(System.out::println);
         this.instrumentedClassLoader = new MemoryClassLoader(dirs);
         this.blackList = blackList;
         this.runtime = new LoggerRuntime();
