@@ -641,8 +641,9 @@ public class EntryPointTest extends AbstractTest {
         CoverageDetailed coverageDetailed = (CoverageDetailed) coveredTestResultPerTestMethod.getCoverageOf("test8");
         assertNotNull(coverageDetailed.getDetailedCoverage());
         assertEquals(16, coverageDetailed.getDetailedCoverage().size());
-        // This assertion fails because the coverage returns 0, when it should be 2
-        assertEquals(java.util.Optional.of(2), coverageDetailed.getDetailedCoverage().get("example/TestSuiteExample").getCov().get(2));
+        // This assertion fails because the coverage returns 0, when it should be 3
+        System.out.println(coverageDetailed.getDetailedCoverage());
+        assertEquals(3, coverageDetailed.getDetailedCoverage().get("example/TestSuiteExample").getCov().get(2).intValue());
     }
 
 }

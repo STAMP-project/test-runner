@@ -94,7 +94,8 @@ public class JacocoRunnerTest extends AbstractTest {
 
         // Assert coverage of test class
         CoverageDetailed covLine = (CoverageDetailed) coveredTestResult.getCoverageInformation();
-        assertEquals(java.util.Optional.of(2), covLine.getDetailedCoverage().get("example/TestSuiteExample").getCov().get(2));
+        System.out.println(covLine);
+        assertEquals(3, covLine.getDetailedCoverage().get("example/TestSuiteExample").getCov().get(2).intValue());
     }
 
 }
