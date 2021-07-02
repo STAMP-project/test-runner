@@ -52,7 +52,7 @@ public class JUnit5JacocoRunnerCoveredResultPerTestMethod extends JacocoRunnerCo
 				options.getCoverageTransformer()
 		).runCoveredTestResultPerTestMethod(classesDirectory,
 				testClassesDirectory,
-				options.getFullQualifiedNameOfTestClassesToRun()[0],
+				options.getFullQualifiedNameOfTestClassesToRun(),
 				options.getTestMethodNamesToRun()
 		).save();
 	}

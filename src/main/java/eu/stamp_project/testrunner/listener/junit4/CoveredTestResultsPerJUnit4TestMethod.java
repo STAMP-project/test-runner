@@ -14,6 +14,8 @@ import org.jacoco.core.analysis.ICounter;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.SessionInfoStore;
 import org.jacoco.core.runtime.RuntimeData;
+import org.junit.platform.engine.support.descriptor.MethodSource;
+import org.junit.platform.launcher.TestIdentifier;
 import org.junit.runner.Description;
 
 import java.io.File;
@@ -38,6 +40,12 @@ public class CoveredTestResultsPerJUnit4TestMethod extends JUnit4TestResult impl
 	private static final long serialVersionUID = -6934847896187177463L;
 
 	private CoveredTestResultPerTestMethodImpl internalCoveredTestResult;
+
+	protected transient final Function<Description, String> toString = description ->
+			description.getClassName() + "#" + description.getMethodName();
+
+	protected transient final Function<Description, String> toStringParametrized = description ->
+			description.getClassName() + "#" + fromParametrizedToSimpleName.apply(description.getMethodName());
 
 	/**
 	 * This field is used to support parametrized test
@@ -64,7 +72,7 @@ public class CoveredTestResultsPerJUnit4TestMethod extends JUnit4TestResult impl
 	public synchronized void testStarted(Description description) throws Exception {
 		this.internalCoveredTestResult.setExecutionData(new ExecutionDataStore());
 		this.internalCoveredTestResult.setSessionInfos(new SessionInfoStore());
-		this.internalCoveredTestResult.getData().setSessionId(description.getMethodName());
+		this.internalCoveredTestResult.getData().setSessionId(this.toString.apply(description));
 		this.internalCoveredTestResult.getData().collect(
 				this.internalCoveredTestResult.getExecutionData(),
 				this.internalCoveredTestResult.getSessionInfos(),
@@ -74,7 +82,7 @@ public class CoveredTestResultsPerJUnit4TestMethod extends JUnit4TestResult impl
 
 	@Override
 	public synchronized void testFinished(Description description) throws Exception {
-		this.internalCoveredTestResult.getRunningTests().add(description.getMethodName());
+		this.internalCoveredTestResult.getRunningTests().add(this.toString.apply(description));
 
 		this.internalCoveredTestResult.getData().collect(
 				this.internalCoveredTestResult.getExecutionData(),
@@ -85,9 +93,9 @@ public class CoveredTestResultsPerJUnit4TestMethod extends JUnit4TestResult impl
 		Coverage jUnit4Coverage =
 				internalCoveredTestResult.getCoverageTransformer().transformJacocoObject(this.internalCoveredTestResult.getExecutionData(),
 						this.internalCoveredTestResult.getClassesDirectory());
-		this.internalCoveredTestResult.getCoverageResultsMap().put(description.getMethodName(), jUnit4Coverage);
+		this.internalCoveredTestResult.getCoverageResultsMap().put(this.toString.apply(description), jUnit4Coverage);
 		if (isParametrized.test(description.getMethodName())) {
-			this.collectForParametrizedTest(fromParametrizedToSimpleName.apply(description.getMethodName()));
+			this.collectForParametrizedTest(this.toStringParametrized.apply(description));
 		}
 	}
 
@@ -115,7 +123,7 @@ public class CoveredTestResultsPerJUnit4TestMethod extends JUnit4TestResult impl
 
 	@Override
 	public void testIgnored(Description description) throws Exception {
-		this.internalCoveredTestResult.getIgnoredTests().add(description.getMethodName());
+		this.internalCoveredTestResult.getIgnoredTests().add(this.toString.apply(description));
 	}
 
 	private void collectForParametrizedTest(String testMethodName) {

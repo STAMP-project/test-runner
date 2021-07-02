@@ -9,9 +9,11 @@ import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.SessionInfoStore;
 import org.jacoco.core.runtime.RuntimeData;
 import org.junit.platform.engine.TestExecutionResult;
+import org.junit.platform.engine.support.descriptor.MethodSource;
 import org.junit.platform.launcher.TestIdentifier;
 
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * JUnit5 implementation of {@link CoveredTestResultPerTestMethod}
@@ -23,6 +25,10 @@ public class CoveredTestResultsPerJUnit5TestMethod extends JUnit5TestResult impl
 	private static final long serialVersionUID = 5003707306546430948L;
 
 	private CoveredTestResultPerTestMethodImpl internalCoveredTestResult;
+
+	protected transient final Function<TestIdentifier, String> toString = testIdentifier ->
+			((MethodSource) testIdentifier.getSource().get()).getClassName() + "#" +
+					((MethodSource) testIdentifier.getSource().get()).getMethodName();
 
 	public CoveredTestResultsPerJUnit5TestMethod(RuntimeData data, String classesDirectory, CoverageTransformer coverageTransformer) {
 		this.internalCoveredTestResult = new CoveredTestResultPerTestMethodImpl(data, classesDirectory, coverageTransformer);

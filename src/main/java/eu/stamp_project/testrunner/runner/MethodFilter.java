@@ -41,12 +41,14 @@ class MethodFilter extends Filter {
                     .reduce(Boolean.FALSE, Boolean::logicalOr);
 
     private final Predicate<Description> anyTestMethodNamesMatch = description ->
-            this.testMethodNames.stream()
-                    .anyMatch(testMethodName ->
-                            Pattern.compile(testMethodName + "\\[(\\d+)\\]")
+                    this.testMethodNames.stream()
+                            .anyMatch(testMethodName ->
+                                    Pattern.compile("(" + description.getClassName() + ")?" + testMethodName + "\\[(\\d+)\\]")
                                     .matcher(description.getMethodName())
                                     .find()
-                    ) || this.testMethodNames.contains(description.getMethodName());
+                            ) ||
+                    this.testMethodNames.contains(description.getMethodName()) ||
+                    this.testMethodNames.contains(description.getClassName() + "#" + description.getMethodName());
 
     @Override
     public String describe() {

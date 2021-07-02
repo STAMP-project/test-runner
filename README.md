@@ -134,8 +134,8 @@ In the same way, you can have the covered results per test method using `runCove
 
 The output of all `runCoveredTestResultPerTestMethods()` API is a [`eu.stamp_project.testrunner.listener.CoveredTestResultPerTestMethod`](https://github.com/STAMP-project/testrunner/blob/master/src/main/java/eu/stamp_project/testrunner/listener/CoveragePerTestMethod.java#L13).
 
-* `Map<String, Coverage> getCoverageResultsMap()`: returns a map that associate the simple of a test method to its instruction coverage.
-* `Coverage getCoverageOf(String testMethodName)`: returns the instruction coverage of a test method, specified by its simple name.
+* `Map<String, Coverage> getCoverageResultsMap()`: returns a map that associates the **fully qualified name of a test method** (e.g. `org.example#test1`) to its instruction coverage.
+* `Coverage getCoverageOf(String testMethodName)`: returns the instruction coverage of a test method, specified by its fully qualified name.
 * `getRunningTests()`: returns the list of test methods that have been executed.
 * `getPassingTests()`: returns the list of test methods that succeed.
 * `getFailingTests()`: returns the list of test methods that failed.

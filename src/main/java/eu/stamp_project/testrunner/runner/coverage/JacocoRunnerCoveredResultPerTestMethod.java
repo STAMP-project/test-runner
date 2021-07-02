@@ -36,7 +36,7 @@ public abstract class JacocoRunnerCoveredResultPerTestMethod extends JacocoRunne
 
 	public CoveredTestResultPerTestMethod runCoveredTestResultPerTestMethod(String classesDirectory,
 	                                                                        String testClassesDirectory,
-	                                                                        String fullQualifiedNameOfTestClass,
+	                                                                        String[] testClassNames,
 	                                                                        String[] testMethodNames) {
 		final RuntimeData data = new RuntimeData();
 		URLClassLoader classLoader;
@@ -46,14 +46,18 @@ public abstract class JacocoRunnerCoveredResultPerTestMethod extends JacocoRunne
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
 		}
-		final String resource = ConstantsHelper.fullQualifiedNameToPath.apply(fullQualifiedNameOfTestClass) + ".class";
+
 		try {
-			this.instrumentedClassLoader.addDefinition(
-					fullQualifiedNameOfTestClass,
-					IOUtils.toByteArray(classLoader.getResourceAsStream(resource))
-			);
+			// TODO: I'm not sure this for loop is doing anything
+			for (String fullyQualifiedClassName : testClassNames) {
+				String resource = ConstantsHelper.fullQualifiedNameToPath.apply(fullyQualifiedClassName) + ".class";
+				this.instrumentedClassLoader.addDefinition(
+						fullyQualifiedClassName,
+						IOUtils.toByteArray(classLoader.getResourceAsStream(resource))
+				);
+			}
 			this.runtime.startup(data);
-			final CoveredTestResultPerTestMethod listener = this.executeCoveredTestPerTestMethod(data, classesDirectory, new String[]{fullQualifiedNameOfTestClass}, testMethodNames);
+			final CoveredTestResultPerTestMethod listener = this.executeCoveredTestPerTestMethod(data, classesDirectory, testClassNames, testMethodNames);
 			if (!((TestResult) listener).getFailingTests().isEmpty()) {
 				System.err.println("Some test(s) failed during computation of coverage:\n" +
 						((TestResult) listener).getFailingTests()
