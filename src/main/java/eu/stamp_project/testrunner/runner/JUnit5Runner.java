@@ -79,7 +79,9 @@ public class JUnit5Runner {
                                 requestBuilder.selectors(selectMethod(customClassLoader.loadClass(testClassNames[0]), testMethodName));
                             } else {
                                 // Else we load the fully qualified method name
-                                requestBuilder.selectors(selectMethod(testMethodName));
+                                String className = testMethodName.split("#")[0];
+                                String methodName = testMethodName.split("#")[1];
+                                requestBuilder.selectors(selectMethod(customClassLoader.loadClass(className), methodName));
                             }
                         } catch (ClassNotFoundException e) {
                             throw new RuntimeException(e);
