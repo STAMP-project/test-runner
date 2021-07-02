@@ -59,15 +59,23 @@ public class TestFramework implements TestFrameworkSupport {
 
     /**
      * This method says whether the given test method is JUnit 5 or not.
-
-     * For now, only JUnit5 needs to be checked because JUnit3 and JUnit4 can be run with the same test runner and do not required any
-     * specific configuration (such as the pom for PIT, see TODO).
      *
      * @param ctMethod the test method to checkEnum
      * @return true if the given ctMethod is a JUnit5, false otherwise.
      */
     public static boolean isJUnit5(CtMethod<?> ctMethod) {
         return TestFramework.get().getTestFramework(ctMethod) instanceof JUnit5Support;
+    }
+
+    /**
+     * This method says whether the given test method is JUnit4 compatible (i.e. JUnit3 or JUnit4)
+     *
+     * @param ctMethod the test method to CheckEnum
+     * @return true if the given ctMethod is JUnit4 compatible, false otherwise.
+     */
+    public static boolean isJUnit4(CtMethod<?> ctMethod) {
+        return TestFramework.get().getTestFramework(ctMethod) instanceof JUnit3Support
+                || TestFramework.get().getTestFramework(ctMethod) instanceof JUnit4Support;
     }
 
     /**
