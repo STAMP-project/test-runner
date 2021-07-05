@@ -55,10 +55,10 @@ public class JUnit5JacocoRunnerCoveredResultPerTestMethodTest extends AbstractTe
 		assertEquals(0, load.getIgnoredTests().size());
 
 		assertEquals(2, load.getCoverageResultsMap().size());
-		assertEquals(23, load.getCoverageResultsMap().get("test2").getInstructionsCovered());
-		assertEquals(23, load.getCoverageResultsMap().get("test3").getInstructionsCovered());
-		System.out.println(load.getCoverageResultsMap().get("test2").getExecutionPath());
-		System.out.println(load.getCoverageResultsMap().get("test3").getExecutionPath());
+		assertEquals(23, load.getCoverageResultsMap().get("junit5.TestSuiteExample#test2").getInstructionsCovered());
+		assertEquals(23, load.getCoverageResultsMap().get("junit5.TestSuiteExample#test3").getInstructionsCovered());
+		System.out.println(load.getCoverageResultsMap().get("junit5.TestSuiteExample#test2").getExecutionPath());
+		System.out.println(load.getCoverageResultsMap().get("junit5.TestSuiteExample#test3").getExecutionPath());
 	}
 
 	@Test
@@ -81,12 +81,12 @@ public class JUnit5JacocoRunnerCoveredResultPerTestMethodTest extends AbstractTe
 				.map(s -> s + " -> " + load.getCoverageResultsMap().get(s).getExecutionPath())
 				.forEach(System.out::println);
 		for (String expectedExecutionPath : expectedExecutionPathsTest3) {
-			assertEquals(23, load.getCoverageResultsMap().get("test3").getInstructionsCovered());
-			assertTrue(load.getCoverageResultsMap().get("test3").getExecutionPath().contains(expectedExecutionPath));
+			assertEquals(23, load.getCoverageResultsMap().get("junit5.TestSuiteExample#test3").getInstructionsCovered());
+			assertTrue(load.getCoverageResultsMap().get("junit5.TestSuiteExample#test3").getExecutionPath().contains(expectedExecutionPath));
 		}
 		for (String expectedExecutionPath : expectedExecutionPathsTest4) {
-			assertEquals(26, load.getCoverageResultsMap().get("test4").getInstructionsCovered());
-			assertTrue(load.getCoverageResultsMap().get("test4").getExecutionPath().contains(expectedExecutionPath));
+			assertEquals(26, load.getCoverageResultsMap().get("junit5.TestSuiteExample#test4").getInstructionsCovered());
+			assertTrue(load.getCoverageResultsMap().get("junit5.TestSuiteExample#test4").getExecutionPath().contains(expectedExecutionPath));
 		}
 	}
 

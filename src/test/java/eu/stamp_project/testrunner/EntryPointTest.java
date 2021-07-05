@@ -485,10 +485,10 @@ public class EntryPointTest extends AbstractTest {
 
         // Assert coverage
         assertEquals(2, coveredTestResultPerTestMethod.getCoverageResultsMap().size());
-        assertEquals(23, coveredTestResultPerTestMethod.getCoverageOf("test3").getInstructionsCovered());
-        assertEquals(NUMBER_OF_INSTRUCTIONS, coveredTestResultPerTestMethod.getCoverageOf("test3").getInstructionsTotal());
-        assertEquals(23, coveredTestResultPerTestMethod.getCoverageOf("test8").getInstructionsCovered());
-        assertEquals(NUMBER_OF_INSTRUCTIONS, coveredTestResultPerTestMethod.getCoverageOf("test8").getInstructionsTotal());
+        assertEquals(23, coveredTestResultPerTestMethod.getCoverageOf("example.TestSuiteExample#test3").getInstructionsCovered());
+        assertEquals(NUMBER_OF_INSTRUCTIONS, coveredTestResultPerTestMethod.getCoverageOf("example.TestSuiteExample#test3").getInstructionsTotal());
+        assertEquals(23, coveredTestResultPerTestMethod.getCoverageOf("example.TestSuiteExample#test8").getInstructionsCovered());
+        assertEquals(NUMBER_OF_INSTRUCTIONS, coveredTestResultPerTestMethod.getCoverageOf("example.TestSuiteExample#test8").getInstructionsTotal());
     }
 
     @Ignore
@@ -533,11 +533,10 @@ public class EntryPointTest extends AbstractTest {
         assertEquals(NUMBER_OF_INSTRUCTIONS, coveredTestResultPerTestMethod.getCoverageOf("test7[1]").getInstructionsTotal());
     }
 
-    // FIXME: This test highlights a bug where same named test methods from different classes are mapped to the same key
-    // See: https://github.com/STAMP-project/test-runner/issues/86
-    @Ignore
+    // Tests when running same named test methods from different classes
     @Test
-    public void testRunCoveredTestResultPerTestMethodsSameNamedMethods() throws Exception {
+    public void testRunCoveredTestResultPerTestMethodsSameNamedMethodsDetailedCoverage() throws Exception {
+        EntryPoint.coverageDetail = ParserOptions.CoverageTransformerDetail.DETAIL;
 
         /*
             Test the runCoveredTestResultPerTestMethods() of EntryPoint.
@@ -555,7 +554,24 @@ public class EntryPointTest extends AbstractTest {
                 new String[]{"example.TestSuiteExample#test3", "example.TestSuiteExample2#test3"}
         );
 
-        System.out.println(coveredTestResultPerTestMethod);
+        // Assert test results
+        assertEquals(2, coveredTestResultPerTestMethod.getRunningTests().size());
+        assertEquals(2, coveredTestResultPerTestMethod.getPassingTests().size());
+        assertEquals(0, coveredTestResultPerTestMethod.getFailingTests().size());
+        assertEquals(0, coveredTestResultPerTestMethod.getIgnoredTests().size());
+
+        // Assert detailed coverage
+        assertEquals(2, coveredTestResultPerTestMethod.getCoverageResultsMap().size());
+
+        assertTrue(coveredTestResultPerTestMethod.getCoverageOf("example.TestSuiteExample#test3") instanceof CoverageDetailed);
+        CoverageDetailed coverageDetailed = (CoverageDetailed) coveredTestResultPerTestMethod.getCoverageOf("example.TestSuiteExample#test3");
+        assertNotNull(coverageDetailed.getDetailedCoverage());
+        assertEquals(5, coverageDetailed.getDetailedCoverage().size());
+
+        assertTrue(coveredTestResultPerTestMethod.getCoverageOf("example.TestSuiteExample2#test3") instanceof CoverageDetailed);
+        coverageDetailed = (CoverageDetailed) coveredTestResultPerTestMethod.getCoverageOf("example.TestSuiteExample2#test3");
+        assertNotNull(coverageDetailed.getDetailedCoverage());
+        assertEquals(5, coverageDetailed.getDetailedCoverage().size());
     }
 
     @Test
@@ -587,13 +603,13 @@ public class EntryPointTest extends AbstractTest {
         // Assert detailed coverage
         assertEquals(2, coveredTestResultPerTestMethod.getCoverageResultsMap().size());
 
-        assertTrue(coveredTestResultPerTestMethod.getCoverageOf("test3") instanceof CoverageDetailed);
-        CoverageDetailed coverageDetailed = (CoverageDetailed) coveredTestResultPerTestMethod.getCoverageOf("test3");
+        assertTrue(coveredTestResultPerTestMethod.getCoverageOf("example.TestSuiteExample#test3") instanceof CoverageDetailed);
+        CoverageDetailed coverageDetailed = (CoverageDetailed) coveredTestResultPerTestMethod.getCoverageOf("example.TestSuiteExample#test3");
         assertNotNull(coverageDetailed.getDetailedCoverage());
         assertEquals(5, coverageDetailed.getDetailedCoverage().size());
 
-        assertTrue(coveredTestResultPerTestMethod.getCoverageOf("test8") instanceof CoverageDetailed);
-        coverageDetailed = (CoverageDetailed) coveredTestResultPerTestMethod.getCoverageOf("test8");
+        assertTrue(coveredTestResultPerTestMethod.getCoverageOf("example.TestSuiteExample#test8") instanceof CoverageDetailed);
+        coverageDetailed = (CoverageDetailed) coveredTestResultPerTestMethod.getCoverageOf("example.TestSuiteExample#test8");
         assertNotNull(coverageDetailed.getDetailedCoverage());
         assertEquals(5, coverageDetailed.getDetailedCoverage().size());
     }

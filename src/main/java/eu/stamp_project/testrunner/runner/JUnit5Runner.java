@@ -74,7 +74,15 @@ public class JUnit5Runner {
         } else {
             Arrays.asList(testMethodNames).forEach(testMethodName -> {
                         try {
-                            requestBuilder.selectors(selectMethod(customClassLoader.loadClass(testClassNames[0]), testMethodName));
+                            // If there is no class name in the method name, we try the first class
+                            if (!testMethodName.contains("#")) {
+                                requestBuilder.selectors(selectMethod(customClassLoader.loadClass(testClassNames[0]), testMethodName));
+                            } else {
+                                // Else we load the fully qualified method name
+                                String className = testMethodName.split("#")[0];
+                                String methodName = testMethodName.split("#")[1];
+                                requestBuilder.selectors(selectMethod(customClassLoader.loadClass(className), methodName));
+                            }
                         } catch (ClassNotFoundException e) {
                             throw new RuntimeException(e);
                         }
