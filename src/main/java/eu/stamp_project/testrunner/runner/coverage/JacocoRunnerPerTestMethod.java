@@ -32,13 +32,13 @@ public abstract class JacocoRunnerPerTestMethod extends JacocoRunner {
      *
      * @param classesDirectory             the path to the directory that contains the .class file of sources
      * @param testClassesDirectory         the path to the directory that contains the .class file of test sources
-     * @param fullQualifiedNameOfTestClass the full qualified name of the test class to execute
-     * @param testMethodNames              the simple names of the test methods to exeecute
+     * @param testClassNames               the fully qualified name of the test classes to execute
+     * @param testMethodNames              the simple or fully qualified names of the test methods to execute
      * @return a {@link CoveragePerTestMethod} instance that contains the instruction coverage of the given tests.
      */
     public CoveragePerTestMethod runCoveragePerTestMethod(String classesDirectory,
                                                           String testClassesDirectory,
-                                                          String fullQualifiedNameOfTestClass,
+                                                          String[] testClassNames,
                                                           String[] testMethodNames) {
         final RuntimeData data = new RuntimeData();
         URLClassLoader classLoader;
@@ -48,14 +48,16 @@ public abstract class JacocoRunnerPerTestMethod extends JacocoRunner {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
-        final String resource = ConstantsHelper.fullQualifiedNameToPath.apply(fullQualifiedNameOfTestClass) + ".class";
         try {
-            this.instrumentedClassLoader.addDefinition(
-                    fullQualifiedNameOfTestClass,
-                    IOUtils.toByteArray(classLoader.getResourceAsStream(resource))
-            );
+            for (String fullyQualifiedClassName : testClassNames) {
+                String resource = ConstantsHelper.fullQualifiedNameToPath.apply(fullyQualifiedClassName) + ".class";
+                this.instrumentedClassLoader.addDefinition(
+                        fullyQualifiedClassName,
+                        IOUtils.toByteArray(classLoader.getResourceAsStream(resource))
+                );
+            }
             this.runtime.startup(data);
-            final CoveragePerTestMethod listener = this.executeTestPerTestMethod(data, classesDirectory, new String[]{fullQualifiedNameOfTestClass}, testMethodNames);
+            final CoveragePerTestMethod listener = this.executeTestPerTestMethod(data, classesDirectory, testClassNames, testMethodNames);
             if (!((TestResult) listener).getFailingTests().isEmpty()) {
                 System.err.println("Some test(s) failed during computation of coverage:\n" +
                         ((TestResult) listener).getFailingTests()

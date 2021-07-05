@@ -6,9 +6,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * Created by Benjamin DANGLOT
@@ -43,11 +41,11 @@ public class EntryPointTest {
         assertEquals(0, testResult.getAssumptionFailingTests().size());
         assertEquals(2, testResult.getIgnoredTests().size());
 
-        final Failure testFailing = testResult.getFailureOf("testFailing");
-        assertEquals("testFailing", testFailing.testCaseName);
+        final Failure testFailing = testResult.getFailureOf("failing.FailingTestClass#testFailing");
+        assertEquals("failing.FailingTestClass#testFailing", testFailing.testCaseName);
 
         try {
-            testResult.getFailureOf("testPassing");
+            testResult.getFailureOf("failing.FailingTestClass#testPassing");
             fail("Should have throw IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             assertTrue(true); // expected

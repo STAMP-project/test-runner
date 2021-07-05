@@ -41,12 +41,6 @@ public class CoveredTestResultsPerJUnit4TestMethod extends JUnit4TestResult impl
 
 	private CoveredTestResultPerTestMethodImpl internalCoveredTestResult;
 
-	protected transient final Function<Description, String> toString = description ->
-			description.getClassName() + "#" + description.getMethodName();
-
-	protected transient final Function<Description, String> toStringParametrized = description ->
-			description.getClassName() + "#" + fromParametrizedToSimpleName.apply(description.getMethodName());
-
 	/**
 	 * This field is used to support parametrized test
 	 * In fact, parametrized are reported as follow:
@@ -61,12 +55,6 @@ public class CoveredTestResultsPerJUnit4TestMethod extends JUnit4TestResult impl
 		this.internalCoveredTestResult = new CoveredTestResultPerTestMethodImpl(data, classesDirectory, coverageTransformer);
 		this.coveragesPerMethodName = new HashMap<>();
 	}
-
-	private static final Predicate<String> isParametrized = testMethodName ->
-			Pattern.compile(".+\\[\\d+\\]").matcher(testMethodName).matches();
-
-	private static final Function<String, String> fromParametrizedToSimpleName = parametrizedName ->
-			parametrizedName.contains("[") ? parametrizedName.split("\\[")[0] : parametrizedName;
 
 	@Override
 	public synchronized void testStarted(Description description) throws Exception {
@@ -103,7 +91,7 @@ public class CoveredTestResultsPerJUnit4TestMethod extends JUnit4TestResult impl
 	public void testFailure(org.junit.runner.notification.Failure failure) throws Exception {
 		this.internalCoveredTestResult.getFailingTests().add(
 				new Failure(
-						failure.getDescription().getMethodName(),
+						this.toString.apply(failure.getDescription()),
 						failure.getDescription().getClassName(),
 						failure.getException()
 				)
@@ -114,7 +102,7 @@ public class CoveredTestResultsPerJUnit4TestMethod extends JUnit4TestResult impl
 	public void testAssumptionFailure(org.junit.runner.notification.Failure failure) {
 		this.internalCoveredTestResult.getAssumptionFailingTests().add(
 				new Failure(
-						failure.getDescription().getMethodName(),
+						this.toString.apply(failure.getDescription()),
 						failure.getDescription().getClassName(),
 						failure.getException()
 				)

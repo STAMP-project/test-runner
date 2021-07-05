@@ -57,7 +57,7 @@ public class JUnit4JacocoRunnerPerTestMethod extends JacocoRunnerPerTestMethod {
                 options.getCoverageTransformer()
         ).runCoveragePerTestMethod(classesDirectory,
                 testClassesDirectory,
-                options.getFullQualifiedNameOfTestClassesToRun()[0],
+                options.getFullQualifiedNameOfTestClassesToRun(),
                 options.getTestMethodNamesToRun()
         ).save();
     }

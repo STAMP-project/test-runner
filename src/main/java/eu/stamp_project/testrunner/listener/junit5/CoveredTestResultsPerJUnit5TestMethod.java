@@ -26,10 +26,6 @@ public class CoveredTestResultsPerJUnit5TestMethod extends JUnit5TestResult impl
 
 	private CoveredTestResultPerTestMethodImpl internalCoveredTestResult;
 
-	protected transient final Function<TestIdentifier, String> toString = testIdentifier ->
-			((MethodSource) testIdentifier.getSource().get()).getClassName() + "#" +
-					((MethodSource) testIdentifier.getSource().get()).getMethodName();
-
 	public CoveredTestResultsPerJUnit5TestMethod(RuntimeData data, String classesDirectory, CoverageTransformer coverageTransformer) {
 		this.internalCoveredTestResult = new CoveredTestResultPerTestMethodImpl(data, classesDirectory, coverageTransformer);
 	}

@@ -231,11 +231,11 @@ public class EntryPointTest extends AbstractTest {
         assertEquals(1, testResult.getAssumptionFailingTests().size());
         assertEquals(1, testResult.getIgnoredTests().size());
 
-        final Failure testFailing = testResult.getFailureOf("testFailing");
-        assertEquals("testFailing", testFailing.testCaseName);
+        final Failure testFailing = testResult.getFailureOf("failing.FailingTestClass#testFailing");
+        assertEquals("failing.FailingTestClass#testFailing", testFailing.testCaseName);
 
         try {
-            testResult.getFailureOf("testPassing");
+            testResult.getFailureOf("failing.FailingTestClass#testPassing");
             fail("Should have throw IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             assertTrue(true); // expected
@@ -289,6 +289,23 @@ public class EntryPointTest extends AbstractTest {
         assertEquals(0, testResult.getFailingTests().size());
     }
 
+    @Test
+    public void testRunTestTestClassSameNamedMethods() throws Exception {
+
+        /*
+            Test the method runTest() of EntryPoint.
+                It should return the testResult with the result of the execution of the test classes.
+         */
+
+        final TestResult testResult = EntryPoint.runTests(
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                new String[]{"example.TestSuiteExample", "example.TestSuiteExample2"},
+                new String[]{"example.TestSuiteExample#test3", "example.TestSuiteExample2#test3"}
+        );
+        assertEquals(2, testResult.getPassingTests().size());
+        assertEquals(0, testResult.getFailingTests().size());
+    }
+
     @Ignore
     @Test //TODO FIXME FLAKY
     public void testRunTestTestMethods() throws Exception {
@@ -331,6 +348,29 @@ public class EntryPointTest extends AbstractTest {
                 new String[]{"test8", "test3"}
         );
         assertEquals(23, coverage.getInstructionsCovered());
+        assertEquals(NUMBER_OF_INSTRUCTIONS, coverage.getInstructionsTotal());
+    }
+
+    @Test
+    public void testRunCoverageSameNamedMethods() throws Exception {
+
+        /*
+            Test the runCoverage() of EntryPoint.
+                It should return the CoverageResult with the instruction jUnit4Coverage computed by Jacoco.
+         */
+        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + ConstantsHelper.PATH_SEPARATOR +
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP;
+        ;
+
+        final Coverage coverage = EntryPoint.runCoverage(
+                classpath + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                TEST_PROJECT_CLASSES,
+                new String[]{"example.TestSuiteExample", "example.TestSuiteExample2"},
+                new String[]{"example.TestSuiteExample#test3", "example.TestSuiteExample2#test3"}
+        );
+        assertEquals(30, coverage.getInstructionsCovered());
         assertEquals(NUMBER_OF_INSTRUCTIONS, coverage.getInstructionsTotal());
     }
 
@@ -404,10 +444,35 @@ public class EntryPointTest extends AbstractTest {
                 new String[]{"test8", "test3"}
         );
 
-        assertEquals(23, coveragePerTestMethod.getCoverageOf("test3").getInstructionsCovered());
-        assertEquals(NUMBER_OF_INSTRUCTIONS, coveragePerTestMethod.getCoverageOf("test3").getInstructionsTotal());
-        assertEquals(23, coveragePerTestMethod.getCoverageOf("test8").getInstructionsCovered());
-        assertEquals(NUMBER_OF_INSTRUCTIONS, coveragePerTestMethod.getCoverageOf("test8").getInstructionsTotal());
+        assertEquals(23, coveragePerTestMethod.getCoverageOf("example.TestSuiteExample#test3").getInstructionsCovered());
+        assertEquals(NUMBER_OF_INSTRUCTIONS, coveragePerTestMethod.getCoverageOf("example.TestSuiteExample#test3").getInstructionsTotal());
+        assertEquals(23, coveragePerTestMethod.getCoverageOf("example.TestSuiteExample#test8").getInstructionsCovered());
+        assertEquals(NUMBER_OF_INSTRUCTIONS, coveragePerTestMethod.getCoverageOf("example.TestSuiteExample#test8").getInstructionsTotal());
+    }
+
+    @Test
+    public void testRunCoveragePerTestMethodsSameNamedMethods() throws Exception {
+
+        /*
+            Test the runCoveragePerTestMethods() of EntryPoint.
+                It should return the CoverageResult with the instruction coverage computed by Jacoco.
+         */
+        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + ConstantsHelper.PATH_SEPARATOR +
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP;
+
+        final CoveragePerTestMethod coveragePerTestMethod = EntryPoint.runCoveragePerTestMethods(
+                classpath + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                TEST_PROJECT_CLASSES,
+                new String[]{"example.TestSuiteExample", "example.TestSuiteExample2"},
+                new String[]{"example.TestSuiteExample#test3", "example.TestSuiteExample2#test3"}
+        );
+
+        assertEquals(23, coveragePerTestMethod.getCoverageOf("example.TestSuiteExample#test3").getInstructionsCovered());
+        assertEquals(NUMBER_OF_INSTRUCTIONS, coveragePerTestMethod.getCoverageOf("example.TestSuiteExample#test3").getInstructionsTotal());
+        assertEquals(23, coveragePerTestMethod.getCoverageOf("example.TestSuiteExample2#test3").getInstructionsCovered());
+        assertEquals(NUMBER_OF_INSTRUCTIONS, coveragePerTestMethod.getCoverageOf("example.TestSuiteExample2#test3").getInstructionsTotal());
     }
 
     @Test

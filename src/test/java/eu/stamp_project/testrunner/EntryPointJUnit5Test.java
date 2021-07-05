@@ -190,11 +190,11 @@ public class EntryPointJUnit5Test extends AbstractTest {
         //assertEquals(1, testResult.getAssumptionFailingTests().size()); TODO
         assertEquals(1, testResult.getIgnoredTests().size());
 
-        final Failure testFailing = testResult.getFailureOf("testFailing");
-        assertEquals("testFailing", testFailing.testCaseName);
+        final Failure testFailing = testResult.getFailureOf("junit5.FailingTestClass#testFailing");
+        assertEquals("junit5.FailingTestClass#testFailing", testFailing.testCaseName);
 
         try {
-            testResult.getFailureOf("testPassing");
+            testResult.getFailureOf("junit5.FailingTestClass#testPassing");
             fail("Should have throw IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             assertTrue(true); // expected
@@ -231,6 +231,24 @@ public class EntryPointJUnit5Test extends AbstractTest {
                 new String[]{"junit5.TestSuiteExample", "junit5.TestSuiteExample2"}
         );
         assertEquals(12, testResult.getPassingTests().size());
+        assertEquals(0, testResult.getFailingTests().size());
+    }
+
+    @Test
+    public void testRunTestTestClassSameNamedMethods() throws Exception {
+
+        /*
+            Test the method runTest() of EntryPoint.
+                It should return the testResult with the result of the execution of the test classes.
+         */
+
+        final TestResult testResult = EntryPoint.runTests(
+                JUNIT5_CP + ConstantsHelper.PATH_SEPARATOR +
+                        JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                new String[]{"junit5.TestSuiteExample", "junit5.TestSuiteExample2"},
+                new String[]{"junit5.TestSuiteExample#test3", "junit5.TestSuiteExample2#test3"}
+        );
+        assertEquals(2, testResult.getPassingTests().size());
         assertEquals(0, testResult.getFailingTests().size());
     }
 
@@ -296,6 +314,30 @@ public class EntryPointJUnit5Test extends AbstractTest {
         assertEquals(23, coverage.getInstructionsCovered());
         assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, coverage.getInstructionsTotal());
     }
+
+    @Test
+    public void testRunCoverageSameNamedMethods() throws Exception {
+
+        /*
+            Test the runCoverage() of EntryPoint.
+                It should return the CoverageResult with the instruction jUnit4Coverage computed by Jacoco.
+         */
+        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + ConstantsHelper.PATH_SEPARATOR +
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR +
+                JUNIT5_CP;
+
+        final Coverage coverage = EntryPoint.runCoverage(
+                classpath + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                TEST_PROJECT_CLASSES,
+                new String[]{"junit5.TestSuiteExample", "junit5.TestSuiteExample2"},
+                new String[]{"junit5.TestSuiteExample#test3", "junit5.TestSuiteExample2#test3"}
+        );
+        assertEquals(30, coverage.getInstructionsCovered());
+        assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, coverage.getInstructionsTotal());
+    }
+
 
     @Test
     public void testRunGlobalCoverage() throws Exception {
@@ -369,10 +411,35 @@ public class EntryPointJUnit5Test extends AbstractTest {
                 new String[]{"test8", "test3"}
         );
 
-        assertEquals(23, coveragePerTestMethod.getCoverageOf("test3").getInstructionsCovered()); // TODO something may be wrong here. The instruction coverage of test 3 is 26
-        assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, coveragePerTestMethod.getCoverageOf("test3").getInstructionsTotal());
-        assertEquals(23, coveragePerTestMethod.getCoverageOf("test8").getInstructionsCovered());// TODO something may be wrong here. The instruction coverage of test 8 is 23
-        assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, coveragePerTestMethod.getCoverageOf("test8").getInstructionsTotal());
+        assertEquals(23, coveragePerTestMethod.getCoverageOf("junit5.TestSuiteExample#test3").getInstructionsCovered()); // TODO something may be wrong here. The instruction coverage of test 3 is 26
+        assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, coveragePerTestMethod.getCoverageOf("junit5.TestSuiteExample#test3").getInstructionsTotal());
+        assertEquals(23, coveragePerTestMethod.getCoverageOf("junit5.TestSuiteExample#test8").getInstructionsCovered());// TODO something may be wrong here. The instruction coverage of test 8 is 23
+        assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, coveragePerTestMethod.getCoverageOf("junit5.TestSuiteExample#test8").getInstructionsTotal());
+    }
+
+    @Test
+    public void testRunCoveragePerTestMethodsSameNamedMethods() throws Exception {
+
+        /*
+            Test the runCoveragePerTestMethods() of EntryPoint.
+                It should return the CoverageResult with the instruction coverage computed by Jacoco.
+         */
+        final String classpath = MAVEN_HOME + "org/jacoco/org.jacoco.core/0.7.9/org.jacoco.core-0.7.9.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar" + ConstantsHelper.PATH_SEPARATOR +
+                MAVEN_HOME + "commons-io/commons-io/2.5/commons-io-2.5.jar" + ConstantsHelper.PATH_SEPARATOR +
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP;
+
+        final CoveragePerTestMethod coveragePerTestMethod = EntryPoint.runCoveragePerTestMethods(
+                classpath + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                TEST_PROJECT_CLASSES,
+                new String[]{"junit5.TestSuiteExample", "junit5.TestSuiteExample2"},
+                new String[]{"junit5.TestSuiteExample#test3", "junit5.TestSuiteExample2#test3"}
+        );
+
+        assertEquals(23, coveragePerTestMethod.getCoverageOf("junit5.TestSuiteExample#test3").getInstructionsCovered());
+        assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, coveragePerTestMethod.getCoverageOf("junit5.TestSuiteExample#test3").getInstructionsTotal());
+        assertEquals(23, coveragePerTestMethod.getCoverageOf("junit5.TestSuiteExample2#test3").getInstructionsCovered());
+        assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, coveragePerTestMethod.getCoverageOf("junit5.TestSuiteExample2#test3").getInstructionsTotal());
     }
 
     @Ignore

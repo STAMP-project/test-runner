@@ -31,8 +31,8 @@ public class JacocoRunnerPerTestMethodTest extends AbstractTest {
         );
         final CoveragePerTestMethodImpl load = CoveragePerTestMethodImpl.load();
         System.out.println(load);
-        assertEquals(34, load.getCoverageResultsMap().get("test").getInstructionsCovered());
-        System.out.println(load.getCoverageResultsMap().get("test").getExecutionPath());
+        assertEquals(34, load.getCoverageResultsMap().get("example.ParametrizedTest#test").getInstructionsCovered());
+        System.out.println(load.getCoverageResultsMap().get("example.ParametrizedTest#test").getExecutionPath());
     }
 
     @Test
@@ -50,12 +50,12 @@ public class JacocoRunnerPerTestMethodTest extends AbstractTest {
         );
         final CoveragePerTestMethodImpl load = CoveragePerTestMethodImpl.load();
         System.out.println(load);
-        assertEquals(23, load.getCoverageResultsMap().get("test2").getInstructionsCovered());
-        assertEquals(23, load.getCoverageResultsMap().get("test3").getInstructionsCovered());
-        assertEquals(23, load.getCoverageResultsMap().get("copyOftest2").getInstructionsCovered());
-        System.out.println(load.getCoverageResultsMap().get("test2").getExecutionPath());
-        System.out.println(load.getCoverageResultsMap().get("copyOftest2").getExecutionPath());
-        System.out.println(load.getCoverageResultsMap().get("test3").getExecutionPath());
+        assertEquals(23, load.getCoverageResultsMap().get("example.TestSuiteExample#test2").getInstructionsCovered());
+        assertEquals(23, load.getCoverageResultsMap().get("example.TestSuiteExample#test3").getInstructionsCovered());
+        assertEquals(23, load.getCoverageResultsMap().get("example.TestSuiteExample#copyOftest2").getInstructionsCovered());
+        System.out.println(load.getCoverageResultsMap().get("example.TestSuiteExample#test2").getExecutionPath());
+        System.out.println(load.getCoverageResultsMap().get("example.TestSuiteExample#copyOftest2").getExecutionPath());
+        System.out.println(load.getCoverageResultsMap().get("example.TestSuiteExample#test3").getExecutionPath());
     }
 
     @Test

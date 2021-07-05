@@ -49,17 +49,11 @@ public class CoveragePerJUnit4TestMethod extends JUnit4TestResult implements Cov
         this.coveragesPerMethodName = new HashMap<>();
     }
 
-    private static final Predicate<String> isParametrized = testMethodName ->
-            Pattern.compile(".+\\[\\d+\\]").matcher(testMethodName).matches();
-
-    private static final Function<String, String> fromParametrizedToSimpleName = parametrizedName ->
-            parametrizedName.contains("[") ? parametrizedName.split("\\[")[0] : parametrizedName;
-
     @Override
     public synchronized void testStarted(Description description) throws Exception {
         this.internalCoverage.setExecutionData(new ExecutionDataStore());
         this.internalCoverage.setSessionInfos(new SessionInfoStore());
-        this.internalCoverage.getData().setSessionId(description.getMethodName());
+        this.internalCoverage.getData().setSessionId(this.toString.apply(description));
         this.internalCoverage.getData().collect(
                 this.internalCoverage.getExecutionData(),
                 this.internalCoverage.getSessionInfos(),
@@ -78,9 +72,9 @@ public class CoveragePerJUnit4TestMethod extends JUnit4TestResult implements Cov
         Coverage jUnit4Coverage =
                 internalCoverage.getCoverageTransformer().transformJacocoObject(this.internalCoverage.getExecutionData(),
                         this.internalCoverage.getClassesDirectory());
-        this.internalCoverage.getCoverageResultsMap().put(description.getMethodName(), jUnit4Coverage);
+        this.internalCoverage.getCoverageResultsMap().put(this.toString.apply(description), jUnit4Coverage);
         if (isParametrized.test(description.getMethodName())) {
-            this.collectForParametrizedTest(fromParametrizedToSimpleName.apply(description.getMethodName()));
+            this.collectForParametrizedTest(this.toStringParametrized.apply(description));
         }
     }
 
