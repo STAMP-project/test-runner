@@ -21,7 +21,8 @@ public class JUnit5TestResult extends TestResultImpl implements TestExecutionLis
     private static final long serialVersionUID = -7818892670028055637L;
 
     protected transient final Function<TestIdentifier, String> toString = testIdentifier ->
-            ((MethodSource) testIdentifier.getSource().get()).getMethodName();
+            ((MethodSource) testIdentifier.getSource().get()).getClassName() + "#" +
+                    ((MethodSource) testIdentifier.getSource().get()).getMethodName();
 
     protected transient final Function<TestIdentifier, String> toClassName = testIdentifier ->
             ((MethodSource) testIdentifier.getSource().get()).getClassName();

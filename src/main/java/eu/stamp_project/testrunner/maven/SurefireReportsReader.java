@@ -79,8 +79,7 @@ public class SurefireReportsReader {
                     if ("failure".equals(nextSibling.getNodeName())) {
                         final String stacktrace = nextSibling.getFirstChild().getNodeValue();
                         final String fullQualifiedNameOfException = stacktrace.split(LINE_SEPARATOR)[0];
-                        listener.getFailingTests().add(new Failure(testName, testClassName, fullQualifiedNameOfException, "", stacktrace));
-
+                        listener.getFailingTests().add(new Failure(testClassName + "#" + testName, testClassName, fullQualifiedNameOfException, "", stacktrace));
                     }
 
                 }

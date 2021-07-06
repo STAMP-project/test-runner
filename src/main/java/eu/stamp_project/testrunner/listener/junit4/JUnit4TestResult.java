@@ -8,6 +8,9 @@ import org.junit.runner.notification.RunListener;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 /**
  * Created by Benjamin DANGLOT
@@ -22,20 +25,33 @@ public class JUnit4TestResult extends RunListener implements TestResult, Seriali
 
     private TestResultImpl internalTestResult;
 
+    protected transient final Function<Description, String> toString = description ->
+            description.getClassName() + "#" + description.getMethodName();
+
+    protected transient final Function<Description, String> toStringParametrized = description ->
+            description.getClassName() + "#" + fromParametrizedToSimpleName.apply(description.getMethodName());
+
+    protected static final Predicate<String> isParametrized = testMethodName ->
+            Pattern.compile(".+\\[\\d+\\]").matcher(testMethodName).matches();
+
+    protected static final Function<String, String> fromParametrizedToSimpleName = parametrizedName ->
+            parametrizedName.contains("[") ? parametrizedName.split("\\[")[0] : parametrizedName;
+
+
     public JUnit4TestResult() {
         this.internalTestResult = new TestResultImpl();
     }
 
     @Override
     public void testFinished(Description description) throws Exception {
-        this.internalTestResult.getRunningTests().add(description.getMethodName());
+        this.internalTestResult.getRunningTests().add(this.toString.apply(description));
     }
 
     @Override
     public void testFailure(org.junit.runner.notification.Failure failure) throws Exception {
         this.internalTestResult.getFailingTests().add(
                 new Failure(
-                        failure.getDescription().getMethodName(),
+                        this.toString.apply(failure.getDescription()),
                         failure.getDescription().getClassName(),
                         failure.getException()
                 )
@@ -46,7 +62,7 @@ public class JUnit4TestResult extends RunListener implements TestResult, Seriali
     public void testAssumptionFailure(org.junit.runner.notification.Failure failure) {
         this.internalTestResult.getAssumptionFailingTests().add(
                 new Failure(
-                        failure.getDescription().getMethodName(),
+                        this.toString.apply(failure.getDescription()),
                         failure.getDescription().getClassName(),
                         failure.getException()
                 )
@@ -55,7 +71,7 @@ public class JUnit4TestResult extends RunListener implements TestResult, Seriali
 
     @Override
     public void testIgnored(Description description) throws Exception {
-        this.internalTestResult.getIgnoredTests().add(description.getMethodName());
+        this.internalTestResult.getIgnoredTests().add(this.toString.apply(description));
     }
 
     @Override
