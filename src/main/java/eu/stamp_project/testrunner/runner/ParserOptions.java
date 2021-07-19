@@ -2,6 +2,7 @@ package eu.stamp_project.testrunner.runner;
 
 import eu.stamp_project.testrunner.listener.CoverageTransformer;
 import eu.stamp_project.testrunner.listener.impl.CoverageCollectorDetailed;
+import eu.stamp_project.testrunner.listener.impl.CoverageCollectorDetailedCompressed;
 import eu.stamp_project.testrunner.listener.impl.CoverageCollectorMethodDetailed;
 import eu.stamp_project.testrunner.listener.impl.CoverageCollectorSummarization;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
@@ -135,7 +136,8 @@ public class ParserOptions {
     public enum CoverageTransformerDetail {
         SUMMARIZED,
         DETAIL,
-        METHOD_DETAIL
+        METHOD_DETAIL,
+        DETAIL_COMPRESSED
     }
     /**
      * This value represents at which level of detail coverage information should be provided
@@ -184,6 +186,8 @@ public class ParserOptions {
                 return new CoverageCollectorDetailed();
             case METHOD_DETAIL:
                 return new CoverageCollectorMethodDetailed();
+            case DETAIL_COMPRESSED:
+                return new CoverageCollectorDetailedCompressed();
             case SUMMARIZED:
             default:
                 return new CoverageCollectorSummarization();

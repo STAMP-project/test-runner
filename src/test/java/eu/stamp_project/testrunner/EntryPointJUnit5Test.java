@@ -562,4 +562,79 @@ public class EntryPointJUnit5Test extends AbstractTest {
         assertEquals(5, coverageDetailed.getDetailedCoverage().size());
     }
 
+    // Tests when running same named test methods from different classes
+    @Test
+    public void testRunCoveredTestResultPerTestMethodsSameNamedMethodsDetailedCompressedCoverage() throws Exception {
+        EntryPoint.coverageDetail = ParserOptions.CoverageTransformerDetail.DETAIL_COMPRESSED;
+
+        /*
+            Test the runCoveredTestResultPerTestMethods() of EntryPoint.
+                It should return the CoveredTestResultPerTestMethod with the instruction coverage computed by Jacoco.
+         */
+        final String classpath = JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP;
+
+        final CoveredTestResultPerTestMethod coveredTestResultPerTestMethod = EntryPoint.runCoveredTestResultPerTestMethods(
+                classpath + ConstantsHelper.PATH_SEPARATOR + SOURCE_PROJECT_CLASSES + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                SOURCE_PROJECT_CLASSES + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                new String[]{"junit5.TestSuiteExample", "junit5.TestSuiteExample2"},
+                new String[]{"junit5.TestSuiteExample#test3", "junit5.TestSuiteExample2#test3"}
+        );
+
+        // Assert test results
+        System.out.println(coveredTestResultPerTestMethod);
+        assertEquals(2, coveredTestResultPerTestMethod.getRunningTests().size());
+        assertEquals(2, coveredTestResultPerTestMethod.getPassingTests().size());
+        assertEquals(0, coveredTestResultPerTestMethod.getFailingTests().size());
+        assertEquals(0, coveredTestResultPerTestMethod.getIgnoredTests().size());
+
+        // Assert detailed coverage
+        assertEquals(2, coveredTestResultPerTestMethod.getCoverageResultsMap().size());
+
+        assertTrue(coveredTestResultPerTestMethod.getCoverageOf("junit5.TestSuiteExample#test3") instanceof CoverageDetailed);
+        CoverageDetailed coverageDetailed = (CoverageDetailed) coveredTestResultPerTestMethod.getCoverageOf("junit5.TestSuiteExample#test3");
+        assertNotNull(coverageDetailed.getDetailedCoverage());
+        assertEquals(1, coverageDetailed.getDetailedCoverage().size());
+
+        assertTrue(coveredTestResultPerTestMethod.getCoverageOf("junit5.TestSuiteExample2#test3") instanceof CoverageDetailed);
+        coverageDetailed = (CoverageDetailed) coveredTestResultPerTestMethod.getCoverageOf("junit5.TestSuiteExample2#test3");
+        assertNotNull(coverageDetailed.getDetailedCoverage());
+        assertEquals(1, coverageDetailed.getDetailedCoverage().size());
+    }
+
+    @Test
+    public void testRunCoveredTestResultPerTestMethodsDetailedCompressedCoverage() throws Exception {
+        EntryPoint.coverageDetail = ParserOptions.CoverageTransformerDetail.DETAIL_COMPRESSED;
+
+        /*
+            Test the runCoveredTestResultPerTestMethods() of EntryPoint.
+                It should return the CoveredTestResultPerTestMethod with the instruction coverage computed by Jacoco.
+         */
+        final String classpath = JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP;
+
+        final CoveredTestResultPerTestMethod coveredTestResultPerTestMethod = EntryPoint.runCoveredTestResultPerTestMethods(
+                classpath + ConstantsHelper.PATH_SEPARATOR + SOURCE_PROJECT_CLASSES + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                SOURCE_PROJECT_CLASSES + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                "junit5.TestSuiteExample",
+                new String[]{"test8", "test3"}
+        );
+
+        // Assert test results
+        assertEquals(2, coveredTestResultPerTestMethod.getRunningTests().size());
+        assertEquals(2, coveredTestResultPerTestMethod.getPassingTests().size());
+        assertEquals(0, coveredTestResultPerTestMethod.getFailingTests().size());
+        assertEquals(0, coveredTestResultPerTestMethod.getIgnoredTests().size());
+
+        // Assert detailed coverage
+        assertEquals(2, coveredTestResultPerTestMethod.getCoverageResultsMap().size());
+
+        assertTrue(coveredTestResultPerTestMethod.getCoverageOf("junit5.TestSuiteExample#test3") instanceof CoverageDetailed);
+        CoverageDetailed coverageDetailed = (CoverageDetailed) coveredTestResultPerTestMethod.getCoverageOf("junit5.TestSuiteExample#test3");
+        assertNotNull(coverageDetailed.getDetailedCoverage());
+        assertEquals(1, coverageDetailed.getDetailedCoverage().size());
+
+        assertTrue(coveredTestResultPerTestMethod.getCoverageOf("junit5.TestSuiteExample#test8") instanceof CoverageDetailed);
+        coverageDetailed = (CoverageDetailed) coveredTestResultPerTestMethod.getCoverageOf("junit5.TestSuiteExample#test8");
+        assertNotNull(coverageDetailed.getDetailedCoverage());
+        assertEquals(1, coverageDetailed.getDetailedCoverage().size());
+    }
 }
