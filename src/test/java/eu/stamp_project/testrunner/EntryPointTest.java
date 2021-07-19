@@ -684,8 +684,8 @@ public class EntryPointTest extends AbstractTest {
         final String classpath = JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP;
 
         final CoveredTestResultPerTestMethod coveredTestResultPerTestMethod = EntryPoint.runCoveredTestResultPerTestMethods(
-                classpath + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
-                TEST_PROJECT_CLASSES,
+                classpath + ConstantsHelper.PATH_SEPARATOR + SOURCE_PROJECT_CLASSES + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                SOURCE_PROJECT_CLASSES + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 new String[]{"example.TestSuiteExample", "example.TestSuiteExample2"},
                 new String[]{"example.TestSuiteExample#test3", "example.TestSuiteExample2#test3"}
         );
@@ -721,8 +721,8 @@ public class EntryPointTest extends AbstractTest {
         final String classpath = JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP;
 
         final CoveredTestResultPerTestMethod coveredTestResultPerTestMethod = EntryPoint.runCoveredTestResultPerTestMethods(
-                classpath + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
-                TEST_PROJECT_CLASSES,
+                classpath + ConstantsHelper.PATH_SEPARATOR + SOURCE_PROJECT_CLASSES + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                SOURCE_PROJECT_CLASSES + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
                 "example.TestSuiteExample",
                 new String[]{"test8", "test3"}
         );
