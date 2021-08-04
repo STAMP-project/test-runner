@@ -5,6 +5,7 @@ import eu.stamp_project.testrunner.listener.CoverageTransformer;
 import eu.stamp_project.testrunner.listener.CoveredTestResultPerTestMethod;
 import eu.stamp_project.testrunner.listener.impl.CoveredTestResultPerTestMethodImpl;
 import eu.stamp_project.testrunner.runner.Failure;
+import org.jacoco.core.data.ExecutionData;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.SessionInfoStore;
 import org.jacoco.core.runtime.RuntimeData;
@@ -62,12 +63,19 @@ public class CoveredTestResultsPerJUnit5TestMethod extends JUnit5TestResult impl
 					false
 			);
 
-			Coverage jUnit5Coverage =
-					internalCoveredTestResult.getCoverageTransformer().transformJacocoObject(
-							this.internalCoveredTestResult.getExecutionData(),
-							this.internalCoveredTestResult.getClassesDirectory()
-					);
-			this.internalCoveredTestResult.getCoverageResultsMap().put(this.toString.apply(testIdentifier), jUnit5Coverage);
+			// We need to clone each result so it doesn't get changed by the runtime afterwards
+			ExecutionDataStore executionDataStore = new ExecutionDataStore();
+			this.internalCoveredTestResult.getExecutionData().getContents().stream().forEach(x -> {
+				ExecutionData executionData = new ExecutionData(x.getId(), x.getName(), x.getProbes().clone());
+				synchronized (executionDataStore) {
+					executionDataStore.put(executionData);
+				}
+			});
+			this.internalCoveredTestResult.getExecutionDataStoreMap().put(
+					this.toString.apply(testIdentifier),
+					executionDataStore
+			);
+
 			switch (testExecutionResult.getStatus()) {
 				case FAILED:
 					this.internalCoveredTestResult.getFailingTests().add(
@@ -98,4 +106,9 @@ public class CoveredTestResultsPerJUnit5TestMethod extends JUnit5TestResult impl
 	public void save() {
 		this.internalCoveredTestResult.save();
 	}
+
+	public void computeCoverages() {
+		internalCoveredTestResult.computeCoverages();
+	}
+
 }

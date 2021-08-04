@@ -5,6 +5,7 @@ import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
 import eu.stamp_project.testrunner.listener.CoverageTransformer;
 import eu.stamp_project.testrunner.listener.impl.CoveragePerTestMethodImpl;
 import eu.stamp_project.testrunner.runner.Failure;
+import org.jacoco.core.data.ExecutionData;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.SessionInfoStore;
 import org.jacoco.core.runtime.RuntimeData;
@@ -56,12 +57,19 @@ public class CoveragePerJUnit5TestMethod extends JUnit5TestResult implements Cov
                     false
             );
 
-            Coverage jUnit5Coverage =
-                    internalCoverage.getCoverageTransformer().transformJacocoObject(
-                            this.internalCoverage.getExecutionData(),
-                            this.internalCoverage.getClassesDirectory()
-                    );
-            this.internalCoverage.getCoverageResultsMap().put(this.toString.apply(testIdentifier), jUnit5Coverage);
+            // We need to clone each result so it doesn't get changed by the runtime afterwards
+            ExecutionDataStore executionDataStore = new ExecutionDataStore();
+            this.internalCoverage.getExecutionData().getContents().stream().forEach(x -> {
+                ExecutionData executionData = new ExecutionData(x.getId(), x.getName(), x.getProbes().clone());
+                synchronized (executionDataStore) {
+                    executionDataStore.put(executionData);
+                }
+            });
+            this.internalCoverage.getExecutionDataStoreMap().put(
+                    this.toString.apply(testIdentifier),
+                    executionDataStore
+            );
+
             switch (testExecutionResult.getStatus()) {
                 case FAILED:
                     this.getFailingTests().add(
@@ -91,6 +99,10 @@ public class CoveragePerJUnit5TestMethod extends JUnit5TestResult implements Cov
     @Override
     public void save() {
         this.internalCoverage.save();
+    }
+
+    public void computeCoverages() {
+        this.internalCoverage.computeCoverages();
     }
 
 }

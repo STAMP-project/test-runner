@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -29,7 +30,9 @@ public class CoveredTestResultPerTestMethodImpl implements CoveredTestResultPerT
 
 	private static final long serialVersionUID = -789740001022671146L;
 
-	protected final Map<String, Coverage> coverageResultsMap;
+	protected transient final Map<String, ExecutionDataStore> executionDataStoreMap;
+
+	protected final ConcurrentHashMap<String, Coverage> coverageResultsMap;
 
 	protected final List<String> classesDirectory;
 
@@ -49,7 +52,8 @@ public class CoveredTestResultPerTestMethodImpl implements CoveredTestResultPerT
 	public CoveredTestResultPerTestMethodImpl(RuntimeData data, List<String> classesDirectory, CoverageTransformer coverageTransformer) {
 		this.data = data;
 		this.classesDirectory = classesDirectory;
-		this.coverageResultsMap = new HashMap<>();
+		this.executionDataStoreMap = new HashMap<>();
+		this.coverageResultsMap = new ConcurrentHashMap<>();
 		this.coverageTransformer = coverageTransformer;
 		this.runningTests = new ArrayList<>();
 		this.failingTests = new ArrayList<>();
@@ -88,6 +92,22 @@ public class CoveredTestResultPerTestMethodImpl implements CoveredTestResultPerT
 
 	public void setSessionInfos(SessionInfoStore sessionInfos) {
 		this.sessionInfos = sessionInfos;
+	}
+
+	public Map<String, ExecutionDataStore> getExecutionDataStoreMap() {
+		return executionDataStoreMap;
+	}
+
+	@Override
+	public void computeCoverages() {
+		executionDataStoreMap.entrySet().parallelStream()
+				.forEach(x -> {
+					Coverage jUnit4Coverage = coverageTransformer.transformJacocoObject(
+							x.getValue(),
+							classesDirectory
+					);
+					coverageResultsMap.put(x.getKey(), jUnit4Coverage);
+				});
 	}
 
 	@Override

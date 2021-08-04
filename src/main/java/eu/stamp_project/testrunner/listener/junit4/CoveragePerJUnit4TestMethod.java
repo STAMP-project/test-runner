@@ -9,6 +9,7 @@ import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.ICounter;
+import org.jacoco.core.data.ExecutionData;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.SessionInfoStore;
 import org.jacoco.core.runtime.RuntimeData;
@@ -71,12 +72,19 @@ public class CoveragePerJUnit4TestMethod extends JUnit4TestResult implements Cov
                 false
         );
 
-        Coverage jUnit4Coverage =
-                internalCoverage.getCoverageTransformer().transformJacocoObject(
-                        this.internalCoverage.getExecutionData(),
-                        this.internalCoverage.getClassesDirectory()
-                );
-        this.internalCoverage.getCoverageResultsMap().put(this.toString.apply(description), jUnit4Coverage);
+        // We need to clone each result so it doesn't get changed by the runtime afterwards
+        ExecutionDataStore executionDataStore = new ExecutionDataStore();
+        this.internalCoverage.getExecutionData().getContents().stream().forEach(x -> {
+            ExecutionData executionData = new ExecutionData(x.getId(), x.getName(), x.getProbes().clone());
+            synchronized (executionDataStore) {
+                executionDataStore.put(executionData);
+            }
+        });
+        this.internalCoverage.getExecutionDataStoreMap().put(
+                this.toString.apply(description),
+                executionDataStore
+        );
+
         if (isParametrized.test(description.getMethodName())) {
             this.collectForParametrizedTest(this.toStringParametrized.apply(description));
         }
@@ -178,5 +186,8 @@ public class CoveragePerJUnit4TestMethod extends JUnit4TestResult implements Cov
                 .collect(Collectors.toList());
     }
 
+    public void computeCoverages() {
+        internalCoverage.computeCoverages();
+    }
 
 }
