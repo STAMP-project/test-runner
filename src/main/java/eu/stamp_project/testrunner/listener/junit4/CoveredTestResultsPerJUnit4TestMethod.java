@@ -19,10 +19,7 @@ import org.junit.runner.Description;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -54,61 +51,71 @@ public class CoveredTestResultsPerJUnit4TestMethod extends JUnit4TestResult impl
 
 	@Override
 	public synchronized void testStarted(Description description) throws Exception {
-		this.internalCoveredTestResult.setExecutionData(new ExecutionDataStore());
-		this.internalCoveredTestResult.setSessionInfos(new SessionInfoStore());
-		this.internalCoveredTestResult.getData().setSessionId(this.toString.apply(description));
-		this.internalCoveredTestResult.getData().collect(
-				this.internalCoveredTestResult.getExecutionData(),
-				this.internalCoveredTestResult.getSessionInfos(),
-				true
-		);
+		if (description.isTest()) {
+			this.internalCoveredTestResult.setExecutionData(new ExecutionDataStore());
+			this.internalCoveredTestResult.setSessionInfos(new SessionInfoStore());
+			this.internalCoveredTestResult.getData().setSessionId(this.toString.apply(description));
+			this.internalCoveredTestResult.getData().collect(
+					this.internalCoveredTestResult.getExecutionData(),
+					this.internalCoveredTestResult.getSessionInfos(),
+					true
+			);
+		}
 	}
 
 	@Override
 	public synchronized void testFinished(Description description) throws Exception {
-		this.internalCoveredTestResult.getRunningTests().add(this.toString.apply(description));
+		if (description.isTest()) {
+			this.internalCoveredTestResult.getRunningTests().add(this.toString.apply(description));
 
-		this.internalCoveredTestResult.getData().collect(
-				this.internalCoveredTestResult.getExecutionData(),
-				this.internalCoveredTestResult.getSessionInfos(),
-				false
-		);
+			this.internalCoveredTestResult.getData().collect(
+					this.internalCoveredTestResult.getExecutionData(),
+					this.internalCoveredTestResult.getSessionInfos(),
+					false
+			);
 
-		this.internalCoveredTestResult.getExecutionDataStoreMap().put(
-				this.toString.apply(description),
-				ListenerUtils.cloneExecutionDataStore(this.internalCoveredTestResult.getExecutionData())
-		);
+			this.internalCoveredTestResult.getExecutionDataStoreMap().put(
+					this.toString.apply(description),
+					ListenerUtils.cloneExecutionDataStore(this.internalCoveredTestResult.getExecutionData())
+			);
 
-		if (isParametrized.test(description.getMethodName())) {
-			this.collectForParametrizedTest(this.toStringParametrized.apply(description));
+			if (isParametrized.test(description.getMethodName())) {
+				this.collectForParametrizedTest(this.toStringParametrized.apply(description));
+			}
 		}
 	}
 
 	@Override
 	public void testFailure(org.junit.runner.notification.Failure failure) throws Exception {
-		this.internalCoveredTestResult.getFailingTests().add(
-				new Failure(
-						this.toString.apply(failure.getDescription()),
-						failure.getDescription().getClassName(),
-						failure.getException()
-				)
-		);
+		if (failure.getDescription().isTest()) {
+			this.internalCoveredTestResult.getFailingTests().add(
+					new Failure(
+							this.toString.apply(failure.getDescription()),
+							failure.getDescription().getClassName(),
+							failure.getException()
+					)
+			);
+		}
 	}
 
 	@Override
 	public void testAssumptionFailure(org.junit.runner.notification.Failure failure) {
-		this.internalCoveredTestResult.getAssumptionFailingTests().add(
-				new Failure(
-						this.toString.apply(failure.getDescription()),
-						failure.getDescription().getClassName(),
-						failure.getException()
-				)
-		);
+		if (failure.getDescription().isTest()) {
+			this.internalCoveredTestResult.getAssumptionFailingTests().add(
+					new Failure(
+							this.toString.apply(failure.getDescription()),
+							failure.getDescription().getClassName(),
+							failure.getException()
+					)
+			);
+		}
 	}
 
 	@Override
 	public void testIgnored(Description description) throws Exception {
-		this.internalCoveredTestResult.getIgnoredTests().add(this.toString.apply(description));
+		if (description.isTest()) {
+			this.internalCoveredTestResult.getIgnoredTests().add(this.toString.apply(description));
+		}
 	}
 
 	private void collectForParametrizedTest(String testMethodName) {
@@ -146,12 +153,12 @@ public class CoveredTestResultsPerJUnit4TestMethod extends JUnit4TestResult impl
 	}
 
 	@Override
-	public List<String> getRunningTests() {
+	public Set<String> getRunningTests() {
 		return this.internalCoveredTestResult.getRunningTests();
 	}
 
 	@Override
-	public List<String> getPassingTests() {
+	public Set<String> getPassingTests() {
 		return this.internalCoveredTestResult.getPassingTests();
 	}
 
@@ -165,17 +172,17 @@ public class CoveredTestResultsPerJUnit4TestMethod extends JUnit4TestResult impl
 	}
 
 	@Override
-	public List<Failure> getFailingTests() {
+	public Set<Failure> getFailingTests() {
 		return this.internalCoveredTestResult.getFailingTests();
 	}
 
 	@Override
-	public List<Failure> getAssumptionFailingTests() {
+	public Set<Failure> getAssumptionFailingTests() {
 		return this.internalCoveredTestResult.getAssumptionFailingTests();
 	}
 
 	@Override
-	public List<String> getIgnoredTests() {
+	public Set<String> getIgnoredTests() {
 		return this.internalCoveredTestResult.getIgnoredTests();
 	}
 

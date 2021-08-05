@@ -7,7 +7,7 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.RunListener;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -44,43 +44,51 @@ public class JUnit4TestResult extends RunListener implements TestResult, Seriali
 
     @Override
     public void testFinished(Description description) throws Exception {
-        this.internalTestResult.getRunningTests().add(this.toString.apply(description));
+        if (description.isTest()) {
+            this.internalTestResult.getRunningTests().add(this.toString.apply(description));
+        }
     }
 
     @Override
     public void testFailure(org.junit.runner.notification.Failure failure) throws Exception {
-        this.internalTestResult.getFailingTests().add(
-                new Failure(
-                        this.toString.apply(failure.getDescription()),
-                        failure.getDescription().getClassName(),
-                        failure.getException()
-                )
-        );
+        if (failure.getDescription().isTest()) {
+            this.internalTestResult.getFailingTests().add(
+                    new Failure(
+                            this.toString.apply(failure.getDescription()),
+                            failure.getDescription().getClassName(),
+                            failure.getException()
+                    )
+            );
+        }
     }
 
     @Override
     public void testAssumptionFailure(org.junit.runner.notification.Failure failure) {
-        this.internalTestResult.getAssumptionFailingTests().add(
-                new Failure(
-                        this.toString.apply(failure.getDescription()),
-                        failure.getDescription().getClassName(),
-                        failure.getException()
-                )
-        );
+        if (failure.getDescription().isTest()) {
+            this.internalTestResult.getAssumptionFailingTests().add(
+                    new Failure(
+                            this.toString.apply(failure.getDescription()),
+                            failure.getDescription().getClassName(),
+                            failure.getException()
+                    )
+            );
+        }
     }
 
     @Override
     public void testIgnored(Description description) throws Exception {
-        this.internalTestResult.getIgnoredTests().add(this.toString.apply(description));
+        if (description.isTest()) {
+            this.internalTestResult.getIgnoredTests().add(this.toString.apply(description));
+        }
     }
 
     @Override
-    public List<String> getRunningTests() {
+    public Set<String> getRunningTests() {
         return this.internalTestResult.getRunningTests();
     }
 
     @Override
-    public List<String> getPassingTests() {
+    public Set<String> getPassingTests() {
         return this.internalTestResult.getPassingTests();
     }
 
@@ -94,17 +102,17 @@ public class JUnit4TestResult extends RunListener implements TestResult, Seriali
     }
 
     @Override
-    public List<Failure> getFailingTests() {
+    public Set<Failure> getFailingTests() {
         return this.internalTestResult.getFailingTests();
     }
 
     @Override
-    public List<Failure> getAssumptionFailingTests() {
+    public Set<Failure> getAssumptionFailingTests() {
         return this.internalTestResult.getAssumptionFailingTests();
     }
 
     @Override
-    public List<String> getIgnoredTests() {
+    public Set<String> getIgnoredTests() {
         return this.internalTestResult.getIgnoredTests();
     }
 
