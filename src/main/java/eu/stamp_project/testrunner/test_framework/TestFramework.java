@@ -39,6 +39,8 @@ public class TestFramework implements TestFrameworkSupport {
         _instance = new TestFramework(factory);
     }
 
+    private HashMap<CtMethod<?>, TestFrameworkSupport> cachedTestFrameworks;
+
     private List<TestFrameworkSupport> testFrameworkSupportList;
 
     public static TestFramework get() {
@@ -49,6 +51,7 @@ public class TestFramework implements TestFrameworkSupport {
 
     private TestFramework(Factory factory) {
         this.factory = factory;
+        this.cachedTestFrameworks = new HashMap<>();
         this.testFrameworkSupportList = new ArrayList<>();
         this.testFrameworkSupportList.add(new JUnit3Support());
         this.testFrameworkSupportList.add(new JUnit4Support());
@@ -163,8 +166,10 @@ public class TestFramework implements TestFrameworkSupport {
     		DSpotCache.getTestFrameworkCache().put(TypeUtils.getQualifiedName(originalMethod), tfs);
     	}
     	return tfs;*/
-        // TODO Enable the cache in test-runner
-        return getTestFrameworkImpl(testMethod);
+        if (!cachedTestFrameworks.containsKey(testMethod)) {
+            cachedTestFrameworks.put(testMethod, getTestFrameworkImpl(testMethod));
+        }
+        return cachedTestFrameworks.get(testMethod);
     }
 
 
