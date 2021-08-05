@@ -51,71 +51,61 @@ public class CoveredTestResultsPerJUnit4TestMethod extends JUnit4TestResult impl
 
 	@Override
 	public synchronized void testStarted(Description description) throws Exception {
-		if (description.isTest()) {
-			this.internalCoveredTestResult.setExecutionData(new ExecutionDataStore());
-			this.internalCoveredTestResult.setSessionInfos(new SessionInfoStore());
-			this.internalCoveredTestResult.getData().setSessionId(this.toString.apply(description));
-			this.internalCoveredTestResult.getData().collect(
-					this.internalCoveredTestResult.getExecutionData(),
-					this.internalCoveredTestResult.getSessionInfos(),
-					true
-			);
-		}
+		this.internalCoveredTestResult.setExecutionData(new ExecutionDataStore());
+		this.internalCoveredTestResult.setSessionInfos(new SessionInfoStore());
+		this.internalCoveredTestResult.getData().setSessionId(this.toString.apply(description));
+		this.internalCoveredTestResult.getData().collect(
+				this.internalCoveredTestResult.getExecutionData(),
+				this.internalCoveredTestResult.getSessionInfos(),
+				true
+		);
 	}
 
 	@Override
 	public synchronized void testFinished(Description description) throws Exception {
-		if (description.isTest()) {
-			this.internalCoveredTestResult.getRunningTests().add(this.toString.apply(description));
+		this.internalCoveredTestResult.getRunningTests().add(this.toString.apply(description));
 
-			this.internalCoveredTestResult.getData().collect(
-					this.internalCoveredTestResult.getExecutionData(),
-					this.internalCoveredTestResult.getSessionInfos(),
-					false
-			);
+		this.internalCoveredTestResult.getData().collect(
+				this.internalCoveredTestResult.getExecutionData(),
+				this.internalCoveredTestResult.getSessionInfos(),
+				false
+		);
 
-			this.internalCoveredTestResult.getExecutionDataStoreMap().put(
-					this.toString.apply(description),
-					ListenerUtils.cloneExecutionDataStore(this.internalCoveredTestResult.getExecutionData())
-			);
+		this.internalCoveredTestResult.getExecutionDataStoreMap().put(
+				this.toString.apply(description),
+				ListenerUtils.cloneExecutionDataStore(this.internalCoveredTestResult.getExecutionData())
+		);
 
-			if (isParametrized.test(description.getMethodName())) {
-				this.collectForParametrizedTest(this.toStringParametrized.apply(description));
-			}
+		if (isParametrized.test(description.getMethodName())) {
+			this.collectForParametrizedTest(this.toStringParametrized.apply(description));
 		}
 	}
 
 	@Override
 	public void testFailure(org.junit.runner.notification.Failure failure) throws Exception {
-		if (failure.getDescription().isTest()) {
-			this.internalCoveredTestResult.getFailingTests().add(
-					new Failure(
-							this.toString.apply(failure.getDescription()),
-							failure.getDescription().getClassName(),
-							failure.getException()
-					)
-			);
-		}
+		this.internalCoveredTestResult.getFailingTests().add(
+				new Failure(
+						this.toString.apply(failure.getDescription()),
+						failure.getDescription().getClassName(),
+						failure.getException()
+				)
+		);
 	}
 
 	@Override
 	public void testAssumptionFailure(org.junit.runner.notification.Failure failure) {
-		if (failure.getDescription().isTest()) {
-			this.internalCoveredTestResult.getAssumptionFailingTests().add(
-					new Failure(
-							this.toString.apply(failure.getDescription()),
-							failure.getDescription().getClassName(),
-							failure.getException()
-					)
-			);
-		}
+		this.internalCoveredTestResult.getAssumptionFailingTests().add(
+				new Failure(
+						this.toString.apply(failure.getDescription()),
+						failure.getDescription().getClassName(),
+						failure.getException()
+				)
+		);
 	}
 
 	@Override
 	public void testIgnored(Description description) throws Exception {
-		if (description.isTest()) {
-			this.internalCoveredTestResult.getIgnoredTests().add(this.toString.apply(description));
-		}
+		this.internalCoveredTestResult.getIgnoredTests().add(this.toString.apply(description));
 	}
 
 	private void collectForParametrizedTest(String testMethodName) {

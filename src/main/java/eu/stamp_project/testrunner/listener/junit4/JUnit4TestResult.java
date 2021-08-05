@@ -44,42 +44,34 @@ public class JUnit4TestResult extends RunListener implements TestResult, Seriali
 
     @Override
     public void testFinished(Description description) throws Exception {
-        if (description.isTest()) {
-            this.internalTestResult.getRunningTests().add(this.toString.apply(description));
-        }
+        this.internalTestResult.getRunningTests().add(this.toString.apply(description));
     }
 
     @Override
     public void testFailure(org.junit.runner.notification.Failure failure) throws Exception {
-        if (failure.getDescription().isTest()) {
-            this.internalTestResult.getFailingTests().add(
-                    new Failure(
-                            this.toString.apply(failure.getDescription()),
-                            failure.getDescription().getClassName(),
-                            failure.getException()
-                    )
-            );
-        }
+    	this.internalTestResult.getFailingTests().add(
+    			new Failure(
+    					this.toString.apply(failure.getDescription()),
+					    failure.getDescription().getClassName(),
+					    failure.getException()
+			    )
+	    );
     }
 
     @Override
     public void testAssumptionFailure(org.junit.runner.notification.Failure failure) {
-        if (failure.getDescription().isTest()) {
-            this.internalTestResult.getAssumptionFailingTests().add(
-                    new Failure(
-                            this.toString.apply(failure.getDescription()),
-                            failure.getDescription().getClassName(),
-                            failure.getException()
-                    )
-            );
-        }
+    	this.internalTestResult.getAssumptionFailingTests().add(
+    			new Failure(
+    					this.toString.apply(failure.getDescription()),
+                        failure.getDescription().getClassName(),
+                        failure.getException()
+			    )
+        );
     }
 
     @Override
     public void testIgnored(Description description) throws Exception {
-        if (description.isTest()) {
-            this.internalTestResult.getIgnoredTests().add(this.toString.apply(description));
-        }
+    	this.internalTestResult.getIgnoredTests().add(this.toString.apply(description));
     }
 
     @Override
