@@ -4,6 +4,7 @@ import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
 import eu.stamp_project.testrunner.listener.CoverageTransformer;
 import eu.stamp_project.testrunner.listener.impl.CoveragePerTestMethodImpl;
+import eu.stamp_project.testrunner.listener.utils.ListenerUtils;
 import eu.stamp_project.testrunner.runner.Failure;
 import org.jacoco.core.data.ExecutionData;
 import org.jacoco.core.data.ExecutionDataStore;
@@ -57,17 +58,9 @@ public class CoveragePerJUnit5TestMethod extends JUnit5TestResult implements Cov
                     false
             );
 
-            // We need to clone each result so it doesn't get changed by the runtime afterwards
-            ExecutionDataStore executionDataStore = new ExecutionDataStore();
-            this.internalCoverage.getExecutionData().getContents().stream().forEach(x -> {
-                ExecutionData executionData = new ExecutionData(x.getId(), x.getName(), x.getProbes().clone());
-                synchronized (executionDataStore) {
-                    executionDataStore.put(executionData);
-                }
-            });
             this.internalCoverage.getExecutionDataStoreMap().put(
                     this.toString.apply(testIdentifier),
-                    executionDataStore
+                    ListenerUtils.cloneExecutionDataStore(this.internalCoverage.getExecutionData())
             );
 
             switch (testExecutionResult.getStatus()) {

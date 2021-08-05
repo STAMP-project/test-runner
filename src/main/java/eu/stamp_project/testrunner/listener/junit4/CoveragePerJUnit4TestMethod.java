@@ -5,6 +5,7 @@ import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
 import eu.stamp_project.testrunner.listener.CoverageTransformer;
 import eu.stamp_project.testrunner.listener.impl.CoverageImpl;
 import eu.stamp_project.testrunner.listener.impl.CoveragePerTestMethodImpl;
+import eu.stamp_project.testrunner.listener.utils.ListenerUtils;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IClassCoverage;
@@ -72,17 +73,9 @@ public class CoveragePerJUnit4TestMethod extends JUnit4TestResult implements Cov
                 false
         );
 
-        // We need to clone each result so it doesn't get changed by the runtime afterwards
-        ExecutionDataStore executionDataStore = new ExecutionDataStore();
-        this.internalCoverage.getExecutionData().getContents().stream().forEach(x -> {
-            ExecutionData executionData = new ExecutionData(x.getId(), x.getName(), x.getProbes().clone());
-            synchronized (executionDataStore) {
-                executionDataStore.put(executionData);
-            }
-        });
         this.internalCoverage.getExecutionDataStoreMap().put(
                 this.toString.apply(description),
-                executionDataStore
+                ListenerUtils.cloneExecutionDataStore(this.internalCoverage.getExecutionData())
         );
 
         if (isParametrized.test(description.getMethodName())) {

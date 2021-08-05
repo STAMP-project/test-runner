@@ -6,12 +6,12 @@ import eu.stamp_project.testrunner.listener.CoveredTestResultPerTestMethod;
 import eu.stamp_project.testrunner.listener.TestResult;
 import eu.stamp_project.testrunner.listener.impl.CoverageImpl;
 import eu.stamp_project.testrunner.listener.impl.CoveredTestResultPerTestMethodImpl;
+import eu.stamp_project.testrunner.listener.utils.ListenerUtils;
 import eu.stamp_project.testrunner.runner.Failure;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.ICounter;
-import org.jacoco.core.data.ExecutionData;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.SessionInfoStore;
 import org.jacoco.core.runtime.RuntimeData;
@@ -74,17 +74,9 @@ public class CoveredTestResultsPerJUnit4TestMethod extends JUnit4TestResult impl
 				false
 		);
 
-		// We need to clone each result so it doesn't get changed by the runtime afterwards
-		ExecutionDataStore executionDataStore = new ExecutionDataStore();
-		this.internalCoveredTestResult.getExecutionData().getContents().stream().forEach(x -> {
-			ExecutionData executionData = new ExecutionData(x.getId(), x.getName(), x.getProbes().clone());
-			synchronized (executionDataStore) {
-				executionDataStore.put(executionData);
-			}
-		});
 		this.internalCoveredTestResult.getExecutionDataStoreMap().put(
 				this.toString.apply(description),
-				executionDataStore
+				ListenerUtils.cloneExecutionDataStore(this.internalCoveredTestResult.getExecutionData())
 		);
 
 		if (isParametrized.test(description.getMethodName())) {

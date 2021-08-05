@@ -4,6 +4,7 @@ import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.CoverageTransformer;
 import eu.stamp_project.testrunner.listener.CoveredTestResultPerTestMethod;
 import eu.stamp_project.testrunner.listener.impl.CoveredTestResultPerTestMethodImpl;
+import eu.stamp_project.testrunner.listener.utils.ListenerUtils;
 import eu.stamp_project.testrunner.runner.Failure;
 import org.jacoco.core.data.ExecutionData;
 import org.jacoco.core.data.ExecutionDataStore;
@@ -63,17 +64,9 @@ public class CoveredTestResultsPerJUnit5TestMethod extends JUnit5TestResult impl
 					false
 			);
 
-			// We need to clone each result so it doesn't get changed by the runtime afterwards
-			ExecutionDataStore executionDataStore = new ExecutionDataStore();
-			this.internalCoveredTestResult.getExecutionData().getContents().stream().forEach(x -> {
-				ExecutionData executionData = new ExecutionData(x.getId(), x.getName(), x.getProbes().clone());
-				synchronized (executionDataStore) {
-					executionDataStore.put(executionData);
-				}
-			});
 			this.internalCoveredTestResult.getExecutionDataStoreMap().put(
 					this.toString.apply(testIdentifier),
-					executionDataStore
+					ListenerUtils.cloneExecutionDataStore(this.internalCoveredTestResult.getExecutionData())
 			);
 
 			switch (testExecutionResult.getStatus()) {
