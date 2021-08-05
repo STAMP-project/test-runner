@@ -24,4 +24,6 @@ public interface CoveragePerTestMethod extends Serializable {
 
     public void save();
 
+    public void computeCoverages();
+
 }

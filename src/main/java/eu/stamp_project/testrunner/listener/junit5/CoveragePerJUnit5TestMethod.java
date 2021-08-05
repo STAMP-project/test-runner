@@ -4,7 +4,9 @@ import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
 import eu.stamp_project.testrunner.listener.CoverageTransformer;
 import eu.stamp_project.testrunner.listener.impl.CoveragePerTestMethodImpl;
+import eu.stamp_project.testrunner.listener.utils.ListenerUtils;
 import eu.stamp_project.testrunner.runner.Failure;
+import org.jacoco.core.data.ExecutionData;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.SessionInfoStore;
 import org.jacoco.core.runtime.RuntimeData;
@@ -56,12 +58,11 @@ public class CoveragePerJUnit5TestMethod extends JUnit5TestResult implements Cov
                     false
             );
 
-            Coverage jUnit5Coverage =
-                    internalCoverage.getCoverageTransformer().transformJacocoObject(
-                            this.internalCoverage.getExecutionData(),
-                            this.internalCoverage.getClassesDirectory()
-                    );
-            this.internalCoverage.getCoverageResultsMap().put(this.toString.apply(testIdentifier), jUnit5Coverage);
+            this.internalCoverage.getExecutionDataStoreMap().put(
+                    this.toString.apply(testIdentifier),
+                    ListenerUtils.cloneExecutionDataStore(this.internalCoverage.getExecutionData())
+            );
+
             switch (testExecutionResult.getStatus()) {
                 case FAILED:
                     this.getFailingTests().add(
@@ -91,6 +92,10 @@ public class CoveragePerJUnit5TestMethod extends JUnit5TestResult implements Cov
     @Override
     public void save() {
         this.internalCoverage.save();
+    }
+
+    public void computeCoverages() {
+        this.internalCoverage.computeCoverages();
     }
 
 }

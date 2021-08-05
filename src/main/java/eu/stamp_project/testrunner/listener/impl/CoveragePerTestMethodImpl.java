@@ -16,6 +16,7 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -27,7 +28,9 @@ public class CoveragePerTestMethodImpl implements CoveragePerTestMethod {
 
     private static final long serialVersionUID = 606642107403361456L;
 
-    protected final Map<String, Coverage> coverageResultsMap;
+    protected transient final Map<String, ExecutionDataStore> executionDataStoreMap;
+
+    protected final ConcurrentHashMap<String, Coverage> coverageResultsMap;
 
     protected final List<String> classesDirectory;
 
@@ -39,16 +42,11 @@ public class CoveragePerTestMethodImpl implements CoveragePerTestMethod {
 
     protected transient CoverageTransformer coverageTransformer;
 
-    public CoveragePerTestMethodImpl() {
-        coverageResultsMap = null;
-        classesDirectory = null;
-        this.coverageTransformer = new CoverageCollectorSummarization();
-    }
-
     public CoveragePerTestMethodImpl(RuntimeData data, List<String> classesDirectory, CoverageTransformer coverageTransformer) {
         this.data = data;
         this.classesDirectory = classesDirectory;
-        this.coverageResultsMap = new HashMap<>();
+        this.executionDataStoreMap = new HashMap<>();
+        this.coverageResultsMap = new ConcurrentHashMap<>();
         this.coverageTransformer = coverageTransformer;
     }
 
@@ -83,6 +81,23 @@ public class CoveragePerTestMethodImpl implements CoveragePerTestMethod {
     public void setSessionInfos(SessionInfoStore sessionInfos) {
         this.sessionInfos = sessionInfos;
     }
+
+    public Map<String, ExecutionDataStore> getExecutionDataStoreMap() {
+        return executionDataStoreMap;
+    }
+
+    @Override
+    public void computeCoverages() {
+        executionDataStoreMap.entrySet().parallelStream()
+                .forEach(x -> {
+                    Coverage jUnit4Coverage = coverageTransformer.transformJacocoObject(
+                            x.getValue(),
+                            classesDirectory
+                    );
+                    coverageResultsMap.put(x.getKey(), jUnit4Coverage);
+                });
+    }
+
 
     @Override
     public Map<String, Coverage> getCoverageResultsMap() {

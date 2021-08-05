@@ -36,6 +36,7 @@ public class JUnit5JacocoRunnerCoveredResultPerTestMethod extends JacocoRunnerCo
 				(JUnit5TestResult) listener,
 				this.instrumentedClassLoader
 		);
+		listener.computeCoverages();
 		return listener;
 	}
 

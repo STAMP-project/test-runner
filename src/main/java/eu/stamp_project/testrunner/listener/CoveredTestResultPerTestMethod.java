@@ -25,4 +25,6 @@ public interface CoveredTestResultPerTestMethod extends TestResult, Serializable
 
 	public void save();
 
+	public void computeCoverages();
+
 }

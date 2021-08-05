@@ -6,6 +6,7 @@ import eu.stamp_project.testrunner.listener.CoveredTestResultPerTestMethod;
 import eu.stamp_project.testrunner.listener.TestResult;
 import eu.stamp_project.testrunner.listener.impl.CoverageImpl;
 import eu.stamp_project.testrunner.listener.impl.CoveredTestResultPerTestMethodImpl;
+import eu.stamp_project.testrunner.listener.utils.ListenerUtils;
 import eu.stamp_project.testrunner.runner.Failure;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
@@ -73,12 +74,11 @@ public class CoveredTestResultsPerJUnit4TestMethod extends JUnit4TestResult impl
 				false
 		);
 
-		Coverage jUnit4Coverage =
-				internalCoveredTestResult.getCoverageTransformer().transformJacocoObject(
-						this.internalCoveredTestResult.getExecutionData(),
-						this.internalCoveredTestResult.getClassesDirectory()
-				);
-		this.internalCoveredTestResult.getCoverageResultsMap().put(this.toString.apply(description), jUnit4Coverage);
+		this.internalCoveredTestResult.getExecutionDataStoreMap().put(
+				this.toString.apply(description),
+				ListenerUtils.cloneExecutionDataStore(this.internalCoveredTestResult.getExecutionData())
+		);
+
 		if (isParametrized.test(description.getMethodName())) {
 			this.collectForParametrizedTest(this.toStringParametrized.apply(description));
 		}
@@ -247,6 +247,10 @@ public class CoveredTestResultsPerJUnit4TestMethod extends JUnit4TestResult impl
 		return classCoverages.stream()
 				.filter(iClassCoverage -> className.equals(iClassCoverage.getName()))
 				.collect(Collectors.toList());
+	}
+
+	public void computeCoverages() {
+		internalCoveredTestResult.computeCoverages();
 	}
 
 }
