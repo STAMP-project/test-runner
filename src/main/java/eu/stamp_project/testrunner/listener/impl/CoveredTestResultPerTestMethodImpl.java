@@ -14,10 +14,7 @@ import org.jacoco.core.runtime.RuntimeData;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -44,10 +41,10 @@ public class CoveredTestResultPerTestMethodImpl implements CoveredTestResultPerT
 
 	protected transient CoverageTransformer coverageTransformer;
 
-	private List<String> runningTests;
-	private List<Failure> failingTests;
-	private List<Failure> assumptionFailingTests;
-	private List<String> ignoredTests;
+	private Set<String> runningTests;
+	private Set<Failure> failingTests;
+	private Set<Failure> assumptionFailingTests;
+	private Set<String> ignoredTests;
 
 	public CoveredTestResultPerTestMethodImpl(RuntimeData data, List<String> classesDirectory, CoverageTransformer coverageTransformer) {
 		this.data = data;
@@ -55,10 +52,10 @@ public class CoveredTestResultPerTestMethodImpl implements CoveredTestResultPerT
 		this.executionDataStoreMap = new HashMap<>();
 		this.coverageResultsMap = new ConcurrentHashMap<>();
 		this.coverageTransformer = coverageTransformer;
-		this.runningTests = new ArrayList<>();
-		this.failingTests = new ArrayList<>();
-		this.assumptionFailingTests = new ArrayList<>();
-		this.ignoredTests = new ArrayList<>();
+		this.runningTests = new HashSet<>();
+		this.failingTests = new HashSet<>();
+		this.assumptionFailingTests = new HashSet<>();
+		this.ignoredTests = new HashSet<>();
 
 	}
 
@@ -121,22 +118,16 @@ public class CoveredTestResultPerTestMethodImpl implements CoveredTestResultPerT
 	}
 
 	@Override
-	public List<String> getRunningTests() {
+	public Set<String> getRunningTests() {
 		return runningTests;
 	}
 
 	@Override
-	public List<String> getPassingTests() {
-		final List<String> failing = this.failingTests.stream()
-				.map(failure -> failure.testCaseName)
-				.collect(Collectors.toList());
-		final List<String> assumptionFailing = this.assumptionFailingTests.stream()
-				.map(failure -> failure.testCaseName)
-				.collect(Collectors.toList());
-		return this.runningTests.stream()
-				.filter(description -> !assumptionFailing.contains(description))
-				.filter(description -> !failing.contains(description))
-				.collect(Collectors.toList());
+	public Set<String> getPassingTests() {
+		Set<String> passingTests = new HashSet<>(runningTests);
+		passingTests.removeAll(failingTests.stream().map(x -> x.testCaseName).collect(Collectors.toSet()));
+		passingTests.removeAll(assumptionFailingTests.stream().map(x -> x.testCaseName).collect(Collectors.toSet()));
+		return passingTests;
 	}
 
 	@Override
@@ -152,17 +143,17 @@ public class CoveredTestResultPerTestMethodImpl implements CoveredTestResultPerT
 	}
 
 	@Override
-	public List<Failure> getFailingTests() {
+	public Set<Failure> getFailingTests() {
 		return failingTests;
 	}
 
 	@Override
-	public List<Failure> getAssumptionFailingTests() {
+	public Set<Failure> getAssumptionFailingTests() {
 		return assumptionFailingTests;
 	}
 
 	@Override
-	public List<String> getIgnoredTests() {
+	public Set<String> getIgnoredTests() {
 		return ignoredTests;
 	}
 

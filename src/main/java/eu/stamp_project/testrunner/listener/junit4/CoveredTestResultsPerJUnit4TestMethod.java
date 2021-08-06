@@ -19,10 +19,7 @@ import org.junit.runner.Description;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -146,12 +143,12 @@ public class CoveredTestResultsPerJUnit4TestMethod extends JUnit4TestResult impl
 	}
 
 	@Override
-	public List<String> getRunningTests() {
+	public Set<String> getRunningTests() {
 		return this.internalCoveredTestResult.getRunningTests();
 	}
 
 	@Override
-	public List<String> getPassingTests() {
+	public Set<String> getPassingTests() {
 		return this.internalCoveredTestResult.getPassingTests();
 	}
 
@@ -165,17 +162,17 @@ public class CoveredTestResultsPerJUnit4TestMethod extends JUnit4TestResult impl
 	}
 
 	@Override
-	public List<Failure> getFailingTests() {
+	public Set<Failure> getFailingTests() {
 		return this.internalCoveredTestResult.getFailingTests();
 	}
 
 	@Override
-	public List<Failure> getAssumptionFailingTests() {
+	public Set<Failure> getAssumptionFailingTests() {
 		return this.internalCoveredTestResult.getAssumptionFailingTests();
 	}
 
 	@Override
-	public List<String> getIgnoredTests() {
+	public Set<String> getIgnoredTests() {
 		return this.internalCoveredTestResult.getIgnoredTests();
 	}
 

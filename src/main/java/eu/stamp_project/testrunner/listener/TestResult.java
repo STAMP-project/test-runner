@@ -5,6 +5,7 @@ import eu.stamp_project.testrunner.utils.ConstantsHelper;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 /**
  * High level abstraction representing a test execution result.
@@ -24,17 +25,17 @@ public interface TestResult extends Serializable {
      */
     public TestResult aggregate(TestResult that);
 
-    public List<Failure> getFailingTests();
+    public Set<Failure> getFailingTests();
 
-    public List<Failure> getAssumptionFailingTests();
+    public Set<Failure> getAssumptionFailingTests();
 
-    public List<String> getIgnoredTests();
+    public Set<String> getIgnoredTests();
 
     public Failure getFailureOf(String testMethodName);
 
-    public List<String> getPassingTests();
+    public Set<String> getPassingTests();
 
-    public List<String> getRunningTests();
+    public Set<String> getRunningTests();
 
     public void save();
 
