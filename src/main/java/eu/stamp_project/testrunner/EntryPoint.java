@@ -251,7 +251,7 @@ public class EntryPoint {
             LOGGER.warn("Timeout when running {}", commandLine);
             throw e;
         }
-        final TestResult load = TestResultImpl.load(workingDirectory);
+        final TestResult load = TestResultImpl.load();
         if (EntryPoint.verbose) {
             LOGGER.info(
                     "Test has been run: {}", Stream
@@ -378,7 +378,7 @@ public class EntryPoint {
             LOGGER.warn("Timeout when running {}", commandLine);
             throw e;
         }
-        final Coverage load = CoverageImpl.load(workingDirectory);
+        final Coverage load = CoverageImpl.load();
         if (EntryPoint.verbose) {
             LOGGER.info("Global coverage has been computed {}", load.toString());
         }
@@ -455,7 +455,7 @@ public class EntryPoint {
             LOGGER.warn("Timeout when running {}", javaCommand);
             throw e;
         }
-        final CoveragePerTestMethod load = CoveragePerTestMethodImpl.load(workingDirectory);
+        final CoveragePerTestMethod load = CoveragePerTestMethodImpl.load();
         if (EntryPoint.verbose) {
             LOGGER.info("Coverage per test methods has been computed {}{}", ConstantsHelper.LINE_SEPARATOR,
                     load.toString());
@@ -559,7 +559,7 @@ public class EntryPoint {
             LOGGER.warn("Timeout when running {}", javaCommand);
             throw e;
         }
-        final CoveredTestResultPerTestMethod load = CoveredTestResultPerTestMethodImpl.load(workingDirectory);
+        final CoveredTestResultPerTestMethod load = CoveredTestResultPerTestMethodImpl.load();
         if (EntryPoint.verbose) {
             LOGGER.info("Coverage per test methods has been computed {}{}", ConstantsHelper.LINE_SEPARATOR,
                     load.toString());

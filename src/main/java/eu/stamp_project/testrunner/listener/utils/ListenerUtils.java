@@ -1,5 +1,6 @@
 package eu.stamp_project.testrunner.listener.utils;
 
+import eu.stamp_project.testrunner.EntryPoint;
 import eu.stamp_project.testrunner.listener.CoveredTestResultPerTestMethod;
 import org.jacoco.core.data.ExecutionData;
 import org.jacoco.core.data.ExecutionDataStore;
@@ -82,9 +83,9 @@ public class ListenerUtils {
         }
     }
 
-    public static File computeTargetFilePath(File workingDirectory, String outputDir, String outputFile) {
+    public static File computeTargetFilePath(String outputDir, String outputFile) {
         return new File(
-                new File(workingDirectory != null && workingDirectory.exists() ? workingDirectory.getAbsolutePath() : "./",
+                new File(EntryPoint.workingDirectory != null && EntryPoint.workingDirectory.exists() ? EntryPoint.workingDirectory.getAbsolutePath() : "./",
                         outputDir).getAbsolutePath(),
                 outputFile);
     }

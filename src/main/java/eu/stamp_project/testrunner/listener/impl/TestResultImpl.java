@@ -91,11 +91,10 @@ public class TestResultImpl implements TestResult, Serializable {
     /**
      * Loads and deserializes the file from a memory mapped file
      *
-     * @param workingDirectory working directory of the forked process
      * @return loaded TestResult from the memory mapped file
      */
-    public static TestResult load(File workingDirectory) {
-        return ListenerUtils.loadFromMemoryMappedFile(ListenerUtils.computeTargetFilePath(workingDirectory, OUTPUT_DIR, SHARED_MEMORY_FILE));
+    public static TestResult load() {
+        return ListenerUtils.loadFromMemoryMappedFile(ListenerUtils.computeTargetFilePath(OUTPUT_DIR, SHARED_MEMORY_FILE));
     }
 
     public String toString() {

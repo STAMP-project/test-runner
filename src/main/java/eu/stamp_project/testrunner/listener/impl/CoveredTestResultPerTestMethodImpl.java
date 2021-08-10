@@ -175,11 +175,10 @@ public class CoveredTestResultPerTestMethodImpl implements CoveredTestResultPerT
 	/**
 	 * Loads and deserializes the file from a memory mapped file
 	 *
-	 * @param workingDirectory working directory of the forked process
 	 * @return loaded CoveredTestResultPerTestMethodImpl from the memory mapped file
 	 */
-	public static CoveredTestResultPerTestMethodImpl load(File workingDirectory) {
-		return ListenerUtils.loadFromMemoryMappedFile(ListenerUtils.computeTargetFilePath(workingDirectory, OUTPUT_DIR, SHARED_MEMORY_FILE));
+	public static CoveredTestResultPerTestMethodImpl load() {
+		return ListenerUtils.loadFromMemoryMappedFile(ListenerUtils.computeTargetFilePath(OUTPUT_DIR, SHARED_MEMORY_FILE));
 	}
 
 	@Override

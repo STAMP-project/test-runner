@@ -28,7 +28,7 @@ public class JUnit5JacocoRunnerCoveredResultPerTestMethodTest extends AbstractTe
 						ParserOptions.FLAG_testMethodNamesToRun, "test"
 				}
 		);
-		final CoveredTestResultPerTestMethod load = CoveredTestResultPerTestMethodImpl.load(null);
+		final CoveredTestResultPerTestMethod load = CoveredTestResultPerTestMethodImpl.load();
 		System.out.println(load);
 		assertEquals(34, load.getCoverageResultsMap().get("test").getInstructionsCovered());
 		System.out.println(load.getCoverageResultsMap().get("test").getExecutionPath());
@@ -48,7 +48,7 @@ public class JUnit5JacocoRunnerCoveredResultPerTestMethodTest extends AbstractTe
 						ParserOptions.FLAG_testMethodNamesToRun, "test3:test2"
 				}
 		);
-		final CoveredTestResultPerTestMethod load = CoveredTestResultPerTestMethodImpl.load(null);
+		final CoveredTestResultPerTestMethod load = CoveredTestResultPerTestMethodImpl.load();
 		System.out.println(load);
 
 		assertEquals(2, load.getRunningTests().size());
@@ -76,7 +76,7 @@ public class JUnit5JacocoRunnerCoveredResultPerTestMethodTest extends AbstractTe
 						ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, "junit5.TestSuiteExample",
 				}
 		);
-		final CoveredTestResultPerTestMethod load = CoveredTestResultPerTestMethodImpl.load(null);
+		final CoveredTestResultPerTestMethod load = CoveredTestResultPerTestMethodImpl.load();
 		System.out.println(load);
 		load.getCoverageResultsMap()
 				.keySet()

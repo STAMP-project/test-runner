@@ -118,11 +118,10 @@ public class CoveragePerTestMethodImpl implements CoveragePerTestMethod {
     /**
      * Loads and deserializes the file from a memory mapped file
      *
-     * @param workingDirectory working directory of the forked process
      * @return loaded CoveragePerTestMethodImpl from the memory mapped file
      */
-    public static CoveragePerTestMethodImpl load(File workingDirectory) {
-        return ListenerUtils.loadFromMemoryMappedFile(ListenerUtils.computeTargetFilePath(workingDirectory, OUTPUT_DIR, SHARED_MEMORY_FILE));
+    public static CoveragePerTestMethodImpl load() {
+        return ListenerUtils.loadFromMemoryMappedFile(ListenerUtils.computeTargetFilePath(OUTPUT_DIR, SHARED_MEMORY_FILE));
     }
 
     @Override
