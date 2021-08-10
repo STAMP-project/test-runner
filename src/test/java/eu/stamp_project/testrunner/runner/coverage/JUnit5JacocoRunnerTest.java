@@ -33,7 +33,7 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
                         ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, "junit5.TestSuiteExample",
                 }
         );
-        final Coverage load = CoverageImpl.load();
+        final Coverage load = CoverageImpl.load(null);
         assertEquals(30, load.getInstructionsCovered());
         assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, load.getInstructionsTotal());
         for (String expectedExecutionPath : expectedExecutionPaths) {
@@ -63,7 +63,7 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
                         ParserOptions.FLAG_testMethodNamesToRun, "test8:test2"
                 }
         );
-        final Coverage load = CoverageImpl.load();
+        final Coverage load = CoverageImpl.load(null);
         assertEquals(23, load.getInstructionsCovered());
         assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, load.getInstructionsTotal());
     }
@@ -83,7 +83,7 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
                         ParserOptions.FLAG_testMethodNamesToRun, "test"
                 }
         );
-        final Coverage load = CoverageImpl.load();
+        final Coverage load = CoverageImpl.load(null);
         assertEquals(23, load.getInstructionsCovered());
         assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, load.getInstructionsTotal());
     }
@@ -108,7 +108,7 @@ public class JUnit5JacocoRunnerTest extends AbstractTest {
                         ParserOptions.FLAG_coverage_detail, ParserOptions.CoverageTransformerDetail.METHOD_DETAIL.name(),
                 }
         );
-        final Coverage load = CoverageImpl.load();
+        final Coverage load = CoverageImpl.load(null);
         for (String expectedMethodDetailedExecutionPath : expectedMethodDetailedExecutionPaths) {
             assertTrue(load.getExecutionPath().contains(expectedMethodDetailedExecutionPath));
         }

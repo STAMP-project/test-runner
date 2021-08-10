@@ -26,7 +26,7 @@ public class CoverageTest extends AbstractTest {
                         ParserOptions.FLAG_testMethodNamesToRun, "test4"
                 }
         );
-        final Coverage test4Coverage = CoverageImpl.load();
+        final Coverage test4Coverage = CoverageImpl.load(null);
 
         JUnit4JacocoRunner.main(new String[]{
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject, SOURCE_PROJECT_CLASSES,
@@ -35,7 +35,7 @@ public class CoverageTest extends AbstractTest {
                         ParserOptions.FLAG_testMethodNamesToRun, "test8"
                 }
         );
-        final Coverage test8Coverage = CoverageImpl.load();
+        final Coverage test8Coverage = CoverageImpl.load(null);
 
         assertTrue(test4Coverage.getInstructionsCovered() > test8Coverage.getInstructionsCovered());
         assertEquals(test4Coverage.getInstructionsTotal(),test8Coverage.getInstructionsTotal());

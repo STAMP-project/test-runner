@@ -31,7 +31,7 @@ public class JacocoRunnerTest extends AbstractTest {
                         ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, "example.TestSuiteExample"
                 }
         );
-        final Coverage load = CoverageImpl.load();
+        final Coverage load = CoverageImpl.load(null);
         assertEquals(30, load.getInstructionsCovered());
         assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, load.getInstructionsTotal());
         System.out.println(String.join(ConstantsHelper.LINE_SEPARATOR, load.getExecutionPath().split(";")));
@@ -52,7 +52,7 @@ public class JacocoRunnerTest extends AbstractTest {
                         ParserOptions.FLAG_testMethodNamesToRun, "test8:test2"
                 }
         );
-        final Coverage load = CoverageImpl.load();
+        final Coverage load = CoverageImpl.load(null);
         assertEquals(23, load.getInstructionsCovered());
         assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, load.getInstructionsTotal());
         System.out.println(load.getExecutionPath());

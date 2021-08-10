@@ -1,16 +1,12 @@
 package eu.stamp_project.testrunner.listener.impl;
 
 import eu.stamp_project.testrunner.listener.TestResult;
+import eu.stamp_project.testrunner.listener.utils.ListenerUtils;
 import eu.stamp_project.testrunner.runner.Failure;
-import eu.stamp_project.testrunner.runner.Loader;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -83,30 +79,23 @@ public class TestResultImpl implements TestResult, Serializable {
                 .orElseThrow(() -> new IllegalArgumentException(String.format("Could not find %s in failing test", testMethodName)));
     }
 
+    /**
+     * Writes the serialized object to a memory mapped file.
+     * The location depends on the workspace set for the test runner process.
+     */
     @Override
     public synchronized void save() {
-        File outputDir = new File(OUTPUT_DIR);
-        if (!outputDir.exists()) {
-            if (!outputDir.mkdirs()) {
-                System.err.println("Error while creating output dir");
-            }
-        }
-        File f = new File(outputDir, SERIALIZE_NAME + EXTENSION);
-        try (FileOutputStream fout = new FileOutputStream(f)) {
-            try (ObjectOutputStream oos = new ObjectOutputStream(fout)) {
-                oos.writeObject(this);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        } catch (Exception e) {
-            System.err.println("Error while writing serialized file.");
-            throw new RuntimeException(e);
-        }
-        System.out.println("File saved to the following path: " + f.getAbsolutePath());
+        ListenerUtils.saveToMemoryMappedFile(new File(OUTPUT_DIR, SHARED_MEMORY_FILE), this);
     }
 
-    public static TestResult load() {
-        return new Loader<TestResult>().load(SERIALIZE_NAME);
+    /**
+     * Loads and deserializes the file from a memory mapped file
+     *
+     * @param workingDirectory working directory of the forked process
+     * @return loaded TestResult from the memory mapped file
+     */
+    public static TestResult load(File workingDirectory) {
+        return ListenerUtils.loadFromMemoryMappedFile(ListenerUtils.computeTargetFilePath(workingDirectory, OUTPUT_DIR, SHARED_MEMORY_FILE));
     }
 
     public String toString() {

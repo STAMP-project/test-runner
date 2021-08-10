@@ -30,7 +30,7 @@ public class JacocoRunnerPerTestMethodTest extends AbstractTest {
                         ParserOptions.FLAG_testMethodNamesToRun, "test"
                 }
         );
-        final CoveragePerTestMethodImpl load = CoveragePerTestMethodImpl.load();
+        final CoveragePerTestMethodImpl load = CoveragePerTestMethodImpl.load(null);
         System.out.println(load);
         assertEquals(34, load.getCoverageResultsMap().get("example.ParametrizedTest#test").getInstructionsCovered());
         System.out.println(load.getCoverageResultsMap().get("example.ParametrizedTest#test").getExecutionPath());
@@ -50,7 +50,7 @@ public class JacocoRunnerPerTestMethodTest extends AbstractTest {
                         ParserOptions.FLAG_testMethodNamesToRun, "test3:test2:copyOftest2"
                 }
         );
-        final CoveragePerTestMethodImpl load = CoveragePerTestMethodImpl.load();
+        final CoveragePerTestMethodImpl load = CoveragePerTestMethodImpl.load(null);
         System.out.println(load);
         assertEquals(23, load.getCoverageResultsMap().get("example.TestSuiteExample#test2").getInstructionsCovered());
         assertEquals(23, load.getCoverageResultsMap().get("example.TestSuiteExample#test3").getInstructionsCovered());
@@ -73,7 +73,7 @@ public class JacocoRunnerPerTestMethodTest extends AbstractTest {
                         ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, "example.TestSuiteExample",
                 }
         );
-        final CoveragePerTestMethodImpl load = CoveragePerTestMethodImpl.load();
+        final CoveragePerTestMethodImpl load = CoveragePerTestMethodImpl.load(null);
         System.out.println(load);
         load.getCoverageResultsMap()
                 .keySet()

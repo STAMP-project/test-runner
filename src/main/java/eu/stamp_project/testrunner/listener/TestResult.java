@@ -12,11 +12,9 @@ import java.util.Set;
  */
 public interface TestResult extends Serializable {
 
-    public static final String SERIALIZE_NAME = "TestResult";
+    public static final String SHARED_MEMORY_FILE = "TestResult.dat";
 
     public static final String OUTPUT_DIR = "target" + ConstantsHelper.FILE_SEPARATOR;
-
-    public static final String EXTENSION = ".ser";
 
     /**
      * Aggregate result of this instance to the given instance

@@ -12,11 +12,9 @@ import java.util.Map;
  */
 public interface CoveragePerTestMethod extends Serializable {
 
-    public static final String SERIALIZE_NAME = "CoveragePerTest";
+    public static final String SHARED_MEMORY_FILE = "CoveragePerTestMethod.dat";
 
     public static final String OUTPUT_DIR = "target" + ConstantsHelper.FILE_SEPARATOR;
-
-    public static final String EXTENSION = ".ser";
 
     public Map<String, Coverage> getCoverageResultsMap();
 
