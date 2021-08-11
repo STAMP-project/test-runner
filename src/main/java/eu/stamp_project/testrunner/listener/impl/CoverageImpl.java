@@ -1,10 +1,13 @@
 package eu.stamp_project.testrunner.listener.impl;
 
 import eu.stamp_project.testrunner.listener.Coverage;
-import eu.stamp_project.testrunner.listener.TestResult;
-import eu.stamp_project.testrunner.runner.Loader;
-import org.jacoco.core.analysis.*;
-import java.io.*;
+import eu.stamp_project.testrunner.listener.utils.ListenerUtils;
+import org.jacoco.core.analysis.IClassCoverage;
+import org.jacoco.core.analysis.ICounter;
+import org.jacoco.core.analysis.ILine;
+
+import java.io.File;
+import java.io.Serializable;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -89,35 +92,22 @@ public class CoverageImpl implements Coverage, Serializable {
         return this.instructionsCovered + " / " + this.instructionsTotal;
     }
 
+    /**
+     * Writes the serialized object to a memory mapped file.
+     * The location depends on the workspace set for the test runner process.
+     */
     @Override
     public void save() {
-        File outputDir = new File(TestResult.OUTPUT_DIR);
-        if (!outputDir.exists()) {
-            if (!outputDir.mkdirs()) {
-                System.err.println("Error while creating output dir");
-            }
-        }
-        File f = new File(outputDir, SERIALIZE_NAME + EXTENSION);
-        try (FileOutputStream fout = new FileOutputStream(f)) {
-            try (ObjectOutputStream oos = new ObjectOutputStream(fout)) {
-                oos.writeObject(this);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        } catch (Exception e) {
-            System.err.println("Error while writing serialized file.");
-            throw new RuntimeException(e);
-        }
-        System.out.println("File saved to the following path: " + f.getAbsolutePath());
+        ListenerUtils.saveToMemoryMappedFile(new File(OUTPUT_DIR, SHARED_MEMORY_FILE), this);
     }
 
     /**
-     * Load from serialized object
+     * Loads and deserializes the file from a memory mapped file
      *
-     * @return an Instance of JUnit4Coverage loaded from a serialized file.
+     * @return loaded Coverage from the memory mapped file
      */
     public static Coverage load() {
-        return new Loader<Coverage>().load(SERIALIZE_NAME);
+        return ListenerUtils.loadFromMemoryMappedFile(ListenerUtils.computeTargetFilePath(OUTPUT_DIR, SHARED_MEMORY_FILE));
     }
 
 }

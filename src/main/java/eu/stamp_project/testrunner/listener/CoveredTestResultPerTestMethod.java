@@ -13,11 +13,9 @@ import java.util.Map;
  */
 public interface CoveredTestResultPerTestMethod extends TestResult, Serializable {
 
-	public static final String SERIALIZE_NAME = "CoveredTestResultPerTest";
+	public static final String SHARED_MEMORY_FILE = "CoveredTestResultPerTest.dat";
 
 	public static final String OUTPUT_DIR = "target" + ConstantsHelper.FILE_SEPARATOR;
-
-	public static final String EXTENSION = ".ser";
 
 	public Map<String, Coverage> getCoverageResultsMap();
 

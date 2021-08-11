@@ -1,7 +1,14 @@
 package eu.stamp_project.testrunner.listener.utils;
 
+import eu.stamp_project.testrunner.EntryPoint;
+import eu.stamp_project.testrunner.listener.CoveredTestResultPerTestMethod;
 import org.jacoco.core.data.ExecutionData;
 import org.jacoco.core.data.ExecutionDataStore;
+
+import java.io.*;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.file.StandardOpenOption;
 
 public class ListenerUtils {
 
@@ -21,4 +28,65 @@ public class ListenerUtils {
 		return cloned;
 	}
 
+    public static void saveToMemoryMappedFile(File file, Object object) {
+        try {
+            // Serialize the object
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream out = new ObjectOutputStream(bos);
+            out.writeObject(object);
+            out.flush();
+            byte[] bytes = bos.toByteArray();
+
+            // Create output dir if it does not exist
+            File outputDir = new File(CoveredTestResultPerTestMethod.OUTPUT_DIR);
+            if (!outputDir.exists()) {
+                if (!outputDir.mkdirs()) {
+                    System.err.println("Error while creating output dir");
+                }
+            }
+
+            // Write to shared memory file
+            FileChannel channel = FileChannel.open(file.toPath(),
+                    StandardOpenOption.CREATE, StandardOpenOption.READ, StandardOpenOption.WRITE);
+            MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, bytes.length);
+            buffer.put(bytes);
+
+            out.close();
+            channel.close();
+            System.out.println("File saved to the following path: " + file.getAbsolutePath());
+        } catch (Exception e) {
+            System.err.println("Error while writing memory-mapped serialized file.");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static <T> T loadFromMemoryMappedFile(File file) {
+        try {
+            // Access the shared memory file
+            FileChannel channel = FileChannel.open(file.toPath(), StandardOpenOption.READ);
+            MappedByteBuffer mappedByteBuffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
+
+            // Get content
+            byte[] buffer = new byte[(int) channel.size()];
+            mappedByteBuffer.get(buffer);
+
+            // Read and deserialize the file
+            ObjectInputStream is = new ObjectInputStream(new ByteArrayInputStream(buffer));
+            final T load = (T) is.readObject();
+
+            is.close();
+            channel.close();
+            file.delete();
+            return load;
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static File computeTargetFilePath(String outputDir, String outputFile) {
+        return new File(
+                new File(EntryPoint.workingDirectory != null && EntryPoint.workingDirectory.exists() ? EntryPoint.workingDirectory.getAbsolutePath() : "./",
+                        outputDir).getAbsolutePath(),
+                outputFile);
+    }
 }

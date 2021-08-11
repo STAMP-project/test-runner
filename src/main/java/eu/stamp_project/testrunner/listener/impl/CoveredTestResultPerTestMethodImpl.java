@@ -4,16 +4,14 @@ import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.CoverageTransformer;
 import eu.stamp_project.testrunner.listener.CoveredTestResultPerTestMethod;
 import eu.stamp_project.testrunner.listener.TestResult;
+import eu.stamp_project.testrunner.listener.utils.ListenerUtils;
 import eu.stamp_project.testrunner.runner.Failure;
-import eu.stamp_project.testrunner.runner.Loader;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.SessionInfoStore;
 import org.jacoco.core.runtime.RuntimeData;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -165,35 +163,22 @@ public class CoveredTestResultPerTestMethodImpl implements CoveredTestResultPerT
 				.orElseThrow(() -> new IllegalArgumentException(String.format("Could not find %s in failing test", testMethodName)));
 	}
 
+	/**
+	 * Writes the serialized object to a memory mapped file.
+	 * The location depends on the workspace set for the test runner process.
+	 */
 	@Override
 	public void save() {
-		File outputDir = new File(TestResult.OUTPUT_DIR);
-		if (!outputDir.exists()) {
-			if (!outputDir.mkdirs()) {
-				System.err.println("Error while creating output dir");
-			}
-		}
-		File f = new File(outputDir, SERIALIZE_NAME + EXTENSION);
-		try (FileOutputStream fout = new FileOutputStream(f)) {
-			try (ObjectOutputStream oos = new ObjectOutputStream(fout)) {
-				oos.writeObject(this);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		} catch (Exception e) {
-			System.err.println("Error while writing serialized file.");
-			throw new RuntimeException(e);
-		}
-		System.out.println("File saved to the following path: " + f.getAbsolutePath());
+		ListenerUtils.saveToMemoryMappedFile(new File(OUTPUT_DIR, SHARED_MEMORY_FILE), this);
 	}
 
 	/**
-	 * Load from serialized object
+	 * Loads and deserializes the file from a memory mapped file
 	 *
-	 * @return an Instance of CoveragePerTestMethod loaded from a serialized file.
+	 * @return loaded CoveredTestResultPerTestMethodImpl from the memory mapped file
 	 */
 	public static CoveredTestResultPerTestMethodImpl load() {
-		return new Loader<CoveredTestResultPerTestMethodImpl>().load(SERIALIZE_NAME);
+		return ListenerUtils.loadFromMemoryMappedFile(ListenerUtils.computeTargetFilePath(OUTPUT_DIR, SHARED_MEMORY_FILE));
 	}
 
 	@Override
