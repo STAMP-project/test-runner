@@ -557,9 +557,12 @@ public class EntryPointTest extends AbstractTest {
 
     @Test
     public void testRunOnlineCoveredTestResultPerTestMethods() throws Exception {
+        EntryPoint.coverageDetail = ParserOptions.CoverageTransformerDetail.DETAIL_COMPRESSED;
+        EntryPoint.jacocoAgentIncludes = "example.*:tobemocked.*";
+        EntryPoint.jacocoAgentExcludes = "example.TestSuiteExample";
 
         /*
-            Test the runCoveredTestResultPerTestMethods() of EntryPoint.
+            Test the runOnlineCoveredTestResultPerTestMethods() of EntryPoint.
                 It should return the CoveredTestResult with the instruction coverage computed by Jacoco.
          */
         final String classpath = JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP;
@@ -577,12 +580,18 @@ public class EntryPointTest extends AbstractTest {
         assertEquals(0, coveredTestResultPerTestMethod.getFailingTests().size());
         assertEquals(0, coveredTestResultPerTestMethod.getIgnoredTests().size());
 
-        // Assert coverage
+        // Assert detailed coverage
         assertEquals(2, coveredTestResultPerTestMethod.getCoverageResultsMap().size());
-        assertEquals(23, coveredTestResultPerTestMethod.getCoverageOf("example.TestSuiteExample#test3").getInstructionsCovered());
-        assertEquals(NUMBER_OF_INSTRUCTIONS, coveredTestResultPerTestMethod.getCoverageOf("example.TestSuiteExample#test3").getInstructionsTotal());
-        assertEquals(23, coveredTestResultPerTestMethod.getCoverageOf("example.TestSuiteExample#test8").getInstructionsCovered());
-        assertEquals(NUMBER_OF_INSTRUCTIONS, coveredTestResultPerTestMethod.getCoverageOf("example.TestSuiteExample#test8").getInstructionsTotal());
+
+        assertTrue(coveredTestResultPerTestMethod.getCoverageOf("example.TestSuiteExample#test3") instanceof CoverageDetailed);
+        CoverageDetailed coverageDetailed = (CoverageDetailed) coveredTestResultPerTestMethod.getCoverageOf("example.TestSuiteExample#test3");
+        assertNotNull(coverageDetailed.getDetailedCoverage());
+        assertEquals(1, coverageDetailed.getDetailedCoverage().size());
+
+        assertTrue(coveredTestResultPerTestMethod.getCoverageOf("example.TestSuiteExample#test8") instanceof CoverageDetailed);
+        coverageDetailed = (CoverageDetailed) coveredTestResultPerTestMethod.getCoverageOf("example.TestSuiteExample#test8");
+        assertNotNull(coverageDetailed.getDetailedCoverage());
+        assertEquals(1, coverageDetailed.getDetailedCoverage().size());
     }
 
     @Ignore

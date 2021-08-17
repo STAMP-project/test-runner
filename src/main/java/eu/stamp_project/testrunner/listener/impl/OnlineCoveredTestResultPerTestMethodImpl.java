@@ -4,278 +4,182 @@ import eu.stamp_project.testrunner.listener.Coverage;
 import eu.stamp_project.testrunner.listener.CoverageTransformer;
 import eu.stamp_project.testrunner.listener.CoveredTestResultPerTestMethod;
 import eu.stamp_project.testrunner.listener.TestResult;
+import eu.stamp_project.testrunner.listener.utils.ListenerUtils;
 import eu.stamp_project.testrunner.runner.Failure;
-import eu.stamp_project.testrunner.runner.Loader;
 import org.jacoco.agent.rt.RT;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.SessionInfoStore;
 import org.jacoco.core.tools.ExecFileLoader;
 
-import javax.management.MBeanServerConnection;
-import javax.management.MBeanServerInvocationHandler;
-import javax.management.ObjectName;
-import javax.management.remote.JMXConnector;
-import javax.management.remote.JMXConnectorFactory;
-import javax.management.remote.JMXServiceURL;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class OnlineCoveredTestResultPerTestMethodImpl implements CoveredTestResultPerTestMethod {
 
-	private static final long serialVersionUID = 3860229575340959882L;
+    private static final long serialVersionUID = 3860229575340959882L;
 
-	protected final Map<String, Coverage> coverageResultsMap;
+    protected transient final Map<String, ExecutionDataStore> executionDataStoreMap;
 
-	protected final List<String> classesDirectory;
+    protected final ConcurrentHashMap<String, Coverage> coverageResultsMap;
 
-	protected transient ExecFileLoader execFileLoader;
+    protected final List<String> classesDirectory;
 
-	protected transient CoverageTransformer coverageTransformer;
+    protected transient ExecFileLoader execFileLoader;
 
-	private final List<String> runningTests;
-	private final List<Failure> failingTests;
-	private final List<Failure> assumptionFailingTests;
-	private final List<String> ignoredTests;
+    protected transient CoverageTransformer coverageTransformer;
 
-	private static final String SERVICE_URL = "service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi";
+    private final Set<String> runningTests;
+    private final Set<Failure> failingTests;
+    private final Set<Failure> assumptionFailingTests;
+    private final Set<String> ignoredTests;
 
-	public OnlineCoveredTestResultPerTestMethodImpl(List<String> classesDirectory, CoverageTransformer coverageTransformer) {
-		this.classesDirectory = classesDirectory;
-		this.coverageResultsMap = new HashMap<>();
-		this.coverageTransformer = coverageTransformer;
-		this.runningTests = new ArrayList<>();
-		this.failingTests = new ArrayList<>();
-		this.assumptionFailingTests = new ArrayList<>();
-		this.ignoredTests = new ArrayList<>();
-	}
+    public OnlineCoveredTestResultPerTestMethodImpl(List<String> classesDirectory, CoverageTransformer coverageTransformer) {
+        this.classesDirectory = classesDirectory;
+        this.executionDataStoreMap = new HashMap<>();
+        this.coverageResultsMap = new ConcurrentHashMap<>();
+        this.coverageTransformer = coverageTransformer;
+        this.runningTests = new HashSet<>();
+        this.failingTests = new HashSet<>();
+        this.assumptionFailingTests = new HashSet<>();
+        this.ignoredTests = new HashSet<>();
+    }
 
-	public static void setSessionId(String id) {
-		RT.getAgent().setSessionId(id);
-		/*
-		try {
-			// Open connection to the coverage agent:
-			final JMXServiceURL url = new JMXServiceURL(SERVICE_URL);
-			final JMXConnector jmxc = JMXConnectorFactory.connect(url, null);
-			final MBeanServerConnection connection = jmxc
-					.getMBeanServerConnection();
+    public static void setSessionId(String id) {
+        RT.getAgent().setSessionId(id);
+    }
 
-			final IProxy proxy = (IProxy) MBeanServerInvocationHandler
-					.newProxyInstance(connection,
-							new ObjectName("org.jacoco:type=Runtime"), IProxy.class,
-							false);
+    public Map<String, ExecutionDataStore> getExecutionDataStoreMap() {
+        return executionDataStoreMap;
+    }
 
-			// Set new session id
-			proxy.setSessionId(id);
+    public void collect() {
+        try {
+            execFileLoader = new ExecFileLoader();
+            execFileLoader.load(new ByteArrayInputStream(RT.getAgent().getExecutionData(false)));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-			// Close connection:
-			jmxc.close();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		 */
-	}
+    public void reset() {
+        RT.getAgent().reset();
+        RT.getAgent().getExecutionData(true);
+    }
 
-	public void collect() {
-		try {
-			execFileLoader = new ExecFileLoader();
-			execFileLoader.load(new ByteArrayInputStream(RT.getAgent().getExecutionData(false)));
-			/*
-			// Open connection to the coverage agent:
-			final JMXServiceURL url = new JMXServiceURL(SERVICE_URL);
-			final JMXConnector jmxc = JMXConnectorFactory.connect(url, null);
-			final MBeanServerConnection connection = jmxc
-					.getMBeanServerConnection();
+    public List<String> getClassesDirectory() {
+        return classesDirectory;
+    }
 
-			final IProxy proxy = (IProxy) MBeanServerInvocationHandler
-					.newProxyInstance(connection,
-							new ObjectName("org.jacoco:type=Runtime"), IProxy.class,
-							false);
+    public ExecutionDataStore getExecutionData() {
+        return execFileLoader.getExecutionDataStore();
+    }
 
-			// Collect
-			execFileLoader = new ExecFileLoader();
-			execFileLoader.load(new ByteArrayInputStream(proxy.getExecutionData(false)));
+    public SessionInfoStore getSessionInfos() {
+        return execFileLoader.getSessionInfoStore();
+    }
 
-			// Close connection:
-			jmxc.close();
-			 */
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public CoverageTransformer getCoverageTransformer() {
+        return coverageTransformer;
+    }
 
-	public void reset() {
-		RT.getAgent().reset();
-		RT.getAgent().getExecutionData(true);
-		/*
-		try {
-			// Open connection to the coverage agent:
-			final JMXServiceURL url = new JMXServiceURL(SERVICE_URL);
-			final JMXConnector jmxc = JMXConnectorFactory.connect(url, null);
-			final MBeanServerConnection connection = jmxc
-					.getMBeanServerConnection();
+    @Override
+    public Map<String, Coverage> getCoverageResultsMap() {
+        return coverageResultsMap;
+    }
 
-			final IProxy proxy = (IProxy) MBeanServerInvocationHandler
-					.newProxyInstance(connection,
-							new ObjectName("org.jacoco:type=Runtime"), IProxy.class,
-							false);
+    @Override
+    public Coverage getCoverageOf(String testMethodName) {
+        return this.getCoverageResultsMap().get(testMethodName);
+    }
 
-			// Collect
-			proxy.reset();
+    @Override
+    public Set<String> getRunningTests() {
+        return runningTests;
+    }
 
-			// Close connection:
-			jmxc.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		}
-		 */
-	}
+    @Override
+    public Set<String> getPassingTests() {
+        Set<String> passingTests = new HashSet<>(runningTests);
+        passingTests.removeAll(failingTests.stream().map(x -> x.testCaseName).collect(Collectors.toSet()));
+        passingTests.removeAll(assumptionFailingTests.stream().map(x -> x.testCaseName).collect(Collectors.toSet()));
+        return passingTests;
+    }
 
-	public List<String> getClassesDirectory() {
-		return classesDirectory;
-	}
+    @Override
+    public TestResult aggregate(TestResult that) {
+        if (that instanceof OnlineCoveredTestResultPerTestMethodImpl) {
+            final OnlineCoveredTestResultPerTestMethodImpl thatListener = (OnlineCoveredTestResultPerTestMethodImpl) that;
+            this.runningTests.addAll(thatListener.runningTests);
+            this.failingTests.addAll(thatListener.failingTests);
+            this.assumptionFailingTests.addAll(thatListener.assumptionFailingTests);
+            this.ignoredTests.addAll(thatListener.ignoredTests);
+        }
+        return this;
+    }
 
-	public ExecutionDataStore getExecutionData() {
-		return execFileLoader.getExecutionDataStore();
-	}
+    @Override
+    public Set<Failure> getFailingTests() {
+        return failingTests;
+    }
 
-	public SessionInfoStore getSessionInfos() {
-		return execFileLoader.getSessionInfoStore();
-	}
+    @Override
+    public Set<Failure> getAssumptionFailingTests() {
+        return assumptionFailingTests;
+    }
 
-	public CoverageTransformer getCoverageTransformer() {
-		return coverageTransformer;
-	}
+    @Override
+    public Set<String> getIgnoredTests() {
+        return ignoredTests;
+    }
 
-	@Override
-	public Map<String, Coverage> getCoverageResultsMap() {
-		return coverageResultsMap;
-	}
+    @Override
+    public Failure getFailureOf(String testMethodName) {
+        return this.getFailingTests().stream()
+                .filter(failure -> failure.testCaseName.equals(testMethodName))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Could not find %s in failing test", testMethodName)));
+    }
 
-	@Override
-	public Coverage getCoverageOf(String testMethodName) {
-		return this.getCoverageResultsMap().get(testMethodName);
-	}
+    @Override
+    public void save() {
+        ListenerUtils.saveToMemoryMappedFile(new File(OUTPUT_DIR, SHARED_MEMORY_FILE), this);
+    }
 
-	@Override
-	public List<String> getRunningTests() {
-		return runningTests;
-	}
+    @Override
+    public void computeCoverages() {
+        executionDataStoreMap.entrySet().parallelStream()
+                .forEach(x -> {
+                    Coverage jUnit4Coverage = coverageTransformer.transformJacocoObject(
+                            x.getValue(),
+                            classesDirectory
+                    );
+                    coverageResultsMap.put(x.getKey(), jUnit4Coverage);
+                });
+    }
 
-	@Override
-	public List<String> getPassingTests() {
-		final List<String> failing = this.failingTests.stream()
-				.map(failure -> failure.testCaseName)
-				.collect(Collectors.toList());
-		final List<String> assumptionFailing = this.assumptionFailingTests.stream()
-				.map(failure -> failure.testCaseName)
-				.collect(Collectors.toList());
-		return this.runningTests.stream()
-				.filter(description -> !assumptionFailing.contains(description))
-				.filter(description -> !failing.contains(description))
-				.collect(Collectors.toList());
-	}
+    /**
+     * Load from serialized object
+     *
+     * @return an Instance of OnlineCoveredTestResultPerTestMethodImpl loaded from a serialized file.
+     */
+    public static OnlineCoveredTestResultPerTestMethodImpl load() {
+        return ListenerUtils.loadFromMemoryMappedFile(ListenerUtils.computeTargetFilePath(OUTPUT_DIR, SHARED_MEMORY_FILE));
+    }
 
-	@Override
-	public TestResult aggregate(TestResult that) {
-		if (that instanceof OnlineCoveredTestResultPerTestMethodImpl) {
-			final OnlineCoveredTestResultPerTestMethodImpl thatListener = (OnlineCoveredTestResultPerTestMethodImpl) that;
-			this.runningTests.addAll(thatListener.runningTests);
-			this.failingTests.addAll(thatListener.failingTests);
-			this.assumptionFailingTests.addAll(thatListener.assumptionFailingTests);
-			this.ignoredTests.addAll(thatListener.ignoredTests);
-		}
-		return this;
-	}
+    @Override
+    public String toString() {
+        return "OnlineCoveredTestResultPerTestMethodImpl{" +
+                "coverageResultsMap=" + coverageResultsMap +
+                ", classesDirectory=" + classesDirectory +
+                ", coverageTransformer=" + coverageTransformer +
+                ", runningTests=" + runningTests +
+                ", failingTests=" + failingTests +
+                ", assumptionFailingTests=" + assumptionFailingTests +
+                ", ignoredTests=" + ignoredTests +
+                '}';
+    }
 
-	@Override
-	public List<Failure> getFailingTests() {
-		return failingTests;
-	}
-
-	@Override
-	public List<Failure> getAssumptionFailingTests() {
-		return assumptionFailingTests;
-	}
-
-	@Override
-	public List<String> getIgnoredTests() {
-		return ignoredTests;
-	}
-
-	@Override
-	public Failure getFailureOf(String testMethodName) {
-		return this.getFailingTests().stream()
-				.filter(failure -> failure.testCaseName.equals(testMethodName))
-				.findFirst()
-				.orElseThrow(() -> new IllegalArgumentException(String.format("Could not find %s in failing test", testMethodName)));
-	}
-
-	@Override
-	public void save() {
-		File outputDir = new File(TestResult.OUTPUT_DIR);
-		if (!outputDir.exists()) {
-			if (!outputDir.mkdirs()) {
-				System.err.println("Error while creating output dir");
-			}
-		}
-		File f = new File(outputDir, SERIALIZE_NAME + EXTENSION);
-		try (FileOutputStream fout = new FileOutputStream(f)) {
-			try (ObjectOutputStream oos = new ObjectOutputStream(fout)) {
-				oos.writeObject(this);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		} catch (Exception e) {
-			System.err.println("Error while writing serialized file.");
-			throw new RuntimeException(e);
-		}
-		System.out.println("File saved to the following path: " + f.getAbsolutePath());
-	}
-
-	/**
-	 * Load from serialized object
-	 *
-	 * @return an Instance of OnlineCoveredTestResultPerTestMethodImpl loaded from a serialized file.
-	 */
-	public static OnlineCoveredTestResultPerTestMethodImpl load() {
-		return new Loader<OnlineCoveredTestResultPerTestMethodImpl>().load(SERIALIZE_NAME);
-	}
-
-	@Override
-	public String toString() {
-		return "OnlineCoveredTestResultPerTestMethodImpl{" +
-				"coverageResultsMap=" + coverageResultsMap +
-				", classesDirectory=" + classesDirectory +
-				", coverageTransformer=" + coverageTransformer +
-				", runningTests=" + runningTests +
-				", failingTests=" + failingTests +
-				", assumptionFailingTests=" + assumptionFailingTests +
-				", ignoredTests=" + ignoredTests +
-				'}';
-	}
-
-	/**
-	 * Interface for JMX proxy
-	 */
-	public interface IProxy {
-		String getVersion();
-
-		String getSessionId();
-
-		void setSessionId(String id);
-
-		byte[] getExecutionData(boolean reset);
-
-		void dump(boolean reset);
-
-		void reset();
-	}
 }
