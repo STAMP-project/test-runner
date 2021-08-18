@@ -130,6 +130,13 @@ The output of all `runCoveragePerTestMethods()` API is a [`eu.stamp_project.test
 
 In the same way, you can have the covered results per test method using `runCoveredTestResultPerTestMethods()` API of `EntryPoint` class.
 
+#### Online covered results per test method
+
+In the same way, you can have the covered results per test method using `runOnlineCoveredTestResultPerTestMethods()` API of `EntryPoint` class.
+
+Note that, in this case, all covered classes will be instrumented and recorded by default, or according to the jacoco parameters `includes` and `excludes`
+available through `EntryPoint.jacocoAgentIncludes` and `EntryPoint.jacocoAgentExcludes` respectively.
+
 ##### Output
 
 The output of all `runCoveredTestResultPerTestMethods()` API is a [`eu.stamp_project.testrunner.listener.CoveredTestResultPerTestMethod`](https://github.com/STAMP-project/testrunner/blob/master/src/main/java/eu/stamp_project/testrunner/listener/CoveragePerTestMethod.java#L13).
@@ -141,6 +148,14 @@ The output of all `runCoveredTestResultPerTestMethods()` API is a [`eu.stamp_pro
 * `getFailingTests()`: returns the list of test methods that failed.
 * `getAssumptionFailingTests()`: returns the list of test methods that have a failing assumption. For example, in JUnit4 one can make assumptions using `org.junit.Assume` API, _e.g._ `Assume.assumeTrue(myBoolean)`. If the assumption does not hold, it is not necessary because the program is broken but rather than the test is irrelevant in the current state, _e.g._ one can make dedicated test to a platform.
 * `getIgnoredTests()`: returns the list of test methods that are ignored.
+
+###### WARNING: Detailed compressed coverage 
+
+Unlike other coverage transformers, which analyze the classes available under the source binary directories, this transformer
+analyzes all classes whose execution was recorded by jacoco, loading them from the system's classloader.
+
+Using this transformer outside the online mode provided through `runOnlineCoveredTestResultPerTestMethods` might
+result in classloading issues, as the executed classes may not be available or coherent between different classloaders.
 
 #### Mutation Score
 
@@ -186,6 +201,8 @@ In `EntryPoint` class, you have access to several fields that allow to configure
    * `MutationEngine mutationEngine`: configure the mutation engine to be used. Possible values are `MutationEngine.DESCARTES` or `MutationEngine.GREGOR`. Default is `MutationEngine.DESCARTES`. You must use the accessor to set this value, see [EntryPoint#setMutationEngine(ConstantsHelper.MutationEngine mutationEngine)](https://github.com/STAMP-project/testrunner/blob/master/src/main/java/eu/stamp_project/testrunner/EntryPoint.java#L156).
    * `List<String> pitMutators`: List of mutators to be used. These mutators are designed by a string. They must match with the used mutation engine. By default, it uses the default mutators for descartes and the mutator `ALL` for gregor. This value is modified when you change the mutation engine with [EntryPoint#setMutationEngine(ConstantsHelper.MutationEngine mutationEngine)](https://github.com/STAMP-project/testrunner/blob/master/src/main/java/eu/stamp_project/testrunner/EntryPoint.java#L156).
    * `AbstractParser.OutputFormat pitOutputFormat`: specify the output format to be used for the mutation analyzed. Possible values are `AbstractParser.OutputFormat.XML` or `AbstractParser.OutputFormat.CSV`. Default is `AbstractParser.OutputFormat.XML`. The `AbstractParser.OutputFormat.XML` contains more information than the `AbstractParser.OutputFormat.CSV`.
+   * `String jacocoAgentIncludes`: used in the online mode of coverage computation. Passed to the jacoco agent as the `includes` option.
+   * `String jacocoAgentExcludes`: used in the online mode of coverage computation. Passed to the jacoco agent as the `excludes` option.
 
 ## Dependency:
 
