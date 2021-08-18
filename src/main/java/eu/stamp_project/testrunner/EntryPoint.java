@@ -633,7 +633,7 @@ public class EntryPoint {
                         getJavaCommand(),
                         (classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES
                                 + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES).replaceAll(" ", "%20"),
-                        "-javaagent:" + jacocoAgentJar.getAbsolutePath() + "=dumponexit=false" +
+                        "-javaagent:" + jacocoAgentJar.getAbsolutePath() + "=destfile=test-runner.exec,dumponexit=false" +
                                 (EntryPoint.jacocoAgentIncludes != null ? (",includes=" + EntryPoint.jacocoAgentIncludes) : "") +
                                 (EntryPoint.jacocoAgentIncludes != null ? (",excludes=" + EntryPoint.jacocoAgentExcludes) : ""),
                         EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_ONLINE_JACOCO_RUNNER_COVERED_RESULT_PER_TEST_QUALIFIED_NAME : EntryPoint.JUNIT4_ONLINE_JACOCO_RUNNER_COVERED_RESULT_PER_TEST_QUALIFIED_NAME,
@@ -658,6 +658,9 @@ public class EntryPoint {
             LOGGER.warn("Timeout when running {}", javaCommand);
             throw e;
         }
+        // Delete test-runner.exec file
+        new File(EntryPoint.workingDirectory, "test-runner.exec").delete();
+
         final CoveredTestResultPerTestMethod load = OnlineCoveredTestResultPerTestMethodImpl.load();
         if (EntryPoint.verbose) {
             LOGGER.info("Coverage per test methods has been computed {}{}", ConstantsHelper.LINE_SEPARATOR,
