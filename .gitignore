@@ -42,3 +42,6 @@ hs_err_pid*
 !/src/main/resources/runner-classes/fr/inria/stamp/runner/test/Loader.class
 !/src/main/resources/runner-classes/fr/inria/stamp/runner/coverage/JacocoRunner.class
 !/src/main/resources/runner-classes/fr/inria/stamp/runner/test/Failure.class
+
+# Jacoco exec files
+test-runner.exec
