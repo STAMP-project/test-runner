@@ -13,7 +13,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -21,7 +20,6 @@ import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
 /**
  * created by Benjamin DANGLOT
@@ -484,6 +482,77 @@ public class EntryPointJUnit5Test extends AbstractTest {
         assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, coveredTestResultPerTestMethod.getCoverageOf("junit5.TestSuiteExample#test3").getInstructionsTotal());
         assertEquals(23, coveredTestResultPerTestMethod.getCoverageOf("junit5.TestSuiteExample#test8").getInstructionsCovered());
         assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, coveredTestResultPerTestMethod.getCoverageOf("junit5.TestSuiteExample#test8").getInstructionsTotal());
+    }
+
+    @Test
+    public void testRunOnlineCoveredTestResultPerTestMethods() throws Exception {
+        EntryPoint.jacocoAgentIncludes = "example.*:tobemocked.*";
+        EntryPoint.jacocoAgentExcludes = "junit5.TestSuiteExample";
+
+        /*
+            Test the runOnlineCoveredTestResultPerTestMethods() of EntryPoint.
+                It should return the CoveredTestResultPerTestMethod with the instruction coverage computed by Jacoco.
+         */
+        final String classpath = JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP;
+
+        final CoveredTestResultPerTestMethod coveredTestResultPerTestMethod = EntryPoint.runOnlineCoveredTestResultPerTestMethods(
+                classpath + ConstantsHelper.PATH_SEPARATOR + SOURCE_PROJECT_CLASSES + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                SOURCE_PROJECT_CLASSES + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                "junit5.TestSuiteExample",
+                new String[]{"test8", "test3"}
+        );
+
+        // Assert test results
+        assertEquals(2, coveredTestResultPerTestMethod.getRunningTests().size());
+        assertEquals(2, coveredTestResultPerTestMethod.getPassingTests().size());
+        assertEquals(0, coveredTestResultPerTestMethod.getFailingTests().size());
+        assertEquals(0, coveredTestResultPerTestMethod.getIgnoredTests().size());
+
+        // Assert coverage
+        assertEquals(2, coveredTestResultPerTestMethod.getCoverageResultsMap().size());
+        assertEquals(23, coveredTestResultPerTestMethod.getCoverageOf("junit5.TestSuiteExample#test3").getInstructionsCovered());
+        assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, coveredTestResultPerTestMethod.getCoverageOf("junit5.TestSuiteExample#test3").getInstructionsTotal());
+        assertEquals(23, coveredTestResultPerTestMethod.getCoverageOf("junit5.TestSuiteExample#test8").getInstructionsCovered());
+        assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, coveredTestResultPerTestMethod.getCoverageOf("junit5.TestSuiteExample#test8").getInstructionsTotal());
+    }
+
+    @Test
+    public void testRunOnlineCoveredTestResultPerTestMethodsDetailedCompressedCoverage() throws Exception {
+        EntryPoint.coverageDetail = ParserOptions.CoverageTransformerDetail.DETAIL_COMPRESSED;
+        EntryPoint.jacocoAgentIncludes = "example.*:tobemocked.*";
+        EntryPoint.jacocoAgentExcludes = "junit5.TestSuiteExample";
+
+        /*
+            Test the runOnlineCoveredTestResultPerTestMethods() of EntryPoint.
+                It should return the CoveredTestResultPerTestMethod with the instruction coverage computed by Jacoco.
+         */
+        final String classpath = JUNIT_CP + ConstantsHelper.PATH_SEPARATOR + JUNIT5_CP;
+
+        final CoveredTestResultPerTestMethod coveredTestResultPerTestMethod = EntryPoint.runOnlineCoveredTestResultPerTestMethods(
+                classpath + ConstantsHelper.PATH_SEPARATOR + SOURCE_PROJECT_CLASSES + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                SOURCE_PROJECT_CLASSES + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                "junit5.TestSuiteExample",
+                new String[]{"test8", "test3"}
+        );
+
+        // Assert test results
+        assertEquals(2, coveredTestResultPerTestMethod.getRunningTests().size());
+        assertEquals(2, coveredTestResultPerTestMethod.getPassingTests().size());
+        assertEquals(0, coveredTestResultPerTestMethod.getFailingTests().size());
+        assertEquals(0, coveredTestResultPerTestMethod.getIgnoredTests().size());
+
+        // Assert detailed coverage
+        assertEquals(2, coveredTestResultPerTestMethod.getCoverageResultsMap().size());
+
+        assertTrue(coveredTestResultPerTestMethod.getCoverageOf("junit5.TestSuiteExample#test3") instanceof CoverageDetailed);
+        CoverageDetailed coverageDetailed = (CoverageDetailed) coveredTestResultPerTestMethod.getCoverageOf("junit5.TestSuiteExample#test3");
+        assertNotNull(coverageDetailed.getDetailedCoverage());
+        assertEquals(1, coverageDetailed.getDetailedCoverage().size());
+
+        assertTrue(coveredTestResultPerTestMethod.getCoverageOf("junit5.TestSuiteExample#test8") instanceof CoverageDetailed);
+        coverageDetailed = (CoverageDetailed) coveredTestResultPerTestMethod.getCoverageOf("junit5.TestSuiteExample#test8");
+        assertNotNull(coverageDetailed.getDetailedCoverage());
+        assertEquals(1, coverageDetailed.getDetailedCoverage().size());
     }
 
     // Tests when running same named test methods from different classes

@@ -5,9 +5,9 @@ import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.IMethodCoverage;
+import org.jacoco.core.data.ExecutionData;
 import org.jacoco.core.data.ExecutionDataStore;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -21,15 +21,19 @@ import java.util.Map;
 public class CoverageCollectorDetailedCompressed implements CoverageTransformer {
 
 	@Override
-	public CoverageDetailed transformJacocoObject(ExecutionDataStore executionData, List<String> classesDirectory) {
+	public CoverageDetailed transformJacocoObject(ExecutionDataStore executionDataStore, List<String> classesDirectory) {
 
 		CoverageInformation covered = new CoverageInformation();
 
 		final CoverageBuilder coverageBuilder = new CoverageBuilder();
-		final Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
+		final Analyzer analyzer = new Analyzer(executionDataStore, coverageBuilder);
 		try {
-			for (String directory : classesDirectory) {
-				analyzer.analyzeAll(new File(directory));
+			for (ExecutionData executionData : executionDataStore.getContents()) {
+				analyzer.analyzeClass(
+						CoverageCollectorDetailedCompressed.class.getClassLoader()
+								.getResourceAsStream(executionData.getName() + ".class"),
+						"./"
+				);
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
