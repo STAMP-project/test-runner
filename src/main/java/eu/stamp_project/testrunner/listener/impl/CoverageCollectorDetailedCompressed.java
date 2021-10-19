@@ -51,7 +51,10 @@ public class CoverageCollectorDetailedCompressed implements CoverageTransformer 
 
 						for (int i = methodCoverage.getFirstLine(); i <= methodCoverage.getLastLine() + 1; i++) {
 							int coveredI = methodCoverage.getLine(i).getInstructionCounter().getCoveredCount();
-							covClass.put(i, coveredI);
+
+							if (coveredI > 0) {
+								covClass.put(i, coveredI);
+							}
 						}
 
 					}
