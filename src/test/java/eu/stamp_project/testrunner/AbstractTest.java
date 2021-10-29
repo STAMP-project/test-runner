@@ -5,6 +5,10 @@ import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.contrib.java.lang.system.ExpectedSystemExit;
+import org.junit.rules.RuleChain;
+import org.junit.rules.TestRule;
 import spoon.Launcher;
 
 import java.io.File;
@@ -23,6 +27,11 @@ import static org.junit.Assert.assertEquals;
  * on 19/12/17
  */
 public class AbstractTest {
+
+    public final ExpectedSystemExit exit = ExpectedSystemExit.none();
+    @Rule
+    public TestRule allRules = RuleChain.emptyRuleChain().around(exit);
+
     public static String MAVEN_HOME;
 
     public static String SOURCE_PROJECT_CLASSES;

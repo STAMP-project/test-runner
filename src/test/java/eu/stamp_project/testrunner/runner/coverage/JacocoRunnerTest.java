@@ -25,6 +25,7 @@ public class JacocoRunnerTest extends AbstractTest {
             Using the api to compute the coverage on a test class
          */
 
+        exit.expectSystemExitWithStatus(0);
         JUnit4JacocoRunner.main(new String[]{
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject, SOURCE_PROJECT_CLASSES,
                         ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject, TEST_PROJECT_CLASSES,
@@ -45,6 +46,7 @@ public class JacocoRunnerTest extends AbstractTest {
             Using the api to compute the coverage on test cases
          */
 
+        exit.expectSystemExitWithStatus(0);
         JUnit4JacocoRunner.main(new String[]{
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject, SOURCE_PROJECT_CLASSES,
                         ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject, TEST_PROJECT_CLASSES,

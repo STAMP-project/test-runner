@@ -5,7 +5,11 @@ import eu.stamp_project.testrunner.listener.impl.CoverageImpl;
 import eu.stamp_project.testrunner.runner.ParserOptions;
 import eu.stamp_project.testrunner.runner.coverage.JUnit4JacocoRunner;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.ExpectedSystemExit;
+import org.junit.rules.RuleChain;
+import org.junit.rules.TestRule;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -19,6 +23,7 @@ public class CoverageTest extends AbstractTest {
             Using the api to compute the coverage on a test class
          */
 
+        exit.expectSystemExitWithStatus(0);
         JUnit4JacocoRunner.main(new String[]{
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject, SOURCE_PROJECT_CLASSES,
                         ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject, TEST_PROJECT_CLASSES,
@@ -28,6 +33,7 @@ public class CoverageTest extends AbstractTest {
         );
         final Coverage test4Coverage = CoverageImpl.load();
 
+        exit.expectSystemExitWithStatus(0);
         JUnit4JacocoRunner.main(new String[]{
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject, SOURCE_PROJECT_CLASSES,
                         ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject, TEST_PROJECT_CLASSES,

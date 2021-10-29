@@ -21,6 +21,7 @@ public class JUnit5JacocoRunnerCoveredResultPerTestMethodTest extends AbstractTe
             Using the api to compute the coverage on a test class
          */
 
+		exit.expectSystemExitWithStatus(0);
 		JUnit5JacocoRunnerCoveredResultPerTestMethod.main(new String[]{
 						ParserOptions.FLAG_pathToCompiledClassesOfTheProject, SOURCE_PROJECT_CLASSES,
 						ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject, TEST_PROJECT_CLASSES,
@@ -41,6 +42,7 @@ public class JUnit5JacocoRunnerCoveredResultPerTestMethodTest extends AbstractTe
             Using the api to compute the coverage on test cases
          */
 
+		exit.expectSystemExitWithStatus(0);
 		JUnit5JacocoRunnerCoveredResultPerTestMethod.main(new String[]{
 						ParserOptions.FLAG_pathToCompiledClassesOfTheProject, SOURCE_PROJECT_CLASSES,
 						ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject, TEST_PROJECT_CLASSES,
@@ -70,6 +72,7 @@ public class JUnit5JacocoRunnerCoveredResultPerTestMethodTest extends AbstractTe
             Using the api to compute the coverage on test cases
          */
 
+		exit.expectSystemExitWithStatus(0);
 		JUnit5JacocoRunnerCoveredResultPerTestMethod.main(new String[]{
 						ParserOptions.FLAG_pathToCompiledClassesOfTheProject, SOURCE_PROJECT_CLASSES,
 						ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject, TEST_PROJECT_CLASSES,
