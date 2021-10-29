@@ -58,6 +58,6 @@ public class JUnit5JacocoRunnerPerTestMethod extends JacocoRunnerPerTestMethod {
                 options.getFullQualifiedNameOfTestClassesToRun(),
                 options.getTestMethodNamesToRun()
         ).save();
-        ConstantsHelper.exit();
+        System.exit(0);
     }
 }

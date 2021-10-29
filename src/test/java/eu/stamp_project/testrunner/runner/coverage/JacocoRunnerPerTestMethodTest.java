@@ -1,11 +1,10 @@
 package eu.stamp_project.testrunner.runner.coverage;
 
 import eu.stamp_project.testrunner.AbstractTest;
-import eu.stamp_project.testrunner.listener.Coverage;
-import eu.stamp_project.testrunner.listener.impl.CoverageImpl;
 import eu.stamp_project.testrunner.listener.impl.CoveragePerTestMethodImpl;
 import eu.stamp_project.testrunner.runner.ParserOptions;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
 import static org.junit.Assert.assertEquals;
 
@@ -23,6 +22,7 @@ public class JacocoRunnerPerTestMethodTest extends AbstractTest {
             Using the api to compute the coverage on a test class
          */
 
+        exit.expectSystemExitWithStatus(0);
         JUnit4JacocoRunnerPerTestMethod.main(new String[]{
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject, SOURCE_PROJECT_CLASSES,
                         ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject, TEST_PROJECT_CLASSES,
@@ -43,6 +43,7 @@ public class JacocoRunnerPerTestMethodTest extends AbstractTest {
             Using the api to compute the coverage on test cases
          */
 
+        exit.expectSystemExitWithStatus(0);
         JUnit4JacocoRunnerPerTestMethod.main(new String[]{
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject, SOURCE_PROJECT_CLASSES,
                         ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject, TEST_PROJECT_CLASSES,
@@ -67,6 +68,7 @@ public class JacocoRunnerPerTestMethodTest extends AbstractTest {
             Using the api to compute the coverage on test cases
          */
 
+        exit.expectSystemExitWithStatus(0);
         JUnit4JacocoRunnerPerTestMethod.main(new String[]{
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject, SOURCE_PROJECT_CLASSES,
                         ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject, TEST_PROJECT_CLASSES,

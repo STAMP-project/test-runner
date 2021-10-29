@@ -51,6 +51,6 @@ public class JUnit5OnlineJacocoRunner extends JacocoOnlineRunner {
 				options.getFullQualifiedNameOfTestClassesToRun(),
 				options.getTestMethodNamesToRun()
 		).save();
-		ConstantsHelper.exit();
+		System.exit(0);
 	}
 }

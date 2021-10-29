@@ -54,7 +54,7 @@ public class JUnit4JacocoRunnerCoveredResultPerTestMethod extends JacocoRunnerCo
 				options.getFullQualifiedNameOfTestClassesToRun(),
 				options.getTestMethodNamesToRun()
 		).save();
-		ConstantsHelper.exit();
+		System.exit(0);
 	}
 
 }

@@ -48,6 +48,6 @@ public class JUnit4OnlineJacocoRunner extends JacocoOnlineRunner {
 				options.getFullQualifiedNameOfTestClassesToRun(),
 				options.getTestMethodNamesToRun()
 		).save();
-		ConstantsHelper.exit();
+		System.exit(0);
 	}
 }

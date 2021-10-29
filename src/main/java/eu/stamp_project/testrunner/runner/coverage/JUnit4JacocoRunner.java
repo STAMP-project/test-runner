@@ -63,7 +63,7 @@ public class JUnit4JacocoRunner extends JacocoRunner {
                 ).save();
             }
         }
-        ConstantsHelper.exit();
+        System.exit(0);
     }
 
     @Override
