@@ -18,6 +18,6 @@ jobs:
       - name: Prepare resources binaries
         run: ./src/compile-and-clean-test-projects.sh
       - name: Export MAVEN_HOME, run tests and collect coverage
-        run: export MAVEN_HOME=`mvn --version | grep 'Maven home' | sed -e 's/Maven h.* //'` && echo "🎉 ${MAVEN_HOME}" && mvn test jacoco:report
+        run: export MAVEN_HOME=`mvn --version | grep 'Maven home' | sed -e 's/Maven h.* //'` && echo "🎉 ${MAVEN_HOME}" && mvn test -DnoExitForTesting=true jacoco:report
       - name: Report coverage to Codecov
         uses: codecov/codecov-action@v1.5.2
