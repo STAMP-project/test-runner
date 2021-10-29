@@ -6,6 +6,7 @@ import eu.stamp_project.testrunner.listener.CoverageTransformer;
 import eu.stamp_project.testrunner.listener.junit5.CoveragePerJUnit5TestMethod;
 import eu.stamp_project.testrunner.runner.JUnit5Runner;
 import eu.stamp_project.testrunner.runner.ParserOptions;
+import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.jacoco.core.runtime.RuntimeData;
 
 import java.util.Collections;
@@ -57,5 +58,6 @@ public class JUnit5JacocoRunnerPerTestMethod extends JacocoRunnerPerTestMethod {
                 options.getFullQualifiedNameOfTestClassesToRun(),
                 options.getTestMethodNamesToRun()
         ).save();
+        ConstantsHelper.exit();
     }
 }

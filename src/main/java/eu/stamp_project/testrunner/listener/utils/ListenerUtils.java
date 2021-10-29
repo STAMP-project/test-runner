@@ -31,8 +31,8 @@ public class ListenerUtils {
     public static void saveToMemoryMappedFile(File file, Object object) {
         try {
             // Serialize the object
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            ObjectOutputStream out = new ObjectOutputStream(bos);
+            final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            final ObjectOutputStream out = new ObjectOutputStream(bos);
             out.writeObject(object);
             out.flush();
             byte[] bytes = bos.toByteArray();
@@ -46,11 +46,12 @@ public class ListenerUtils {
             }
 
             // Write to shared memory file
-            FileChannel channel = FileChannel.open(file.toPath(),
+            final FileChannel channel = FileChannel.open(file.toPath(),
                     StandardOpenOption.CREATE, StandardOpenOption.READ, StandardOpenOption.WRITE);
             MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, bytes.length);
             buffer.put(bytes);
 
+            bos.close();
             out.close();
             channel.close();
             System.out.println("File saved to the following path: " + file.getAbsolutePath());

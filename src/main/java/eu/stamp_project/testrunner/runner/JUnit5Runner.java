@@ -2,6 +2,7 @@ package eu.stamp_project.testrunner.runner;
 
 import eu.stamp_project.testrunner.EntryPoint;
 import eu.stamp_project.testrunner.listener.junit5.JUnit5TestResult;
+import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
@@ -36,14 +37,16 @@ public class JUnit5Runner {
                 JUnit5Runner.class.getClassLoader()
         );
         jUnit5TestResult.save();
+        ConstantsHelper.exit();
     }
 
     /**
      * Execute the test
-     * @param testClassNames full qualified names of the test classes to be run
-     * @param testMethodNames simple names of the test methods to be run
-     * @param blackList simple names of the test methods to NOT be run
-     * @param listener JUnit5 listener to record the result of the execution
+     *
+     * @param testClassNames    full qualified names of the test classes to be run
+     * @param testMethodNames   simple names of the test methods to be run
+     * @param blackList         simple names of the test methods to NOT be run
+     * @param listener          JUnit5 listener to record the result of the execution
      * @param customClassLoader the classloader that contains the classes to execute
      */
     public static void run(String[] testClassNames,
