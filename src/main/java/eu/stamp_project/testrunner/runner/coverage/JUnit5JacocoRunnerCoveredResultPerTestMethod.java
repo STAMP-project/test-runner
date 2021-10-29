@@ -6,6 +6,7 @@ import eu.stamp_project.testrunner.listener.junit5.CoveredTestResultsPerJUnit5Te
 import eu.stamp_project.testrunner.listener.junit5.JUnit5TestResult;
 import eu.stamp_project.testrunner.runner.JUnit5Runner;
 import eu.stamp_project.testrunner.runner.ParserOptions;
+import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.jacoco.core.runtime.RuntimeData;
 
 import java.util.Collections;
@@ -53,6 +54,7 @@ public class JUnit5JacocoRunnerCoveredResultPerTestMethod extends JacocoRunnerCo
 				options.getFullQualifiedNameOfTestClassesToRun(),
 				options.getTestMethodNamesToRun()
 		).save();
+		ConstantsHelper.exit();
 	}
 
 }

@@ -6,6 +6,7 @@ import eu.stamp_project.testrunner.listener.junit4.JUnit4TestResult;
 import eu.stamp_project.testrunner.listener.junit4.OnlineCoveredTestResultsPerJUnit4TestMethod;
 import eu.stamp_project.testrunner.runner.JUnit4Runner;
 import eu.stamp_project.testrunner.runner.ParserOptions;
+import eu.stamp_project.testrunner.utils.ConstantsHelper;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,5 +48,6 @@ public class JUnit4OnlineJacocoRunner extends JacocoOnlineRunner {
 				options.getFullQualifiedNameOfTestClassesToRun(),
 				options.getTestMethodNamesToRun()
 		).save();
+		ConstantsHelper.exit();
 	}
 }

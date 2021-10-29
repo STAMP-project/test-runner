@@ -6,6 +6,7 @@ import eu.stamp_project.testrunner.listener.CoveredTestResult;
 import eu.stamp_project.testrunner.listener.junit5.JUnit5Coverage;
 import eu.stamp_project.testrunner.runner.JUnit5Runner;
 import eu.stamp_project.testrunner.runner.ParserOptions;
+import eu.stamp_project.testrunner.utils.ConstantsHelper;
 
 import java.util.List;
 
@@ -62,6 +63,7 @@ public class JUnit5JacocoRunner extends JacocoRunner {
                 ).save();
             }
         }
+        ConstantsHelper.exit();
     }
 
     @Override
