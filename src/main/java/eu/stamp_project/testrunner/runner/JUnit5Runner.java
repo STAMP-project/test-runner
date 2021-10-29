@@ -37,7 +37,7 @@ public class JUnit5Runner {
                 JUnit5Runner.class.getClassLoader()
         );
         jUnit5TestResult.save();
-        ConstantsHelper.exit();
+        System.exit(0);
     }
 
     /**

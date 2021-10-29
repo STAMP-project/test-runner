@@ -33,7 +33,7 @@ public class JUnit4Runner {
                 JUnit4Runner.class.getClassLoader()
         );
         jUnit4TestResult.save();
-        ConstantsHelper.exit();
+        System.exit(0);
     }
 
     /**

@@ -13,12 +13,6 @@ import java.util.function.Function;
  */
 public class ConstantsHelper {
 
-    public static void exit() {
-        if (!"true".equals(System.getProperty("noExitForTesting"))) {
-            System.exit(0);
-        }
-    }
-
     public enum MutationEngine {
         GREGOR(Collections.singletonList("ALL")),
         DESCARTES(Arrays.asList(
