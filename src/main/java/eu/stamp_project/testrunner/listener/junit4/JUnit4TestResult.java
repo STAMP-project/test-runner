@@ -2,6 +2,7 @@ package eu.stamp_project.testrunner.listener.junit4;
 
 import eu.stamp_project.testrunner.listener.TestResult;
 import eu.stamp_project.testrunner.listener.impl.TestResultImpl;
+import eu.stamp_project.testrunner.listener.utils.ListenerUtils;
 import eu.stamp_project.testrunner.runner.Failure;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunListener;
@@ -26,10 +27,10 @@ public class JUnit4TestResult extends RunListener implements TestResult, Seriali
     private TestResultImpl internalTestResult;
 
     protected transient final Function<Description, String> toString = description ->
-            description.getClassName() + "#" + description.getMethodName();
+            ListenerUtils.getClassName.apply(description) + "#" + ListenerUtils.getMethodName.apply(description);
 
     protected transient final Function<Description, String> toStringParametrized = description ->
-            description.getClassName() + "#" + fromParametrizedToSimpleName.apply(description.getMethodName());
+            ListenerUtils.getClassName.apply(description) + "#" + fromParametrizedToSimpleName.apply(ListenerUtils.getMethodName.apply(description));
 
     protected static final Predicate<String> isParametrized = testMethodName ->
             Pattern.compile(".+\\[\\d+\\]").matcher(testMethodName).matches();
@@ -52,7 +53,7 @@ public class JUnit4TestResult extends RunListener implements TestResult, Seriali
         this.internalTestResult.getFailingTests().add(
                 new Failure(
                         this.toString.apply(failure.getDescription()),
-                        failure.getDescription().getClassName(),
+                        ListenerUtils.getClassName.apply(failure.getDescription()),
                         failure.getException()
                 )
         );
@@ -63,7 +64,7 @@ public class JUnit4TestResult extends RunListener implements TestResult, Seriali
         this.internalTestResult.getAssumptionFailingTests().add(
                 new Failure(
                         this.toString.apply(failure.getDescription()),
-                        failure.getDescription().getClassName(),
+                        ListenerUtils.getClassName.apply(failure.getDescription()),
                         failure.getException()
                 )
         );

@@ -78,7 +78,7 @@ public class CoveragePerJUnit4TestMethod extends JUnit4TestResult implements Cov
                 ListenerUtils.cloneExecutionDataStore(this.internalCoverage.getExecutionData())
         );
 
-        if (isParametrized.test(description.getMethodName())) {
+        if (isParametrized.test(ListenerUtils.getMethodName.apply(description))) {
             this.collectForParametrizedTest(this.toStringParametrized.apply(description));
         }
     }

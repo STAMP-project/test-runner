@@ -1,5 +1,6 @@
 package eu.stamp_project.testrunner.runner;
 
+import eu.stamp_project.testrunner.listener.utils.ListenerUtils;
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 
@@ -7,7 +8,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 class MethodFilter extends Filter {
 
@@ -26,13 +26,16 @@ class MethodFilter extends Filter {
 
     @Override
     public boolean shouldRun(Description description) {
-        return !this.blackList.contains(description.getMethodName()) &&
-                (
-                        (description.isTest() &&
-                                this.anyTestMethodNamesMatch.test(description) ||
-                                testMethodNames.isEmpty()) ||
-                                this.anyChildrenMatch.test(description)
-                );
+        if (description.isSuite()) {
+            return this.anyChildrenMatch.test(description);
+        } else {
+            final String methodName = ListenerUtils.getMethodName.apply(description);
+            if (this.blackList.contains(methodName)) {
+                return false;
+            } else {
+                return description.isTest() && (this.anyTestMethodNamesMatch.test(description) || testMethodNames.isEmpty());
+            }
+        }
     }
 
     private final Predicate<Description> anyChildrenMatch = description ->
@@ -41,14 +44,14 @@ class MethodFilter extends Filter {
                     .reduce(Boolean.FALSE, Boolean::logicalOr);
 
     private final Predicate<Description> anyTestMethodNamesMatch = description ->
-                    this.testMethodNames.stream()
-                            .anyMatch(testMethodName ->
-                                    Pattern.compile("(" + description.getClassName() + ")?" + testMethodName + "\\[(\\d+)\\]")
-                                    .matcher(description.getMethodName())
+            this.testMethodNames.stream()
+                    .anyMatch(testMethodName ->
+                            Pattern.compile("(" + ListenerUtils.getClassName.apply(description) + ")?" + testMethodName + "\\[(\\d+)\\]")
+                                    .matcher(ListenerUtils.getMethodName.apply(description))
                                     .find()
-                            ) ||
-                    this.testMethodNames.contains(description.getMethodName()) ||
-                    this.testMethodNames.contains(description.getClassName() + "#" + description.getMethodName());
+                    ) ||
+                    this.testMethodNames.contains(ListenerUtils.getMethodName.apply(description)) ||
+                    this.testMethodNames.contains(ListenerUtils.getClassName.apply(description) + "#" + ListenerUtils.getMethodName.apply(description));
 
     @Override
     public String describe() {

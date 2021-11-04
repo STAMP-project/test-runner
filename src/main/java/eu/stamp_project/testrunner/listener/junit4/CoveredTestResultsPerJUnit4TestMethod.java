@@ -76,7 +76,7 @@ public class CoveredTestResultsPerJUnit4TestMethod extends JUnit4TestResult impl
 				ListenerUtils.cloneExecutionDataStore(this.internalCoveredTestResult.getExecutionData())
 		);
 
-		if (isParametrized.test(description.getMethodName())) {
+		if (isParametrized.test(ListenerUtils.getMethodName.apply(description))) {
 			this.collectForParametrizedTest(this.toStringParametrized.apply(description));
 		}
 	}
@@ -86,7 +86,7 @@ public class CoveredTestResultsPerJUnit4TestMethod extends JUnit4TestResult impl
 		this.internalCoveredTestResult.getFailingTests().add(
 				new Failure(
 						this.toString.apply(failure.getDescription()),
-						failure.getDescription().getClassName(),
+						ListenerUtils.getClassName.apply(failure.getDescription()),
 						failure.getException()
 				)
 		);

@@ -3,6 +3,7 @@ package eu.stamp_project.testrunner.runner;
 import eu.stamp_project.testrunner.EntryPoint;
 import eu.stamp_project.testrunner.listener.junit4.JUnit4TestResult;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
+import org.junit.runner.Description;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
