@@ -4,13 +4,39 @@ import eu.stamp_project.testrunner.EntryPoint;
 import eu.stamp_project.testrunner.listener.CoveredTestResultPerTestMethod;
 import org.jacoco.core.data.ExecutionData;
 import org.jacoco.core.data.ExecutionDataStore;
+import org.junit.runner.Description;
 
 import java.io.*;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.StandardOpenOption;
+import java.util.function.Function;
 
 public class ListenerUtils {
+
+    public static final Function<Description, String> getMethodName = description -> {
+        String methodName = "";
+        try {
+            methodName = description.getMethodName();
+        } catch (NoSuchMethodError e) {
+            methodName = description.getDisplayName().split("\\(")[0];
+        }
+        return methodName;
+    };
+
+    public static final Function<Description, String> getClassName = description -> {
+        String className = "";
+        try {
+            className = description.getClassName();
+        } catch (NoSuchMethodError e) {
+            if (description.isSuite()) {
+                className = description.getDisplayName();
+            } else {
+                className = description.getDisplayName().split("\\(")[1].split("\\)")[0];
+            }
+        }
+        return className;
+    };
 
 	/**
 	 * Clones each result so it doesn't get changed by the runtime afterwards
