@@ -125,7 +125,7 @@ public class EntryPoint {
         final String[] finalGoals = new String[splittedPreGoals.length + goals.length];
         System.arraycopy(splittedPreGoals, 0, finalGoals, 0, splittedPreGoals.length);
         System.arraycopy(goals, 0, finalGoals, splittedPreGoals.length, goals.length);
-        LOGGER.info("run mvn {}", String.join(ConstantsHelper.WHITE_SPACE, finalGoals));
+        LOGGER.debug("run mvn {}", String.join(ConstantsHelper.WHITE_SPACE, finalGoals));
         InvocationRequest request = new DefaultInvocationRequest();
         request.setGoals(Arrays.asList(goals));
         request.setPomFile(new File(absolutePathToPomFile));
