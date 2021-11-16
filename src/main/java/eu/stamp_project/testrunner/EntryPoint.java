@@ -259,7 +259,7 @@ public class EntryPoint {
         }
         final TestResult load = TestResultImpl.load();
         if (EntryPoint.verbose) {
-            LOGGER.info(
+            LOGGER.debug(
                     "Test has been run: {}", Stream
                             .concat(load.getPassingTests().stream().map(Object::toString),
                                     load.getFailingTests().stream().map(Object::toString))
@@ -386,7 +386,7 @@ public class EntryPoint {
         }
         final Coverage load = CoverageImpl.load();
         if (EntryPoint.verbose) {
-            LOGGER.info("Global coverage has been computed {}", load.toString());
+            LOGGER.debug("Global coverage has been computed {}", load.toString());
         }
         return load;
     }
@@ -463,7 +463,7 @@ public class EntryPoint {
         }
         final CoveragePerTestMethod load = CoveragePerTestMethodImpl.load();
         if (EntryPoint.verbose) {
-            LOGGER.info("Coverage per test methods has been computed {}{}", ConstantsHelper.LINE_SEPARATOR,
+            LOGGER.debug("Coverage per test methods has been computed {}{}", ConstantsHelper.LINE_SEPARATOR,
                     load.toString());
         }
         return load;
@@ -567,7 +567,7 @@ public class EntryPoint {
         }
         final CoveredTestResultPerTestMethod load = CoveredTestResultPerTestMethodImpl.load();
         if (EntryPoint.verbose) {
-            LOGGER.info("Coverage per test methods has been computed {}{}", ConstantsHelper.LINE_SEPARATOR,
+            LOGGER.debug("Coverage per test methods has been computed {}{}", ConstantsHelper.LINE_SEPARATOR,
                     load.toString());
         }
         return load;
@@ -663,7 +663,7 @@ public class EntryPoint {
 
         final CoveredTestResultPerTestMethod load = OnlineCoveredTestResultPerTestMethodImpl.load();
         if (EntryPoint.verbose) {
-            LOGGER.info("Coverage per test methods has been computed {}{}", ConstantsHelper.LINE_SEPARATOR,
+            LOGGER.debug("Coverage per test methods has been computed {}{}", ConstantsHelper.LINE_SEPARATOR,
                     load.toString());
         }
         return load;
@@ -720,7 +720,7 @@ public class EntryPoint {
         command = command.stream().map(s -> s.replaceAll("%20", " ")).collect(Collectors.toList());
 
         if (EntryPoint.verbose) {
-            LOGGER.info("Run: {}", command);
+            LOGGER.debug("Run: {}", command);
         }
         if (workingDirectory != null && !workingDirectory.exists()) {
             LOGGER.warn(
@@ -862,7 +862,7 @@ public class EntryPoint {
             .map(path -> path.startsWith("file:") ? path.substring("file:".length()) : path)
             .map(path -> path.split("!")[0]).map(path -> path.replace("/", ConstantsHelper.FILE_SEPARATOR))
             .map(EntryPoint::RemoveWinFileSeparator)
-            .peek(path -> LOGGER.info("{}", path))
+            .peek(path -> LOGGER.debug("{}", path))
             .collect(Collectors.joining(ConstantsHelper.PATH_SEPARATOR));
 
     private static final List<Class<?>> JACOCO_DEPENDENCIES = Arrays.asList(IRuntime.class, RT.class, FileUtils.class, ClassReader.class);
@@ -920,7 +920,7 @@ public class EntryPoint {
             path = path.substring("file:".length()).split("!")[0];
         }
         path = RemoveWinFileSeparator(path.replace("/", ConstantsHelper.FILE_SEPARATOR));
-        LOGGER.info("Path to runner Classes: {}", path);
+        LOGGER.debug("Path to runner Classes: {}", path);
         return path;
     }
 
