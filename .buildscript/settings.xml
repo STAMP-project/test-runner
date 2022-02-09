@@ -1,0 +1,14 @@
+<settings>
+  <servers>
+    <server>
+      <id>ossrh-snapshot</id>
+      <username>${env.OSS_TESTRUNNER_USERNAME}</username>
+      <password>${env.OSS_TESTRUNNER_PASSWORD}</password>
+    </server>
+    <server>
+      <id>ossrh</id>
+      <username>${env.OSS_TESTRUNNER_USERNAME}</username>
+      <password>${env.OSS_TESTRUNNER_PASSWORD}</password>
+    </server>
+  </servers>
+</settings>
