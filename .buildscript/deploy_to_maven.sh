@@ -19,8 +19,7 @@ echo "Deploying ..."
 PREVIOUS_MAVEN_CENTRAL_VERSION=`curl "https://www.monperrus.net/martin/last-version-maven.py?groupId=eu.stamp-project&artifactId=test-runner" | egrep -o "[0-9]+$"`
 
 # and incrementing it
-#mvn versions:set -DnewVersion=1.$((PREVIOUS_MAVEN_CENTRAL_VERSION+1))
-mvn versions:set -DnewVersion=4.0
+mvn versions:set -DnewVersion=4.$((PREVIOUS_MAVEN_CENTRAL_VERSION+1))
 
 mvn -Prelease deploy --settings .buildscript/settings.xml -Dmaven.test.skip=true
 echo "Well deployed!"
