@@ -1,6 +1,4 @@
-# Test Runner
-
-[![Build Status](https://travis-ci.org/STAMP-project/testrunner.svg?branch=master)](https://travis-ci.org/STAMP-project/testrunner) [![Coverage Status](https://coveralls.io/repos/github/STAMP-project/testrunner/badge.svg?branch=master)](https://coveralls.io/github/STAMP-project/testrunner?branch=master) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/eu.stamp-project/test-runner/badge.svg)](https://mavenbadges.herokuapp.com/maven-central/eu.stamp-project/test-runner)
+# Test Runner · [![Java CI](https://github.com/STAMP-project/test-runner/actions/workflows/mvn-build-action.yml/badge.svg)](https://github.com/STAMP-project/test-runner/actions/workflows/mvn-build-action.yml) [![Coverage Status](https://coveralls.io/repos/github/STAMP-project/testrunner/badge.svg?branch=master)](https://coveralls.io/github/STAMP-project/testrunner?branch=master) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/eu.stamp-project/test-runner/badge.svg)](https://mavenbadges.herokuapp.com/maven-central/eu.stamp-project/test-runner)
 
 This project provides a framework to run JUnit tests in a new JVM. It allows to retrieve results using serialization / deserialization.
 
