@@ -16,12 +16,25 @@ import java.util.List;
 
 public class JUnit5OnlineJacocoRunner extends JacocoOnlineRunner {
 
-	public JUnit5OnlineJacocoRunner(List<String> classesDirectory, List<String> testClassesDirectory, CoverageTransformer coverageTransformer) {
-		this(classesDirectory, testClassesDirectory, Collections.emptyList(), coverageTransformer);
+	public JUnit5OnlineJacocoRunner(List<String> classesDirectory,
+									List<String> testClassesDirectory,
+									CoverageTransformer coverageTransformer) {
+		super(classesDirectory, testClassesDirectory, coverageTransformer);
 	}
 
-	public JUnit5OnlineJacocoRunner(List<String> classesDirectory, List<String> testClassesDirectory, List<String> blackList, CoverageTransformer coverageTransformer) {
+	public JUnit5OnlineJacocoRunner(List<String> classesDirectory,
+									List<String> testClassesDirectory,
+									List<String> blackList,
+									CoverageTransformer coverageTransformer) {
 		super(classesDirectory, testClassesDirectory, blackList, coverageTransformer);
+	}
+
+	public JUnit5OnlineJacocoRunner(List<String> classesDirectory,
+									List<String> testClassesDirectory,
+									List<String> blackList,
+									int nbFailingLoadClass,
+									CoverageTransformer coverageTransformer) {
+		super(classesDirectory, testClassesDirectory, blackList, nbFailingLoadClass, coverageTransformer);
 	}
 
 	@Override
@@ -31,6 +44,7 @@ public class JUnit5OnlineJacocoRunner extends JacocoOnlineRunner {
 				testClassNames,
 				testMethodNames,
 				Collections.emptyList(),
+				this.nbFailingLoadClass,
 				(JUnit5TestResult) listener,
 				JUnit5OnlineJacocoRunner.class.getClassLoader()
 		);
@@ -44,6 +58,7 @@ public class JUnit5OnlineJacocoRunner extends JacocoOnlineRunner {
 				options.getPathToCompiledClassesOfTheProject(),
 				options.getPathToCompiledTestClassesOfTheProject(),
 				options.getBlackList(),
+				options.getNbFailingLoadClass(),
 				options.getCoverageTransformer()
 		).runCoveredTestResultPerTestMethod(
 				options.getPathToCompiledClassesOfTheProject(),

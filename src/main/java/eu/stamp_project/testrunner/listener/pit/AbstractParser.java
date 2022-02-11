@@ -3,6 +3,7 @@ package eu.stamp_project.testrunner.listener.pit;
 import java.io.File;
 import java.util.List;
 
+@Deprecated
 abstract public class AbstractParser<T extends AbstractPitResult> {
 
     public enum OutputFormat {XML, CSV}

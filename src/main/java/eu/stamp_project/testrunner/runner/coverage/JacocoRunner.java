@@ -44,12 +44,16 @@ public abstract class JacocoRunner {
 
     protected CoverageTransformer coverageTransformer;
 
+	protected int nbFailingLoadClass;
+
     /**
      * @param classesDirectory     the paths to the directories that contains the .class file of sources
      * @param testClassesDirectory the paths to the directories that contains the .class file of test sources
      */
-    public JacocoRunner(List<String> classesDirectory, List<String> testClassesDirectory, CoverageTransformer coverageTransformer) {
-        this(classesDirectory, testClassesDirectory, Collections.emptyList(), coverageTransformer);
+    public JacocoRunner(List<String> classesDirectory,
+						List<String> testClassesDirectory,
+						CoverageTransformer coverageTransformer) {
+        this(classesDirectory, testClassesDirectory, Collections.emptyList(), 0, coverageTransformer);
     }
 
 	/**
@@ -57,7 +61,18 @@ public abstract class JacocoRunner {
 	 * @param testClassesDirectory the paths to the directories that contains the .class file of test sources
 	 * @param blackList            the names of the test methods to NOT be run.
 	 */
-	public JacocoRunner(List<String> classesDirectory, List<String> testClassesDirectory, List<String> blackList, CoverageTransformer coverageTransformer) {
+	public JacocoRunner(List<String> classesDirectory,
+						List<String> testClassesDirectory,
+						List<String> blackList,
+						CoverageTransformer coverageTransformer) {
+		this(classesDirectory, testClassesDirectory, blackList, 0, coverageTransformer);
+	}
+
+	public JacocoRunner(List<String> classesDirectory,
+						List<String> testClassesDirectory,
+						List<String> blackList,
+						int nbFailingLoadClass,
+						CoverageTransformer coverageTransformer) {
 		URL[] dirs = Stream.concat(classesDirectory.stream(), testClassesDirectory.stream())
 				.map(x -> {
 					try {
@@ -72,17 +87,14 @@ public abstract class JacocoRunner {
 		this.runtime = new LoggerRuntime();
 		this.instrumenter = new Instrumenter(this.runtime);
 		this.coverageTransformer = coverageTransformer;
+		this.nbFailingLoadClass = nbFailingLoadClass;
 		// instrument source code
 		instrumentAll(classesDirectory);
 	}
 
-    
 	protected void recreateInstrumentedClassloaded(String classpath, String classesDirectory, Map<String, byte[]> definitions) {
-
 		URLClassLoader urlloader = getUrlClassloaderFromClassPath(classpath);
-
 		recreateInstrumentedClassloaded(urlloader, classesDirectory, definitions);
-
 	}
 
 	protected void recreateInstrumentedClassloaded(ClassLoader urlloader, String classesDirectory, Map<String, byte[]> definitions) {
@@ -141,7 +153,12 @@ public abstract class JacocoRunner {
                     IOUtils.toByteArray(classLoader.getResourceAsStream(resource))
             );
             runtime.startup(data);
-            final TestResult listener = this.executeTest(new String[]{fullQualifiedNameOfTestClass}, testMethodNames, Collections.emptyList());
+            final TestResult listener = this.executeTest(
+					new String[]{fullQualifiedNameOfTestClass},
+					testMethodNames,
+					Collections.emptyList(),
+					this.nbFailingLoadClass
+			);
             if (!((TestResult) listener).getFailingTests().isEmpty()) {
                 System.err.println("Some test(s) failed during computation of coverage:\n" +
                         ((TestResult) listener).getFailingTests()
@@ -163,12 +180,8 @@ public abstract class JacocoRunner {
 
     protected abstract CoveredTestResult executeTest(String[] testClassNames,
 													 String[] testMethodNames,
-													 List<String> blackList);
-    
-
-
-
-
+													 List<String> blackList,
+													 int nbFailingLoadClass);
 
     /**
      * Compute the instruction coverage of the given tests
@@ -208,7 +221,7 @@ public abstract class JacocoRunner {
         });
         try {
             runtime.startup(data);
-            CoveredTestResult listener = this.executeTest(fullQualifiedNameOfTestClasses, new String[0], this.blackList);
+            CoveredTestResult listener = this.executeTest(fullQualifiedNameOfTestClasses, new String[0], this.blackList, this.nbFailingLoadClass);
 
             if (!listener.getFailingTests().isEmpty()) {
                 System.err.println("Some test(s) failed during computation of coverage:\n" +
@@ -231,7 +244,6 @@ public abstract class JacocoRunner {
             throw new RuntimeException(e);
         }
     }
-
 
     public void instrumentAll(List<String> classesDirectory) {
     	for (String directory : classesDirectory) {
@@ -259,21 +271,13 @@ public abstract class JacocoRunner {
   	public URLClassLoader getUrlClassloader(String[] classpath, String classesDirectory, String testClassesDirectory) {
   		URLClassLoader classLoader;
   		URL[] urls = new URL[classpath.length + 2];
-
   		try {
-
   			for (int i = 0; i < classpath.length; i++) {
   				urls[i] = new File(classpath[i]).toURI().toURL();
   			}
-
   			urls[classpath.length] = new File(classesDirectory).toURI().toURL();
-
   			urls[classpath.length + 1] = new File(testClassesDirectory).toURI().toURL();
-
-  			classLoader = new URLClassLoader(urls, ClassLoader.getSystemClassLoader()// this.instrumentedClassLoader
-  			);
-
-
+  			classLoader = new URLClassLoader(urls, ClassLoader.getSystemClassLoader());
   		} catch (MalformedURLException e) {
   			throw new RuntimeException(e);
   		}
@@ -290,16 +294,11 @@ public abstract class JacocoRunner {
   		URLClassLoader classLoader;
   		String[] cps = classpath.split(File.pathSeparator);
   		URL[] urls = new URL[cps.length];
-
   		try {
-
   			for (int i = 0; i < cps.length; i++) {
-  	
   				urls[i] = new File(cps[i]).toURI().toURL();
   			}
-
   			classLoader = new URLClassLoader(urls, ClassLoader.getSystemClassLoader());
-
   		} catch (MalformedURLException e) {
   			throw new RuntimeException(e);
   		}

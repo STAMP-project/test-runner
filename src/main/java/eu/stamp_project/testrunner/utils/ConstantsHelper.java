@@ -13,6 +13,7 @@ import java.util.function.Function;
  */
 public class ConstantsHelper {
 
+    @Deprecated
     public enum MutationEngine {
         GREGOR(Collections.singletonList("ALL")),
         DESCARTES(Arrays.asList(

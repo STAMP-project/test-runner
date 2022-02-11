@@ -2,7 +2,6 @@ package eu.stamp_project.testrunner.runner;
 
 import eu.stamp_project.testrunner.EntryPoint;
 import eu.stamp_project.testrunner.listener.junit5.JUnit5TestResult;
-import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
@@ -10,6 +9,7 @@ import org.junit.platform.launcher.core.LauncherFactory;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectMethod;
@@ -26,13 +26,14 @@ public class JUnit5Runner {
      * This method is not meant to be used directly, but rather using {@link EntryPoint}
      * For the expected arguments, see {@link ParserOptions}
      */
-    public static void main(String args[]) {
+    public static void main(String []args) {
         final JUnit5TestResult jUnit5TestResult = new JUnit5TestResult();
         final ParserOptions options = ParserOptions.parse(args);
         JUnit5Runner.run(
                 options.getFullQualifiedNameOfTestClassesToRun(),
                 options.getTestMethodNamesToRun(),
                 options.getBlackList(),
+                options.getNbFailingLoadClass(),
                 jUnit5TestResult,
                 JUnit5Runner.class.getClassLoader()
         );
@@ -52,18 +53,22 @@ public class JUnit5Runner {
     public static void run(String[] testClassNames,
                            String[] testMethodNames,
                            List<String> blackList, // TODO the blacklist is not yet implemented
+                           int nbFailingLoadClass,
                            JUnit5TestResult listener,
                            ClassLoader customClassLoader) {
+        AtomicInteger numberOfFailedLoadClass = new AtomicInteger();
         final LauncherDiscoveryRequestBuilder requestBuilder = LauncherDiscoveryRequestBuilder.request();
         if (testMethodNames.length == 0) {
             if (testClassNames.length > 0) {
                 Arrays.asList(testClassNames).forEach(testClassName -> {
                             try {
-                                requestBuilder.selectors(
-                                        selectClass(customClassLoader.loadClass(testClassName))
-                                );
+                                final Class<?> clazz = customClassLoader.loadClass(testClassName);
+                                requestBuilder.selectors(selectClass(clazz));
                             } catch (ClassNotFoundException e) {
-                                throw new RuntimeException(e);
+                                if (numberOfFailedLoadClass.incrementAndGet() > nbFailingLoadClass) {
+                                    throw new RuntimeException(e);
+                                }
+                                e.printStackTrace();
                             }
                         }
                 );

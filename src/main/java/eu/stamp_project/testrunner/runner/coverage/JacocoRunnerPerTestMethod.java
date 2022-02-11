@@ -80,7 +80,7 @@ public abstract class JacocoRunnerPerTestMethod extends JacocoRunner {
     }
 
     @Override
-    protected CoveredTestResult executeTest(String[] testClassNames, String[] testMethodNames, List<String> blackList) {
+    protected CoveredTestResult executeTest(String[] testClassNames, String[] testMethodNames, List<String> blackList, int nbFailingLoadClass) {
         throw new UnsupportedOperationException();
     }
 
@@ -102,7 +102,18 @@ public abstract class JacocoRunnerPerTestMethod extends JacocoRunner {
      * @param testClassesDirectory the path to the directory that contains the .class file of test sources
      * @param blackList            the names of the test methods to NOT be run.
      */
-    public JacocoRunnerPerTestMethod(List<String> classesDirectory, List<String> testClassesDirectory, List<String> blackList, CoverageTransformer coverageTransformer) {
-        super(classesDirectory, testClassesDirectory, blackList, coverageTransformer);
+    public JacocoRunnerPerTestMethod(List<String> classesDirectory,
+                                     List<String> testClassesDirectory,
+                                     List<String> blackList,
+                                     CoverageTransformer coverageTransformer) {
+        this(classesDirectory, testClassesDirectory, blackList, 0, coverageTransformer);
+    }
+
+    public JacocoRunnerPerTestMethod(List<String> classesDirectory,
+                                                  List<String> testClassesDirectory,
+                                                  List<String> blackList,
+                                                  int nbFailingLoadClass,
+                                                  CoverageTransformer coverageTransformer) {
+        super(classesDirectory, testClassesDirectory, blackList, nbFailingLoadClass, coverageTransformer);
     }
 }

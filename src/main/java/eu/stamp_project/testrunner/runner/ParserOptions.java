@@ -150,6 +150,17 @@ public class ParserOptions {
                                                            " provided in the coverage information. Valid values:" +
                                                            "'SUMMARIZED' (default), 'DETAIL' or 'METHOD_DETAIL'.";
 
+    /**
+     * This option specifies the number of "ClassNotFoundException" throws when running the tests.
+     * This option allows to skip some missing compiled test classes
+     */
+    private int nbFailingLoadClass = 0;
+
+    public static final String FLAG_nbFailingLoadClass = "--nb-failing-load-class";
+
+    public static final String FLAG_HELP_nbFailingLoadClass = "This option specifies the number of \"ClassNotFoundException\"" +
+            " throws when running the tests." +
+            "This option allows to skip some missing compiled test classes";
 
     private ParserOptions() {
         this.pathToCompiledClassesOfTheProject = Collections.singletonList("");
@@ -178,6 +189,10 @@ public class ParserOptions {
 
     public List<String> getBlackList() {
         return blackList;
+    }
+
+    public int getNbFailingLoadClass() {
+        return nbFailingLoadClass;
     }
 
     public CoverageTransformer getCoverageTransformer() {

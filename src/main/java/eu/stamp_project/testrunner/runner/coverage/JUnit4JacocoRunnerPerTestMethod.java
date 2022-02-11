@@ -20,8 +20,19 @@ import java.util.List;
  */
 public class JUnit4JacocoRunnerPerTestMethod extends JacocoRunnerPerTestMethod {
 
-    public JUnit4JacocoRunnerPerTestMethod(List<String> classesDirectory, List<String> testClassesDirectory, List<String> blackList, CoverageTransformer coverageTransformer) {
+    public JUnit4JacocoRunnerPerTestMethod(List<String> classesDirectory,
+                                           List<String> testClassesDirectory,
+                                           List<String> blackList,
+                                           CoverageTransformer coverageTransformer) {
         super(classesDirectory, testClassesDirectory, blackList, coverageTransformer);
+    }
+
+    public JUnit4JacocoRunnerPerTestMethod(List<String> classesDirectory,
+                                           List<String> testClassesDirectory,
+                                           List<String> blackList,
+                                           int nbFailingLoadClass,
+                                           CoverageTransformer coverageTransformer) {
+        super(classesDirectory, testClassesDirectory, blackList, nbFailingLoadClass, coverageTransformer);
     }
 
     @Override
@@ -34,6 +45,7 @@ public class JUnit4JacocoRunnerPerTestMethod extends JacocoRunnerPerTestMethod {
                 testClassNames,
                 testMethodNames,
                 Collections.emptyList(),
+                this.nbFailingLoadClass,
                 (JUnit4TestResult) listener,
                 this.instrumentedClassLoader
         );
@@ -52,6 +64,7 @@ public class JUnit4JacocoRunnerPerTestMethod extends JacocoRunnerPerTestMethod {
                 options.getPathToCompiledClassesOfTheProject(),
                 options.getPathToCompiledTestClassesOfTheProject(),
                 options.getBlackList(),
+                options.getNbFailingLoadClass(),
                 options.getCoverageTransformer()
         ).runCoveragePerTestMethod(
                 options.getPathToCompiledClassesOfTheProject(),

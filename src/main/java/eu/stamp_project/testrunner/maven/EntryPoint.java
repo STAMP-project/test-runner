@@ -20,6 +20,7 @@ import java.util.function.Predicate;
  * <p>
  * This class is an extension of {@link eu.stamp_project.testrunner.EntryPoint} to run the tests using Maven goals
  */
+@Deprecated
 public class EntryPoint {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EntryPoint.class);

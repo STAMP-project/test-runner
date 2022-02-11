@@ -13,6 +13,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,12 +27,25 @@ import static java.util.ResourceBundle.clearCache;
 public abstract class JacocoRunnerCoveredResultPerTestMethod extends JacocoRunnerPerTestMethod {
 
 
-	public JacocoRunnerCoveredResultPerTestMethod(List<String> classesDirectory, List<String> testClassesDirectory, CoverageTransformer coverageTransformer) {
-		super(classesDirectory, testClassesDirectory, coverageTransformer);
+	public JacocoRunnerCoveredResultPerTestMethod(List<String> classesDirectory,
+												  List<String> testClassesDirectory,
+												  CoverageTransformer coverageTransformer) {
+		this(classesDirectory, testClassesDirectory, Collections.emptyList(), coverageTransformer);
 	}
 
-	public JacocoRunnerCoveredResultPerTestMethod(List<String> classesDirectory, List<String> testClassesDirectory, List<String> blackList, CoverageTransformer coverageTransformer) {
-		super(classesDirectory, testClassesDirectory, blackList, coverageTransformer);
+	public JacocoRunnerCoveredResultPerTestMethod(List<String> classesDirectory,
+												  List<String> testClassesDirectory,
+												  List<String> blackList,
+												  CoverageTransformer coverageTransformer) {
+		this(classesDirectory, testClassesDirectory, blackList, 0, coverageTransformer);
+	}
+
+	public JacocoRunnerCoveredResultPerTestMethod(List<String> classesDirectory,
+												  List<String> testClassesDirectory,
+												  List<String> blackList,
+												  int nbFailingLoadClass,
+												  CoverageTransformer coverageTransformer) {
+		super(classesDirectory, testClassesDirectory, blackList, nbFailingLoadClass, coverageTransformer);
 	}
 
 	public CoveredTestResultPerTestMethod runCoveredTestResultPerTestMethod(List<String> classesDirectory,
@@ -79,7 +93,10 @@ public abstract class JacocoRunnerCoveredResultPerTestMethod extends JacocoRunne
 	}
 
 	@Override
-	protected CoveragePerTestMethod executeTestPerTestMethod(RuntimeData data, List<String> classesDirectory, String[] testClassNames, String[] testMethodNames) {
+	protected CoveragePerTestMethod executeTestPerTestMethod(RuntimeData data,
+															 List<String> classesDirectory,
+															 String[] testClassNames,
+															 String[] testMethodNames) {
 		throw new UnsupportedOperationException();
 	}
 

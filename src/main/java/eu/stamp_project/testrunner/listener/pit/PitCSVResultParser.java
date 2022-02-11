@@ -11,6 +11,7 @@ import java.util.List;
  * benjamin.danglot@inria.fr
  * on 1/4/17
  */
+@Deprecated
 public class PitCSVResultParser extends AbstractParser<PitCSVResult> {
 
     public PitCSVResultParser() {

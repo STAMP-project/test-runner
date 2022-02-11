@@ -1,6 +1,6 @@
 package eu.stamp_project.testrunner.listener.pit;
 
-
+@Deprecated
 public class AbstractPitResult {
 
     public enum State {SURVIVED, KILLED, NO_COVERAGE, TIMED_OUT, NON_VIABLE, MEMORY_ERROR}

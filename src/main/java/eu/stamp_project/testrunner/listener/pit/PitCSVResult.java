@@ -5,6 +5,7 @@ package eu.stamp_project.testrunner.listener.pit;
  * benjamin.danglot@inria.fr
  * on 1/4/17
  */
+@Deprecated
 public class PitCSVResult extends AbstractPitResult{
 
     public PitCSVResult(String fullQualifiedNameOfMutatedClass, State stateOfMutant,

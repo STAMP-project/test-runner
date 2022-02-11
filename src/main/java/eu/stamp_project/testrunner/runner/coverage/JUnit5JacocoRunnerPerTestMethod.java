@@ -19,8 +19,19 @@ import java.util.List;
  */
 public class JUnit5JacocoRunnerPerTestMethod extends JacocoRunnerPerTestMethod {
 
-    public JUnit5JacocoRunnerPerTestMethod(List<String> classesDirectory, List<String> testClassesDirectory, List<String> blackList, CoverageTransformer coverageTransformer) {
+    public JUnit5JacocoRunnerPerTestMethod(List<String> classesDirectory,
+                                           List<String> testClassesDirectory,
+                                           List<String> blackList,
+                                           CoverageTransformer coverageTransformer) {
         super(classesDirectory, testClassesDirectory, blackList, coverageTransformer);
+    }
+
+    public JUnit5JacocoRunnerPerTestMethod(List<String> classesDirectory,
+                                           List<String> testClassesDirectory,
+                                           List<String> blackList,
+                                           int nbFailingLoadClass,
+                                           CoverageTransformer coverageTransformer) {
+        super(classesDirectory, testClassesDirectory, blackList, nbFailingLoadClass, coverageTransformer);
     }
 
     @Override
@@ -33,6 +44,7 @@ public class JUnit5JacocoRunnerPerTestMethod extends JacocoRunnerPerTestMethod {
                 testClassNames,
                 testMethodNames,
                 Collections.emptyList(),
+                this.nbFailingLoadClass,
                 listener,
                 this.instrumentedClassLoader
         );
@@ -51,6 +63,7 @@ public class JUnit5JacocoRunnerPerTestMethod extends JacocoRunnerPerTestMethod {
                 options.getPathToCompiledClassesOfTheProject(),
                 options.getPathToCompiledTestClassesOfTheProject(),
                 options.getBlackList(),
+                options.getNbFailingLoadClass(),
                 options.getCoverageTransformer()
         ).runCoveragePerTestMethod(
                 options.getPathToCompiledClassesOfTheProject(),

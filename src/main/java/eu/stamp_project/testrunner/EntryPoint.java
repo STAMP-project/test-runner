@@ -160,6 +160,12 @@ public class EntryPoint {
      */
     public static String jacocoAgentExcludes;
 
+    /**
+     * This option specifies the number of "ClassNotFoundException" throws when running the tests.
+     * This option allows to skip some missing compiled test classes
+     */
+    public static int nbFailingLoadClass = 0;
+
     // PIT OPTIONS
 
     /**
