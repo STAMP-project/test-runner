@@ -2,14 +2,14 @@ package eu.stamp_project.testrunner.runner;
 
 import eu.stamp_project.testrunner.EntryPoint;
 import eu.stamp_project.testrunner.listener.junit4.JUnit4TestResult;
-import eu.stamp_project.testrunner.utils.ConstantsHelper;
-import org.junit.runner.Description;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Benjamin DANGLOT
@@ -30,6 +30,7 @@ public class JUnit4Runner {
                 options.getFullQualifiedNameOfTestClassesToRun(),
                 options.getTestMethodNamesToRun(),
                 options.getBlackList(),
+                options.getNbFailingLoadClass(),
                 jUnit4TestResult,
                 JUnit4Runner.class.getClassLoader()
         );
@@ -48,16 +49,22 @@ public class JUnit4Runner {
     public static void run(String[] testClassNames,
                            String[] testMethodNames,
                            List<String> blackList,
+                           int nbFailingLoadClass,
                            JUnit4TestResult listener,
                            ClassLoader customClassLoader) {
+        AtomicInteger numberOfFailedLoadClass = new AtomicInteger();
         Request request;
         request = Request.classes(Arrays.stream(testClassNames).map(testClassName -> {
             try {
                 return customClassLoader.loadClass(testClassName);
             } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
+                if (numberOfFailedLoadClass.incrementAndGet() > nbFailingLoadClass) {
+                    throw new RuntimeException(e);
+                }
+                e.printStackTrace();
+                return null;
             }
-        }).toArray(Class[]::new));
+        }).filter(Objects::nonNull).toArray(Class[]::new));
         final MethodFilter filter = new MethodFilter(Arrays.asList(testMethodNames), blackList);
         request = request.filterWith(filter);
         final Runner runner = request.getRunner();
