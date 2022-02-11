@@ -201,6 +201,7 @@ In `EntryPoint` class, you have access to several fields that allow to configure
    * `AbstractParser.OutputFormat pitOutputFormat`: specify the output format to be used for the mutation analyzed. Possible values are `AbstractParser.OutputFormat.XML` or `AbstractParser.OutputFormat.CSV`. Default is `AbstractParser.OutputFormat.XML`. The `AbstractParser.OutputFormat.XML` contains more information than the `AbstractParser.OutputFormat.CSV`.
    * `String jacocoAgentIncludes`: used in the online mode of coverage computation. Passed to the jacoco agent as the `includes` option.
    * `String jacocoAgentExcludes`: used in the online mode of coverage computation. Passed to the jacoco agent as the `excludes` option.
+   * `int nbFailingLoadClass`: specify the number of "ClassNotFoundException" throws when running the tests.
 
 ## Dependency:
 
