@@ -250,7 +250,8 @@ public class EntryPoint {
                                 + String.join(ConstantsHelper.PATH_SEPARATOR, methodNames)),
                         EntryPoint.blackList.isEmpty() ? ""
                                 : (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE
-                                + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList))
+                                + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
+                        ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
                 }
         );
         return EntryPoint.runTests(javaCommand);
@@ -353,6 +354,7 @@ public class EntryPoint {
                         EntryPoint.coverageDetail == ParserOptions.CoverageTransformerDetail.SUMMARIZED ? "" :
                                 (ParserOptions.FLAG_coverage_detail + ConstantsHelper.WHITE_SPACE
                                         + EntryPoint.coverageDetail.name()),
+                        ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
                 });
         return EntryPoint.runCoverage(javaCommand);
     }
@@ -460,6 +462,7 @@ public class EntryPoint {
                         EntryPoint.coverageDetail == ParserOptions.CoverageTransformerDetail.SUMMARIZED ? "" :
                                 (ParserOptions.FLAG_coverage_detail + ConstantsHelper.WHITE_SPACE
                                         + EntryPoint.coverageDetail.name()),
+                        ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
                 });
         try {
             EntryPoint.runGivenCommandLine(javaCommand);
@@ -564,6 +567,7 @@ public class EntryPoint {
                         EntryPoint.coverageDetail == ParserOptions.CoverageTransformerDetail.SUMMARIZED ? "" :
                                 (ParserOptions.FLAG_coverage_detail + ConstantsHelper.WHITE_SPACE
                                         + EntryPoint.coverageDetail.name()),
+                        ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
                 });
         try {
             EntryPoint.runGivenCommandLine(javaCommand);
@@ -657,6 +661,7 @@ public class EntryPoint {
                         EntryPoint.coverageDetail == ParserOptions.CoverageTransformerDetail.SUMMARIZED ? "" :
                                 (ParserOptions.FLAG_coverage_detail + ConstantsHelper.WHITE_SPACE
                                         + EntryPoint.coverageDetail.name()),
+                        ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
                 });
         try {
             EntryPoint.runGivenCommandLine(javaCommand);

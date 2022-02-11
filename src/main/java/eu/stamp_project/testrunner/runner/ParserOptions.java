@@ -50,6 +50,9 @@ public class ParserOptions {
                 case FLAG_coverage_detail:
                     parserOptions.coverageTransformerDetail = CoverageTransformerDetail.valueOf(args[++i]);
                     break;
+                case FLAG_nbFailingLoadClass:
+                    parserOptions.nbFailingLoadClass = Integer.parseInt(args[++i]);
+                    break;
                 case " ":
                 case "":
                     break;
@@ -82,6 +85,9 @@ public class ParserOptions {
 
         usage.append(FLAG_coverage_detail).append(ConstantsHelper.WHITE_SPACE)
              .append(FLAG_HELP_coverage_detail).append(ConstantsHelper.LINE_SEPARATOR);
+
+        usage.append(FLAG_nbFailingLoadClass).append(ConstantsHelper.WHITE_SPACE)
+                .append(FLAG_HELP_nbFailingLoadClass).append(ConstantsHelper.LINE_SEPARATOR);
 
         System.out.println(usage.toString());
     }
