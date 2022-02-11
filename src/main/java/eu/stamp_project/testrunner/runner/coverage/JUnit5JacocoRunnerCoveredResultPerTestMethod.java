@@ -19,12 +19,25 @@ import java.util.List;
  */
 public class JUnit5JacocoRunnerCoveredResultPerTestMethod extends JacocoRunnerCoveredResultPerTestMethod {
 
-	public JUnit5JacocoRunnerCoveredResultPerTestMethod(List<String> classesDirectory, List<String> testClassesDirectory, CoverageTransformer coverageTransformer) {
+	public JUnit5JacocoRunnerCoveredResultPerTestMethod(List<String> classesDirectory,
+														List<String> testClassesDirectory,
+														CoverageTransformer coverageTransformer) {
 		super(classesDirectory, testClassesDirectory, coverageTransformer);
 	}
 
-	public JUnit5JacocoRunnerCoveredResultPerTestMethod(List<String> classesDirectory, List<String> testClassesDirectory, List<String> blackList, CoverageTransformer coverageTransformer) {
+	public JUnit5JacocoRunnerCoveredResultPerTestMethod(List<String> classesDirectory,
+														List<String> testClassesDirectory,
+														List<String> blackList,
+														CoverageTransformer coverageTransformer) {
 		super(classesDirectory, testClassesDirectory, blackList, coverageTransformer);
+	}
+
+	public JUnit5JacocoRunnerCoveredResultPerTestMethod(List<String> classesDirectory,
+														List<String> testClassesDirectory,
+														List<String> blackList,
+														int nbFailingLoadClass,
+														CoverageTransformer coverageTransformer) {
+		super(classesDirectory, testClassesDirectory, blackList, nbFailingLoadClass, coverageTransformer);
 	}
 
 	@Override
@@ -34,6 +47,7 @@ public class JUnit5JacocoRunnerCoveredResultPerTestMethod extends JacocoRunnerCo
 				testClassNames,
 				testMethodNames,
 				Collections.emptyList(),
+				this.nbFailingLoadClass,
 				(JUnit5TestResult) listener,
 				this.instrumentedClassLoader
 		);
@@ -47,6 +61,7 @@ public class JUnit5JacocoRunnerCoveredResultPerTestMethod extends JacocoRunnerCo
 				options.getPathToCompiledClassesOfTheProject(),
 				options.getPathToCompiledTestClassesOfTheProject(),
 				options.getBlackList(),
+				options.getNbFailingLoadClass(),
 				options.getCoverageTransformer()
 		).runCoveredTestResultPerTestMethod(
 				options.getPathToCompiledClassesOfTheProject(),

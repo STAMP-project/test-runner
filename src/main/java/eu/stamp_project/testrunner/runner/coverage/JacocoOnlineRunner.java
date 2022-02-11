@@ -11,43 +11,59 @@ import java.util.stream.Collectors;
 
 public abstract class JacocoOnlineRunner {
 
-	protected List<String> classesDirectories;
+    protected List<String> classesDirectories;
 
-	protected List<String> testClassesDirectories;
+    protected List<String> testClassesDirectories;
 
-	protected List<String> blackList;
+    protected List<String> blackList;
 
-	protected CoverageTransformer coverageTransformer;
+    protected CoverageTransformer coverageTransformer;
 
-	public JacocoOnlineRunner(List<String> classesDirectory, List<String> testClassesDirectory, CoverageTransformer coverageTransformer) {
-		this(classesDirectory, testClassesDirectory, Collections.emptyList(), coverageTransformer);
-	}
+    protected int nbFailingLoadClass;
 
-	public JacocoOnlineRunner(List<String> classesDirectory, List<String> testClassesDirectory, List<String> blackList, CoverageTransformer coverageTransformer) {
-		this.classesDirectories = classesDirectory;
-		this.testClassesDirectories = testClassesDirectory;
-		this.blackList = blackList;
-		this.coverageTransformer = coverageTransformer;
-	}
+    public JacocoOnlineRunner(List<String> classesDirectory,
+                              List<String> testClassesDirectory,
+                              CoverageTransformer coverageTransformer) {
+        this(classesDirectory, testClassesDirectory, Collections.emptyList(), coverageTransformer);
+    }
 
-	protected abstract CoveredTestResultPerTestMethod executeCoveredTestPerTestMethod(List<String> classesDirectory,
-																					  String[] testClassNames,
-	                                                                                  String[] testMethodNames);
+    public JacocoOnlineRunner(List<String> classesDirectory,
+                              List<String> testClassesDirectory,
+                              List<String> blackList,
+                              CoverageTransformer coverageTransformer) {
+        this(classesDirectory, testClassesDirectory, blackList, 0, coverageTransformer);
+    }
 
-	public CoveredTestResultPerTestMethod runCoveredTestResultPerTestMethod(List<String> classesDirectory,
-	                                                                        List<String> testClassesDirectory,
-	                                                                        String[] testClassNames,
-	                                                                        String[] testMethodNames) {
-		final CoveredTestResultPerTestMethod listener = this.executeCoveredTestPerTestMethod(classesDirectory, testClassNames, testMethodNames);
-		if (!((TestResult) listener).getFailingTests().isEmpty()) {
-			System.err.println("Some test(s) failed during computation of coverage:\n" +
-					((TestResult) listener).getFailingTests()
-							.stream()
-							.map(Failure::toString)
-							.collect(Collectors.joining("\n"))
-			);
-		}
-		return listener;
-	}
+    public JacocoOnlineRunner(List<String> classesDirectory,
+                              List<String> testClassesDirectory,
+                              List<String> blackList,
+                              int nbFailingLoadClass,
+                              CoverageTransformer coverageTransformer) {
+        this.classesDirectories = classesDirectory;
+        this.testClassesDirectories = testClassesDirectory;
+        this.blackList = blackList;
+        this.nbFailingLoadClass = nbFailingLoadClass;
+        this.coverageTransformer = coverageTransformer;
+    }
+
+    protected abstract CoveredTestResultPerTestMethod executeCoveredTestPerTestMethod(List<String> classesDirectory,
+                                                                                      String[] testClassNames,
+                                                                                      String[] testMethodNames);
+
+    public CoveredTestResultPerTestMethod runCoveredTestResultPerTestMethod(List<String> classesDirectory,
+                                                                            List<String> testClassesDirectory,
+                                                                            String[] testClassNames,
+                                                                            String[] testMethodNames) {
+        final CoveredTestResultPerTestMethod listener = this.executeCoveredTestPerTestMethod(classesDirectory, testClassNames, testMethodNames);
+        if (!((TestResult) listener).getFailingTests().isEmpty()) {
+            System.err.println("Some test(s) failed during computation of coverage:\n" +
+                    ((TestResult) listener).getFailingTests()
+                            .stream()
+                            .map(Failure::toString)
+                            .collect(Collectors.joining("\n"))
+            );
+        }
+        return listener;
+    }
 
 }

@@ -19,12 +19,28 @@ import java.util.List;
  */
 public class JUnit4JacocoRunnerCoveredResultPerTestMethod extends JacocoRunnerCoveredResultPerTestMethod {
 
-	public JUnit4JacocoRunnerCoveredResultPerTestMethod(List<String> classesDirectory, List<String> testClassesDirectory, CoverageTransformer coverageTransformer) {
+	public JUnit4JacocoRunnerCoveredResultPerTestMethod(
+			List<String> classesDirectory,
+			List<String> testClassesDirectory,
+			CoverageTransformer coverageTransformer) {
 		super(classesDirectory, testClassesDirectory, coverageTransformer);
 	}
 
-	public JUnit4JacocoRunnerCoveredResultPerTestMethod(List<String> classesDirectory, List<String> testClassesDirectory, List<String> blackList, CoverageTransformer coverageTransformer) {
+	public JUnit4JacocoRunnerCoveredResultPerTestMethod(
+			List<String> classesDirectory,
+			List<String> testClassesDirectory,
+			List<String> blackList,
+			CoverageTransformer coverageTransformer) {
 		super(classesDirectory, testClassesDirectory, blackList, coverageTransformer);
+	}
+
+	public JUnit4JacocoRunnerCoveredResultPerTestMethod(
+			List<String> classesDirectory,
+			List<String> testClassesDirectory,
+			List<String> blackList,
+			int nbFailingLoadClass,
+			CoverageTransformer coverageTransformer) {
+		super(classesDirectory, testClassesDirectory, blackList, nbFailingLoadClass, coverageTransformer);
 	}
 
 	@Override
@@ -34,6 +50,7 @@ public class JUnit4JacocoRunnerCoveredResultPerTestMethod extends JacocoRunnerCo
 				testClassNames,
 				testMethodNames,
 				Collections.emptyList(),
+				this.nbFailingLoadClass,
 				(JUnit4TestResult) listener,
 				this.instrumentedClassLoader
 		);
@@ -47,6 +64,7 @@ public class JUnit4JacocoRunnerCoveredResultPerTestMethod extends JacocoRunnerCo
 				options.getPathToCompiledClassesOfTheProject(),
 				options.getPathToCompiledTestClassesOfTheProject(),
 				options.getBlackList(),
+				options.getNbFailingLoadClass(),
 				options.getCoverageTransformer()
 		).runCoveredTestResultPerTestMethod(
 				options.getPathToCompiledClassesOfTheProject(),

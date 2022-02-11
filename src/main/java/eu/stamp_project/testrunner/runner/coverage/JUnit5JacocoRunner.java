@@ -18,12 +18,25 @@ import java.util.List;
 public class JUnit5JacocoRunner extends JacocoRunner {
 
 	
-    public JUnit5JacocoRunner(List<String> classesDirectory, List<String> testClassesDirectory, CoverageTransformer coverageTransformer) {
+    public JUnit5JacocoRunner(List<String> classesDirectory,
+                              List<String> testClassesDirectory,
+                              CoverageTransformer coverageTransformer) {
         super(classesDirectory, testClassesDirectory, coverageTransformer);
     }
     
-    public JUnit5JacocoRunner(List<String> classesDirectory, List<String> testClassesDirectory, List<String> blackList, CoverageTransformer coverageTransformer) {
+    public JUnit5JacocoRunner(List<String> classesDirectory,
+                              List<String> testClassesDirectory,
+                              List<String> blackList,
+                              CoverageTransformer coverageTransformer) {
         super(classesDirectory, testClassesDirectory, blackList, coverageTransformer);;
+    }
+
+    public JUnit5JacocoRunner(List<String> classesDirectory,
+                              List<String> testClassesDirectory,
+                              List<String> blackList,
+                              int nbFailingLoadClass,
+                              CoverageTransformer coverageTransformer) {
+        super(classesDirectory, testClassesDirectory, blackList, nbFailingLoadClass, coverageTransformer);;
     }
 
     /**
@@ -38,6 +51,7 @@ public class JUnit5JacocoRunner extends JacocoRunner {
                         options.getPathToCompiledClassesOfTheProject(),
                         options.getPathToCompiledTestClassesOfTheProject(),
                         options.getBlackList(),
+                        options.getNbFailingLoadClass(),
                         options.getCoverageTransformer()
                 );
         final String[] testClassesToRun = options.getFullQualifiedNameOfTestClassesToRun();
@@ -67,12 +81,16 @@ public class JUnit5JacocoRunner extends JacocoRunner {
     }
 
     @Override
-    protected CoveredTestResult executeTest(String[] testClassNames, String[] testMethodNames, List<String> blackList) {
+    protected CoveredTestResult executeTest(String[] testClassNames,
+                                            String[] testMethodNames,
+                                            List<String> blackList,
+                                            int nbFailingLoadClass) {
         final JUnit5Coverage listener = new JUnit5Coverage();
         JUnit5Runner.run(
                 testClassNames,
                 testMethodNames,
                 blackList,
+                nbFailingLoadClass,
                 listener,
                 this.instrumentedClassLoader
         );

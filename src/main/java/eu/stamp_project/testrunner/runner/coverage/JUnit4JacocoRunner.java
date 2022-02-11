@@ -18,13 +18,14 @@ import java.util.List;
  */
 public class JUnit4JacocoRunner extends JacocoRunner {
 
-    public JUnit4JacocoRunner(List<String> classesDirectory, List<String> testClassesDirectory, CoverageTransformer coverageTransformer) {
-        super(classesDirectory, testClassesDirectory, coverageTransformer);
+    public JUnit4JacocoRunner(List<String> classesDirectory,
+                              List<String> testClassesDirectory,
+                              List<String> blackList,
+                              int nbFailingLoadClass,
+                              CoverageTransformer coverageTransformer) {
+        super(classesDirectory, testClassesDirectory, blackList, nbFailingLoadClass, coverageTransformer);
     }
-    
-    public JUnit4JacocoRunner(List<String> classesDirectory, List<String> testClassesDirectory, List<String> blackList, CoverageTransformer coverageTransformer) {
-        super(classesDirectory, testClassesDirectory, blackList, coverageTransformer);
-    }
+
 
     /**
      * The entry method to execute junit tests.
@@ -38,6 +39,7 @@ public class JUnit4JacocoRunner extends JacocoRunner {
                         options.getPathToCompiledClassesOfTheProject(),
                         options.getPathToCompiledTestClassesOfTheProject(),
                         options.getBlackList(),
+                        options.getNbFailingLoadClass(),
                         options.getCoverageTransformer()
                 );
         final String[] testClassesToRun = options.getFullQualifiedNameOfTestClassesToRun();
@@ -68,17 +70,19 @@ public class JUnit4JacocoRunner extends JacocoRunner {
 
     @Override
     protected CoveredTestResult executeTest(String[] testClassNames,
-											String[] testMethodNames,
-											List<String> blackList) {
+                                            String[] testMethodNames,
+                                            List<String> blackList,
+                                            int nbFailingLoadClass) {
         final CoveredTestResult listener = new JUnit4Coverage();
         JUnit4Runner.run(
                 testClassNames,
                 testMethodNames,
                 blackList,
+                nbFailingLoadClass,
                 (JUnit4TestResult) listener,
                 this.instrumentedClassLoader
         );
         return listener;
     }
- 
+
 }
