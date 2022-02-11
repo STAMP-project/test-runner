@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
  * benjamin.danglot@inria.fr
  * on 03/04/19
  */
+@Deprecated
 public class PitRunner {
 
     private static final String JUNIT4_TEST_PLUGIN = "junit";

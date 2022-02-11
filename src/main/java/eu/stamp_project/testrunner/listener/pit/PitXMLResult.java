@@ -5,6 +5,7 @@ package eu.stamp_project.testrunner.listener.pit;
  * abwogi@kth.se
  * on 14/11/18
  */
+@Deprecated
 public class PitXMLResult extends AbstractPitResult {
 
     private final String methodDescription;

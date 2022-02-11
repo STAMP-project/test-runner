@@ -22,6 +22,7 @@ import java.util.stream.IntStream;
  * benjamin.danglot@inria.fr
  * on 12/09/18
  */
+@Deprecated
 public class SurefireReportsReader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SurefireReportsReader.class);

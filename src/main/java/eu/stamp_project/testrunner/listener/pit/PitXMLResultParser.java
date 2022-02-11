@@ -14,6 +14,7 @@ import java.util.List;
  * abwogi@kth.se
  * on 14/11/18
  */
+@Deprecated
 public class PitXMLResultParser extends AbstractParser<PitXMLResult> {
 
     public PitXMLResultParser(){
