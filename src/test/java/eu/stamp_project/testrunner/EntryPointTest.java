@@ -5,7 +5,6 @@ import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
 import eu.stamp_project.testrunner.listener.CoveredTestResultPerTestMethod;
 import eu.stamp_project.testrunner.listener.TestResult;
 import eu.stamp_project.testrunner.listener.impl.CoverageDetailed;
-import eu.stamp_project.testrunner.listener.impl.CoverageFromClass;
 import eu.stamp_project.testrunner.listener.pit.AbstractPitResult;
 import eu.stamp_project.testrunner.runner.Failure;
 import eu.stamp_project.testrunner.runner.ParserOptions;
