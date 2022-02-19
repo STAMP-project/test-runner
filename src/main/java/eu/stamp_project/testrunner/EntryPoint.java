@@ -407,6 +407,7 @@ public class EntryPoint {
                                 + EntryPoint.coverageDetail.name()),
                 ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
         );
+        classpath = checkAndAddJUnit4(classpath);
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{getJavaCommand(),
                         (classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES
@@ -517,6 +518,7 @@ public class EntryPoint {
                                 + EntryPoint.coverageDetail.name()),
                 ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
         );
+        classpath = checkAndAddJUnit4(classpath);
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{
                         getJavaCommand(),
@@ -625,6 +627,7 @@ public class EntryPoint {
                                 + EntryPoint.coverageDetail.name()),
                 ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
         );
+        classpath = checkAndAddJUnit4(classpath);
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{
                         getJavaCommand(),
@@ -701,7 +704,6 @@ public class EntryPoint {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
         final String options = checkUseOptionsFile(
                 ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
                 targetSourceClasses.stream().reduce((x, y) -> x + ConstantsHelper.PATH_SEPARATOR + y).get().replaceAll(" ", "%20"),
@@ -719,6 +721,7 @@ public class EntryPoint {
                                 + EntryPoint.coverageDetail.name()),
                 ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
         );
+        classpath = checkAndAddJUnit4(classpath);
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{
                         getJavaCommand(),
