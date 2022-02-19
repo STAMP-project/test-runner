@@ -349,6 +349,7 @@ public class EntryPoint {
                                        List<String> targetTestClasses,
                                        String[] fullQualifiedNameOfTestClasses,
                                        String[] methodNames) throws TimeoutException {
+        classpath = checkAndAddJUnit4(classpath);
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{getJavaCommand(),
                         (classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES
@@ -457,6 +458,7 @@ public class EntryPoint {
                                                                   List<String> targetTestClasses,
                                                                   String[] fullQualifiedNameOfTestClasses,
                                                                   String[] methodNames) throws TimeoutException {
+        classpath = checkAndAddJUnit4(classpath);
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{
                         getJavaCommand(),
@@ -562,6 +564,7 @@ public class EntryPoint {
                                                                                     List<String> targetTestClasses,
                                                                                     String[] fullQualifiedNameOfTestClasses,
                                                                                     String[] methodNames) throws TimeoutException {
+        classpath = checkAndAddJUnit4(classpath);
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{
                         getJavaCommand(),
@@ -652,7 +655,7 @@ public class EntryPoint {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
+        classpath = checkAndAddJUnit4(classpath);
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{
                         getJavaCommand(),
