@@ -17,6 +17,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.jacoco.agent.rt.RT;
 import org.jacoco.core.runtime.IRuntime;
+import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.objectweb.asm.ClassReader;
 import org.opentest4j.TestAbortedException;
@@ -286,6 +287,7 @@ public class EntryPoint {
                         + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
                 ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
         );
+        classpath = checkAndAddJUnit4(classpath);
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{getJavaCommand(),
                         (classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES).replaceAll(" ", "%20"),
@@ -295,6 +297,19 @@ public class EntryPoint {
                 }
         );
         return EntryPoint.runTests(javaCommand);
+    }
+
+    private static String checkAndAddJUnit4(String classpath) {
+        if (!classpath.contains("junit-4")) {
+            LOGGER.warn("junit-4 is not detected in the provided classpath.");
+            LOGGER.warn("junit-4 is mandatory, and will be artificially injected at he end of the provided classpath.");
+            final String junit4Path = Test.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+            LOGGER.warn("junit-4 has been found here {}", junit4Path);
+            final String hamcrestPath = org.hamcrest.Description.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+            LOGGER.warn("hamcrest has been found here {}", hamcrestPath);
+            classpath += ConstantsHelper.PATH_SEPARATOR + junit4Path + ConstantsHelper.PATH_SEPARATOR + hamcrestPath;
+        }
+        return classpath;
     }
 
     private static TestResult runTests(String commandLine) throws TimeoutException {
