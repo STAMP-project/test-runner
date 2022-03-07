@@ -309,6 +309,10 @@ public class EntryPoint {
             LOGGER.warn("hamcrest has been found here {}", hamcrestPath);
             classpath += ConstantsHelper.PATH_SEPARATOR + junit4Path + ConstantsHelper.PATH_SEPARATOR + hamcrestPath;
         }
+        if (EntryPoint.jUnit5Mode) {
+            final String junit5PlatformLauncherPath = org.junit.platform.launcher.TestExecutionListener.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+            classpath += ConstantsHelper.PATH_SEPARATOR + junit5PlatformLauncherPath;
+        }
         return classpath;
     }
 
