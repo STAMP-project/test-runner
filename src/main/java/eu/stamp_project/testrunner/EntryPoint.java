@@ -846,13 +846,17 @@ public class EntryPoint {
             long startTime = System.currentTimeMillis();
             boolean finished = process.waitFor(timeoutInMs, TimeUnit.MILLISECONDS);
             long endTime = System.currentTimeMillis();
-            int exitValue = process.exitValue();
-            if (!finished || exitValue != 0) {
-                throw new RuntimeException("Forked process did not finish correctly.\n" +
-                        "Timeout set was " + timeoutInMs + " ms, " +
-                        "process took " + (endTime - startTime) + " ms before ending.\n" +
-                        "Use the verbose mode to obtain more information regarding the error."
-                );
+            try {
+                int exitValue = process.exitValue();
+                if (!finished || exitValue != 0) {
+                    throw new RuntimeException("Forked process did not finish correctly.\n" +
+                            "Timeout set was " + timeoutInMs + " ms, " +
+                            "process took " + (endTime - startTime) + " ms before ending.\n" +
+                            "Use the verbose mode to obtain more information regarding the error."
+                    );
+                }
+            } catch (IllegalThreadStateException ignored) {
+                ignored.printStackTrace();
             }
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
