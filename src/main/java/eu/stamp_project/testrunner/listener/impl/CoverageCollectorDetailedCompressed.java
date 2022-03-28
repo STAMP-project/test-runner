@@ -20,53 +20,44 @@ import java.util.Map;
  */
 public class CoverageCollectorDetailedCompressed implements CoverageTransformer {
 
-	@Override
-	public CoverageDetailed transformJacocoObject(ExecutionDataStore executionDataStore, List<String> classesDirectory) {
+    @Override
+    public CoverageDetailed transformJacocoObject(ExecutionDataStore executionDataStore, List<String> classesDirectory) {
 
-		CoverageInformation covered = new CoverageInformation();
+        CoverageInformation covered = new CoverageInformation();
 
-		final CoverageBuilder coverageBuilder = new CoverageBuilder();
-		final Analyzer analyzer = new Analyzer(executionDataStore, coverageBuilder);
-		try {
-			for (ExecutionData executionData : executionDataStore.getContents()) {
-				analyzer.analyzeClass(
-						CoverageCollectorDetailedCompressed.class.getClassLoader()
-								.getResourceAsStream(executionData.getName() + ".class"),
-						"./"
-				);
-			}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-
-		for (IClassCoverage classCoverage : coverageBuilder.getClasses()) {
-
-			if (classCoverage.getInstructionCounter().getCoveredCount() > 0) {
-
-				Map<Integer, Integer> covClass = new HashMap<>();
-
-				for (IMethodCoverage methodCoverage : classCoverage.getMethods()) {
-
-					if (!"<clinit>".equals(methodCoverage.getName())) {
-
-						for (int i = methodCoverage.getFirstLine(); i <= methodCoverage.getLastLine() + 1; i++) {
-							int coveredI = methodCoverage.getLine(i).getInstructionCounter().getCoveredCount();
-
-							if (coveredI > 0) {
-								covClass.put(i, coveredI);
-							}
-						}
-
-					}
-				}
-				CoverageFromClass l = new CoverageFromClass(classCoverage.getName(), classCoverage.getPackageName(),
-						classCoverage.getFirstLine(), classCoverage.getLastLine(), covClass);
-
-				covered.put(classCoverage.getName(), l);
-			}
-
-		}
-		return new CoverageDetailed(covered);
-	}
+        final CoverageBuilder coverageBuilder = new CoverageBuilder();
+        final Analyzer analyzer = new Analyzer(executionDataStore, coverageBuilder);
+        for (ExecutionData executionData : executionDataStore.getContents()) {
+            try {
+                analyzer.analyzeClass(
+                        CoverageCollectorDetailedCompressed.class.getClassLoader()
+                                .getResourceAsStream(executionData.getName() + ".class"),
+                        "./"
+                );
+            } catch (Exception ignored) {
+                ignored.printStackTrace();
+                continue;
+            }
+        }
+        for (IClassCoverage classCoverage : coverageBuilder.getClasses()) {
+            if (classCoverage.getInstructionCounter().getCoveredCount() > 0) {
+                final Map<Integer, Integer> covClass = new HashMap<>();
+                for (IMethodCoverage methodCoverage : classCoverage.getMethods()) {
+                    if (!"<clinit>".equals(methodCoverage.getName())) {
+                        for (int i = methodCoverage.getFirstLine(); i <= methodCoverage.getLastLine() + 1; i++) {
+                            int coveredI = methodCoverage.getLine(i).getInstructionCounter().getCoveredCount();
+                            if (coveredI > 0) {
+                                covClass.put(i, coveredI);
+                            }
+                        }
+                    }
+                }
+                final CoverageFromClass l = new CoverageFromClass(classCoverage.getName(), classCoverage.getPackageName(),
+                        classCoverage.getFirstLine(), classCoverage.getLastLine(), covClass);
+                covered.put(classCoverage.getName(), l);
+            }
+        }
+        return new CoverageDetailed(covered);
+    }
 
 }
