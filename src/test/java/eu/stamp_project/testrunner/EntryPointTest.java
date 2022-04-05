@@ -34,7 +34,7 @@ import static org.junit.Assert.fail;
 public class EntryPointTest extends AbstractTest {
 
     // depends on the compiler and compiler version that is used on the test project
-    public static final int NUMBER_OF_INSTRUCTIONS = 104;
+    public static final int NUMBER_OF_INSTRUCTIONS = 103;
 
     @Before
     public void setUp() {
