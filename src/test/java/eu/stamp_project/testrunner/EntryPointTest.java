@@ -9,10 +9,7 @@ import eu.stamp_project.testrunner.listener.pit.AbstractPitResult;
 import eu.stamp_project.testrunner.runner.Failure;
 import eu.stamp_project.testrunner.runner.ParserOptions;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -194,6 +191,7 @@ public class EntryPointTest extends AbstractTest {
 
     @Test
     public void testOnEasyMockTests() throws Exception {
+        Assume.assumeTrue(getJavaVersion() <= 11);
 
         /*
             Test to run test class that use easymock framework
