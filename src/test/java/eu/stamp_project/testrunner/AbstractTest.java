@@ -4,7 +4,6 @@ import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 import org.junit.rules.RuleChain;
@@ -12,14 +11,9 @@ import org.junit.rules.TestRule;
 import spoon.Launcher;
 
 import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Created by Benjamin DANGLOT
@@ -45,8 +39,7 @@ public class AbstractTest {
     public static String JUNIT5_CP;
 
     {
-        List<String> classPath = Arrays.stream(((URLClassLoader) URLClassLoader.getSystemClassLoader()).getURLs())
-                .map(URL::getPath).collect(Collectors.toList());
+        List<String> classPath = Arrays.asList(System.getProperty("java.class.path").split(System.getProperty("path.separator")));
 
         System.out.println(classPath);
         if (classPath.size() == 1) {
