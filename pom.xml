@@ -183,10 +183,11 @@
             <version>0.8</version>
         </dependency>
 
+        <!-- for testing System.exit -->
         <dependency>
             <groupId>com.github.stefanbirkner</groupId>
-            <artifactId>system-rules</artifactId>
-            <version>1.19.0</version>
+            <artifactId>system-lambda</artifactId>
+            <version>1.2.1</version>
         </dependency>
 
     </dependencies>
@@ -290,6 +291,35 @@
 
 
     <profiles>
+        <profile>
+            <id>surefire-java16-and-below</id>
+            <activation>
+                <jdk>(,17)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>surefire-java17-and-above</id>
+            <activation>
+                <jdk>[17,)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <argLine>-Djava.security.manager=allow</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>coveralls</id>
             <build>

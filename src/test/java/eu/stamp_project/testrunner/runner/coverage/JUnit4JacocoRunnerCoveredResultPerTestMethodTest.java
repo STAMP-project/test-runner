@@ -7,6 +7,7 @@ import eu.stamp_project.testrunner.runner.ParserOptions;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static com.github.stefanbirkner.systemlambda.SystemLambda.catchSystemExit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -23,14 +24,14 @@ public class JUnit4JacocoRunnerCoveredResultPerTestMethodTest extends AbstractTe
             Using the api to compute the coverage on a test class
          */
 
-		exit.expectSystemExitWithStatus(0);
-		JUnit4JacocoRunnerCoveredResultPerTestMethod.main(new String[]{
+		int statusCode = catchSystemExit(() -> JUnit4JacocoRunnerCoveredResultPerTestMethod.main(new String[]{
 						ParserOptions.FLAG_pathToCompiledClassesOfTheProject, SOURCE_PROJECT_CLASSES,
 						ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject, TEST_PROJECT_CLASSES,
 						ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, "example.ParametrizedTest",
 						ParserOptions.FLAG_testMethodNamesToRun, "test"
 				}
-		);
+		));
+		assertEquals(0, statusCode);
 		final CoveredTestResultPerTestMethod load = CoveredTestResultPerTestMethodImpl.load();
 		System.out.println(load);
 
@@ -56,14 +57,14 @@ public class JUnit4JacocoRunnerCoveredResultPerTestMethodTest extends AbstractTe
             Using the api to compute the coverage on test cases
          */
 
-		exit.expectSystemExitWithStatus(0);
-		JUnit4JacocoRunnerCoveredResultPerTestMethod.main(new String[]{
+		int statusCode = catchSystemExit(() -> JUnit4JacocoRunnerCoveredResultPerTestMethod.main(new String[]{
 						ParserOptions.FLAG_pathToCompiledClassesOfTheProject, SOURCE_PROJECT_CLASSES,
 						ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject, TEST_PROJECT_CLASSES,
 						ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, "example.TestSuiteExample",
 						ParserOptions.FLAG_testMethodNamesToRun, "test3:test2:copyOftest2"
 				}
-		);
+		));
+		assertEquals(0, statusCode);
 		final CoveredTestResultPerTestMethod load = CoveredTestResultPerTestMethodImpl.load();
 		System.out.println(load);
 
@@ -88,13 +89,13 @@ public class JUnit4JacocoRunnerCoveredResultPerTestMethodTest extends AbstractTe
             Using the api to compute the coverage on test cases
          */
 
-		exit.expectSystemExitWithStatus(0);
-		JUnit4JacocoRunnerCoveredResultPerTestMethod.main(new String[]{
+		int statusCode = catchSystemExit(() -> JUnit4JacocoRunnerCoveredResultPerTestMethod.main(new String[]{
 						ParserOptions.FLAG_pathToCompiledClassesOfTheProject, SOURCE_PROJECT_CLASSES,
 						ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject, TEST_PROJECT_CLASSES,
 						ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, "example.TestSuiteExample",
 				}
-		);
+		));
+		assertEquals(0, statusCode);
 		final CoveredTestResultPerTestMethod load = CoveredTestResultPerTestMethodImpl.load();
 
 		System.out.println(load);
