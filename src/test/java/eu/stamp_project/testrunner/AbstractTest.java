@@ -51,8 +51,8 @@ public class AbstractTest {
         TEST_PROJECT_CLASSES = "src/test/resources/test-projects/target/test-classes/";
         JUNIT_CP = MAVEN_HOME + "junit/junit/4.12/junit-4.12.jar" + ConstantsHelper.PATH_SEPARATOR
                 + MAVEN_HOME + "org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar";
-        EASYMOCK_CP = MAVEN_HOME + "org/easymock/easymock/3.4/easymock-3.4.jar" + ConstantsHelper.PATH_SEPARATOR
-                + MAVEN_HOME + "org/objenesis/objenesis/2.2/objenesis-2.2.jar";
+        EASYMOCK_CP = MAVEN_HOME + "org/easymock/easymock/4.3/easymock-4.3.jar" + ConstantsHelper.PATH_SEPARATOR
+                + MAVEN_HOME + "org/objenesis/objenesis/3.2/objenesis-3.2.jar";
         JUNIT5_CP =
                 MAVEN_HOME + "org/junit/jupiter/junit-jupiter-api/5.3.2/junit-jupiter-api-5.3.2.jar" + ConstantsHelper.PATH_SEPARATOR
                         + MAVEN_HOME + "org/apiguardian/apiguardian-api/1.0.0/apiguardian-api-1.0.0.jar" + ConstantsHelper.PATH_SEPARATOR
