@@ -19,12 +19,12 @@ jobs:
           # Reference: https://github.com/lewagon/wait-on-check-action#running-workflow-name
           running-workflow-name: 'Publish package'
           repo-token: ${{ secrets.TOKEN_GITHUB }}
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.0.0
       - name: Set up JDK 8
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: '8'
-          distribution: 'adopt'
+          distribution: 'temurin'
       - name: Import GPG key
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v4

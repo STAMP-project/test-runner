@@ -4,22 +4,12 @@ import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.contrib.java.lang.system.ExpectedSystemExit;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
 import spoon.Launcher;
 
 import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Created by Benjamin DANGLOT
@@ -27,10 +17,6 @@ import static org.junit.Assert.assertEquals;
  * on 19/12/17
  */
 public class AbstractTest {
-
-    public final ExpectedSystemExit exit = ExpectedSystemExit.none();
-    @Rule
-    public TestRule allRules = RuleChain.emptyRuleChain().around(exit);
 
     public static String MAVEN_HOME;
 
@@ -45,8 +31,7 @@ public class AbstractTest {
     public static String JUNIT5_CP;
 
     {
-        List<String> classPath = Arrays.stream(((URLClassLoader) URLClassLoader.getSystemClassLoader()).getURLs())
-                .map(URL::getPath).collect(Collectors.toList());
+        List<String> classPath = Arrays.asList(System.getProperty("java.class.path").split(System.getProperty("path.separator")));
 
         System.out.println(classPath);
         if (classPath.size() == 1) {
@@ -66,8 +51,8 @@ public class AbstractTest {
         TEST_PROJECT_CLASSES = "src/test/resources/test-projects/target/test-classes/";
         JUNIT_CP = MAVEN_HOME + "junit/junit/4.12/junit-4.12.jar" + ConstantsHelper.PATH_SEPARATOR
                 + MAVEN_HOME + "org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar";
-        EASYMOCK_CP = MAVEN_HOME + "org/easymock/easymock/3.4/easymock-3.4.jar" + ConstantsHelper.PATH_SEPARATOR
-                + MAVEN_HOME + "org/objenesis/objenesis/2.2/objenesis-2.2.jar";
+        EASYMOCK_CP = MAVEN_HOME + "org/easymock/easymock/4.3/easymock-4.3.jar" + ConstantsHelper.PATH_SEPARATOR
+                + MAVEN_HOME + "org/objenesis/objenesis/3.2/objenesis-3.2.jar";
         JUNIT5_CP =
                 MAVEN_HOME + "org/junit/jupiter/junit-jupiter-api/5.3.2/junit-jupiter-api-5.3.2.jar" + ConstantsHelper.PATH_SEPARATOR
                         + MAVEN_HOME + "org/apiguardian/apiguardian-api/1.0.0/apiguardian-api-1.0.0.jar" + ConstantsHelper.PATH_SEPARATOR
@@ -140,6 +125,21 @@ public class AbstractTest {
         if (target.exists()) {
             FileUtils.forceDelete(target);
         }
+    }
+
+    public static int getJavaVersion() {
+        String version = System.getProperty("java.version");
+
+        // Java 8 or lower: 1.6.0_23, 1.7.0, 1.7.0_80, 1.8.0_211
+        // Java 9 or higher: 9.0.1, 11.0.4, 12, 12.0.1
+        if(version.startsWith("1.")) {
+            version = version.substring(2, 3);
+        } else {
+            int dot = version.indexOf(".");
+            if(dot != -1) { version = version.substring(0, dot); }
+        }
+
+        return Integer.parseInt(version);
     }
 
 }

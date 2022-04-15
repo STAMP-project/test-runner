@@ -9,6 +9,7 @@ import eu.stamp_project.testrunner.runner.ParserOptions;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.junit.Test;
 
+import static com.github.stefanbirkner.systemlambda.SystemLambda.catchSystemExit;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -25,13 +26,13 @@ public class JacocoRunnerTest extends AbstractTest {
             Using the api to compute the coverage on a test class
          */
 
-        exit.expectSystemExitWithStatus(0);
-        JUnit4JacocoRunner.main(new String[]{
+        int statusCode = catchSystemExit(() -> JUnit4JacocoRunner.main(new String[]{
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject, SOURCE_PROJECT_CLASSES,
                         ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject, TEST_PROJECT_CLASSES,
                         ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, "example.TestSuiteExample"
                 }
-        );
+        ));
+        assertEquals(0, statusCode);
         final Coverage load = CoverageImpl.load();
         assertEquals(30, load.getInstructionsCovered());
         assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, load.getInstructionsTotal());
@@ -46,14 +47,14 @@ public class JacocoRunnerTest extends AbstractTest {
             Using the api to compute the coverage on test cases
          */
 
-        exit.expectSystemExitWithStatus(0);
-        JUnit4JacocoRunner.main(new String[]{
+        int statusCode = catchSystemExit(() -> JUnit4JacocoRunner.main(new String[]{
                         ParserOptions.FLAG_pathToCompiledClassesOfTheProject, SOURCE_PROJECT_CLASSES,
                         ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject, TEST_PROJECT_CLASSES,
                         ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun, "example.TestSuiteExample",
                         ParserOptions.FLAG_testMethodNamesToRun, "test8:test2"
                 }
-        );
+        ));
+        assertEquals(0, statusCode);
         final Coverage load = CoverageImpl.load();
         assertEquals(23, load.getInstructionsCovered());
         assertEquals(EntryPointTest.NUMBER_OF_INSTRUCTIONS, load.getInstructionsTotal());

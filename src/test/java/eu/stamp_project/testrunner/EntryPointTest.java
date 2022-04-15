@@ -5,26 +5,18 @@ import eu.stamp_project.testrunner.listener.CoveragePerTestMethod;
 import eu.stamp_project.testrunner.listener.CoveredTestResultPerTestMethod;
 import eu.stamp_project.testrunner.listener.TestResult;
 import eu.stamp_project.testrunner.listener.impl.CoverageDetailed;
-import eu.stamp_project.testrunner.listener.impl.CoverageFromClass;
 import eu.stamp_project.testrunner.listener.pit.AbstractPitResult;
 import eu.stamp_project.testrunner.runner.Failure;
 import eu.stamp_project.testrunner.runner.ParserOptions;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.Ignore;
+import org.junit.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * Created by Benjamin DANGLOT
@@ -199,6 +191,7 @@ public class EntryPointTest extends AbstractTest {
 
     @Test
     public void testOnEasyMockTests() throws Exception {
+        Assume.assumeTrue(getJavaVersion() <= 11);
 
         /*
             Test to run test class that use easymock framework
