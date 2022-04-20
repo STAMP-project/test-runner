@@ -7,6 +7,8 @@ import eu.stamp_project.testrunner.listener.impl.CoverageCollectorMethodDetailed
 import eu.stamp_project.testrunner.listener.impl.CoverageCollectorSummarization;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -53,6 +55,13 @@ public class ParserOptions {
                 case FLAG_nbFailingLoadClass:
                     parserOptions.nbFailingLoadClass = Integer.parseInt(args[++i]);
                     break;
+                case FLAG_pathToOptionsFile:
+                    final String pathToOptionsFile = args[i+1];
+                    try (final BufferedReader reader = new BufferedReader(new FileReader(pathToOptionsFile))) {
+                        return parse(reader.readLine().split(ConstantsHelper.WHITE_SPACE));
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 case " ":
                 case "":
                     break;
@@ -88,6 +97,9 @@ public class ParserOptions {
 
         usage.append(FLAG_nbFailingLoadClass).append(ConstantsHelper.WHITE_SPACE)
                 .append(FLAG_HELP_nbFailingLoadClass).append(ConstantsHelper.LINE_SEPARATOR);
+
+        usage.append(FLAG_pathToOptionsFile).append(ConstantsHelper.WHITE_SPACE)
+                .append(FLAG_HELP_pathToOptionsFile).append(ConstantsHelper.LINE_SEPARATOR);
 
         System.out.println(usage.toString());
     }
@@ -167,6 +179,12 @@ public class ParserOptions {
     public static final String FLAG_HELP_nbFailingLoadClass = "This option specifies the number of \"ClassNotFoundException\"" +
             " throws when running the tests." +
             "This option allows to skip some missing compiled test classes";
+
+    public static final String FLAG_pathToOptionsFile = "--path-options-file";
+
+    public static final String FLAG_HELP_pathToOptionsFile = "This option specifies a path to a file that contains options" +
+            " for test-runner." +
+            " This can be used to pass too large command line options such a very long list of test method names.";
 
     private ParserOptions() {
         this.pathToCompiledClassesOfTheProject = Collections.singletonList("");
