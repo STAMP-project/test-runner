@@ -11,8 +11,7 @@ import eu.stamp_project.testrunner.runner.ParserOptions;
 import eu.stamp_project.testrunner.utils.ConstantsHelper;
 import org.junit.*;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
@@ -36,11 +35,48 @@ public class EntryPointTest extends AbstractTest {
         EntryPoint.verbose = true;
         EntryPoint.setMutationEngine(ConstantsHelper.MutationEngine.DESCARTES);
         EntryPoint.coverageDetail = ParserOptions.CoverageTransformerDetail.SUMMARIZED;
+        EntryPoint.useOptionsFile = false;
     }
 
     @After
     public void tearDown() {
         EntryPoint.blackList.clear();
+    }
+
+    @Test
+    public void testUseOptionsFile() throws TimeoutException {
+        /*
+            Test option useOptionsFile of Entrypoint.
+                It should output a file containing the command line options to be parsed by the runner.
+                This file can be found at the path designed by EntryPoint.ABSOLUTE_PATH_TO_OPTIONS_FILE
+         */
+
+        assertTrue(new File(EntryPoint.ABSOLUTE_PATH_TO_OPTIONS_FILE).exists());
+        try (BufferedReader reader = new BufferedReader(new FileReader(EntryPoint.ABSOLUTE_PATH_TO_OPTIONS_FILE))) {
+            assertNull("the options file should be empty when created", reader.readLine());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        EntryPoint.useOptionsFile = true;
+        final TestResult testResult = EntryPoint.runTests(
+                JUNIT_CP + ConstantsHelper.PATH_SEPARATOR +
+                        SOURCE_PROJECT_CLASSES + ConstantsHelper.PATH_SEPARATOR + TEST_PROJECT_CLASSES,
+                new String[]{"example.TestSuiteExample", "example.TestSuiteExample2"}
+        );
+
+        assertEquals(13, testResult.getPassingTests().size());
+        assertEquals(0, testResult.getFailingTests().size());
+        assertTrue(new File(EntryPoint.ABSOLUTE_PATH_TO_OPTIONS_FILE).exists());
+        try (BufferedReader reader = new BufferedReader(new FileReader(EntryPoint.ABSOLUTE_PATH_TO_OPTIONS_FILE))) {
+            assertEquals(
+                    "--class example.TestSuiteExample:example.TestSuiteExample2   --nb-failing-load-class 0",
+                    reader.readLine()
+            );
+            assertNull("the options file should have only one line", reader.readLine());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /*
