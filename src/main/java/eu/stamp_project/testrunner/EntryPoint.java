@@ -187,14 +187,13 @@ public class EntryPoint {
      */
     public static boolean useOptionsFile = false;
 
-
     private static String checkUseOptionsFile(String... options) {
         return EntryPoint.checkUseOptionsFile(String.join(ConstantsHelper.WHITE_SPACE, options));
     }
 
     private static String checkUseOptionsFile(String options) {
         if (EntryPoint.useOptionsFile) {
-            try (final FileWriter writer = new FileWriter(ABSOLUTE_PATH_TO_OPTIONS_FILE)) {
+            try (final FileWriter writer = new FileWriter(ABSOLUTE_PATH_TO_OPTIONS_FILE, false)) {
                 writer.write(options);
                 options = String.join(ConstantsHelper.WHITE_SPACE, ParserOptions.FLAG_pathToOptionsFile, ABSOLUTE_PATH_TO_OPTIONS_FILE);
             } catch (Exception e) {
