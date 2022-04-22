@@ -277,8 +277,6 @@ public class EntryPoint {
     public static TestResult runTests(String classpath, String[] fullQualifiedNameOfTestClasses, String[] methodNames)
             throws TimeoutException {
         final String options = checkUseOptionsFile(
-                EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_TEST_RUNNER_QUALIFIED_NAME
-                        : EntryPoint.JUNIT4_TEST_RUNNER_QUALIFIED_NAME,
                 ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun,
                 String.join(ConstantsHelper.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
                 methodNames.length == 0 ? ""
@@ -292,6 +290,8 @@ public class EntryPoint {
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{getJavaCommand(),
                         (classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES).replaceAll(" ", "%20"),
+                        EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_TEST_RUNNER_QUALIFIED_NAME
+                                : EntryPoint.JUNIT4_TEST_RUNNER_QUALIFIED_NAME,
                         options
                 }
         );
@@ -376,7 +376,6 @@ public class EntryPoint {
                                        String[] fullQualifiedNameOfTestClasses,
                                        String[] methodNames) throws TimeoutException {
         final String options = checkUseOptionsFile(
-                EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_JACOCO_RUNNER_QUALIFIED_NAME : EntryPoint.JUNIT4_JACOCO_RUNNER_QUALIFIED_NAME,
                 ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
                 targetSourceClasses.stream().reduce((x, y) -> x + ConstantsHelper.PATH_SEPARATOR + y).get().replaceAll(" ", "%20"),
                 ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject,
@@ -398,6 +397,7 @@ public class EntryPoint {
                 new String[]{getJavaCommand(),
                         (classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES
                                 + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES).replaceAll(" ", "%20"),
+                        EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_JACOCO_RUNNER_QUALIFIED_NAME : EntryPoint.JUNIT4_JACOCO_RUNNER_QUALIFIED_NAME,
                         options
                 });
         return EntryPoint.runCoverage(javaCommand);
@@ -487,7 +487,6 @@ public class EntryPoint {
                                                                   String[] fullQualifiedNameOfTestClasses,
                                                                   String[] methodNames) throws TimeoutException {
         final String options = checkUseOptionsFile(
-                EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME : EntryPoint.JUNIT4_JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME,
                 ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
                 targetSourceClasses.stream().reduce((x, y) -> x + ConstantsHelper.PATH_SEPARATOR + y).get().replaceAll(" ", "%20"),
                 ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject,
@@ -509,6 +508,7 @@ public class EntryPoint {
                         getJavaCommand(),
                         (classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES
                                 + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES).replaceAll(" ", "%20"),
+                        EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME : EntryPoint.JUNIT4_JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME,
                         options
                 });
         try {
@@ -595,7 +595,6 @@ public class EntryPoint {
                                                                                     String[] fullQualifiedNameOfTestClasses,
                                                                                     String[] methodNames) throws TimeoutException {
         final String options = checkUseOptionsFile(
-                EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_JACOCO_RUNNER_COVERED_RESULT_PER_TEST_QUALIFIED_NAME : EntryPoint.JUNIT4_JACOCO_RUNNER_COVERED_RESULT_PER_TEST_QUALIFIED_NAME,
                 ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
                 targetSourceClasses.stream().reduce((x, y) -> x + ConstantsHelper.PATH_SEPARATOR + y).get().replaceAll(" ", "%20"),
                 ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject,
@@ -617,6 +616,7 @@ public class EntryPoint {
                         getJavaCommand(),
                         (classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES
                                 + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES).replaceAll(" ", "%20"),
+                        EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_JACOCO_RUNNER_COVERED_RESULT_PER_TEST_QUALIFIED_NAME : EntryPoint.JUNIT4_JACOCO_RUNNER_COVERED_RESULT_PER_TEST_QUALIFIED_NAME,
                         options
                 });
         try {
@@ -689,7 +689,6 @@ public class EntryPoint {
         }
 
         final String options = checkUseOptionsFile(
-                EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_ONLINE_JACOCO_RUNNER_COVERED_RESULT_PER_TEST_QUALIFIED_NAME : EntryPoint.JUNIT4_ONLINE_JACOCO_RUNNER_COVERED_RESULT_PER_TEST_QUALIFIED_NAME,
                 ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
                 targetSourceClasses.stream().reduce((x, y) -> x + ConstantsHelper.PATH_SEPARATOR + y).get().replaceAll(" ", "%20"),
                 ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject,
@@ -714,6 +713,7 @@ public class EntryPoint {
                         "-javaagent:" + jacocoAgentJar.getAbsolutePath() + "=destfile=test-runner.exec,dumponexit=false" +
                                 (EntryPoint.jacocoAgentIncludes != null ? (",includes=" + EntryPoint.jacocoAgentIncludes) : "") +
                                 (EntryPoint.jacocoAgentIncludes != null ? (",excludes=" + EntryPoint.jacocoAgentExcludes) : ""),
+                        EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_ONLINE_JACOCO_RUNNER_COVERED_RESULT_PER_TEST_QUALIFIED_NAME : EntryPoint.JUNIT4_ONLINE_JACOCO_RUNNER_COVERED_RESULT_PER_TEST_QUALIFIED_NAME,
                         options
                 });
         try {
