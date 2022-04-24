@@ -202,6 +202,7 @@ In `EntryPoint` class, you have access to several fields that allow to configure
    * `String jacocoAgentIncludes`: used in the online mode of coverage computation. Passed to the jacoco agent as the `includes` option.
    * `String jacocoAgentExcludes`: used in the online mode of coverage computation. Passed to the jacoco agent as the `excludes` option.
    * `int nbFailingLoadClass`: specify the number of "ClassNotFoundException" throws when running the tests.
+   * `boolean useOptionsFile`: This options specifies to use a file to pass the options to the Runner. EntryPoint will output this file automatically. Default is false
 
 ## Dependency:
 

@@ -31,6 +31,7 @@ import java.io.*;
 import java.lang.ProcessBuilder.Redirect;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -166,6 +167,42 @@ public class EntryPoint {
      */
     public static int nbFailingLoadClass = 0;
 
+    private static final String OPTIONS_FILE_PATHNAME = "test_runner";
+
+    private static final String OPTIONS_FILE_EXT = ".options";
+
+    public static final String ABSOLUTE_PATH_TO_OPTIONS_FILE;
+
+    static {
+        try {
+            ABSOLUTE_PATH_TO_OPTIONS_FILE = Files.createTempFile(OPTIONS_FILE_PATHNAME, OPTIONS_FILE_EXT).toFile().getAbsolutePath();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * This options specifies to use a file to pass the options to the Runner
+     * EntryPoint will output this file automatically
+     */
+    public static boolean useOptionsFile = false;
+
+    private static String checkUseOptionsFile(String... options) {
+        return EntryPoint.checkUseOptionsFile(String.join(ConstantsHelper.WHITE_SPACE, options));
+    }
+
+    private static String checkUseOptionsFile(String options) {
+        if (EntryPoint.useOptionsFile) {
+            try (final FileWriter writer = new FileWriter(ABSOLUTE_PATH_TO_OPTIONS_FILE, false)) {
+                writer.write(options);
+                options = String.join(ConstantsHelper.WHITE_SPACE, ParserOptions.FLAG_pathToOptionsFile, ABSOLUTE_PATH_TO_OPTIONS_FILE);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return options;
+    }
+
     // PIT OPTIONS
 
     /**
@@ -238,20 +275,23 @@ public class EntryPoint {
      */
     public static TestResult runTests(String classpath, String[] fullQualifiedNameOfTestClasses, String[] methodNames)
             throws TimeoutException {
+        final String options = checkUseOptionsFile(
+                ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun,
+                String.join(ConstantsHelper.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
+                methodNames.length == 0 ? ""
+                        : (ParserOptions.FLAG_testMethodNamesToRun + ConstantsHelper.WHITE_SPACE
+                        + String.join(ConstantsHelper.PATH_SEPARATOR, methodNames)),
+                EntryPoint.blackList.isEmpty() ? ""
+                        : (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE
+                        + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
+                ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
+        );
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{getJavaCommand(),
                         (classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES).replaceAll(" ", "%20"),
                         EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_TEST_RUNNER_QUALIFIED_NAME
                                 : EntryPoint.JUNIT4_TEST_RUNNER_QUALIFIED_NAME,
-                        ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun,
-                        String.join(ConstantsHelper.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
-                        methodNames.length == 0 ? ""
-                                : (ParserOptions.FLAG_testMethodNamesToRun + ConstantsHelper.WHITE_SPACE
-                                + String.join(ConstantsHelper.PATH_SEPARATOR, methodNames)),
-                        EntryPoint.blackList.isEmpty() ? ""
-                                : (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE
-                                + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
-                        ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
+                        options
                 }
         );
         return EntryPoint.runTests(javaCommand);
@@ -334,27 +374,30 @@ public class EntryPoint {
                                        List<String> targetTestClasses,
                                        String[] fullQualifiedNameOfTestClasses,
                                        String[] methodNames) throws TimeoutException {
+        final String options = checkUseOptionsFile(
+                ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
+                targetSourceClasses.stream().reduce((x, y) -> x + ConstantsHelper.PATH_SEPARATOR + y).get().replaceAll(" ", "%20"),
+                ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject,
+                targetTestClasses.stream().reduce((x, y) -> x + ConstantsHelper.PATH_SEPARATOR + y).get().replaceAll(" ", "%20"),
+                ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun,
+                String.join(ConstantsHelper.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
+                methodNames.length == 0 ? "" :
+                        (ParserOptions.FLAG_testMethodNamesToRun + ConstantsHelper.WHITE_SPACE +
+                                String.join(ConstantsHelper.PATH_SEPARATOR, methodNames)),
+                EntryPoint.blackList.isEmpty() ? "" :
+                        (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE
+                                + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
+                EntryPoint.coverageDetail == ParserOptions.CoverageTransformerDetail.SUMMARIZED ? "" :
+                        (ParserOptions.FLAG_coverage_detail + ConstantsHelper.WHITE_SPACE
+                                + EntryPoint.coverageDetail.name()),
+                ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
+        );
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{getJavaCommand(),
                         (classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES
                                 + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES).replaceAll(" ", "%20"),
                         EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_JACOCO_RUNNER_QUALIFIED_NAME : EntryPoint.JUNIT4_JACOCO_RUNNER_QUALIFIED_NAME,
-                        ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
-                        targetSourceClasses.stream().reduce((x, y) -> x + ConstantsHelper.PATH_SEPARATOR + y).get().replaceAll(" ", "%20"),
-                        ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject,
-                        targetTestClasses.stream().reduce((x, y) -> x + ConstantsHelper.PATH_SEPARATOR + y).get().replaceAll(" ", "%20"),
-                        ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun,
-                        String.join(ConstantsHelper.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
-                        methodNames.length == 0 ? "" :
-                                (ParserOptions.FLAG_testMethodNamesToRun + ConstantsHelper.WHITE_SPACE +
-                                        String.join(ConstantsHelper.PATH_SEPARATOR, methodNames)),
-                        EntryPoint.blackList.isEmpty() ? "" :
-                                (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE
-                                        + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
-                        EntryPoint.coverageDetail == ParserOptions.CoverageTransformerDetail.SUMMARIZED ? "" :
-                                (ParserOptions.FLAG_coverage_detail + ConstantsHelper.WHITE_SPACE
-                                        + EntryPoint.coverageDetail.name()),
-                        ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
+                        options
                 });
         return EntryPoint.runCoverage(javaCommand);
     }
@@ -442,27 +485,30 @@ public class EntryPoint {
                                                                   List<String> targetTestClasses,
                                                                   String[] fullQualifiedNameOfTestClasses,
                                                                   String[] methodNames) throws TimeoutException {
+        final String options = checkUseOptionsFile(
+                ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
+                targetSourceClasses.stream().reduce((x, y) -> x + ConstantsHelper.PATH_SEPARATOR + y).get().replaceAll(" ", "%20"),
+                ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject,
+                targetTestClasses.stream().reduce((x, y) -> x + ConstantsHelper.PATH_SEPARATOR + y).get().replaceAll(" ", "%20"),
+                ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun,
+                String.join(ConstantsHelper.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
+                methodNames.length == 0 ? "" : ParserOptions.FLAG_testMethodNamesToRun + ConstantsHelper.WHITE_SPACE +
+                        String.join(ConstantsHelper.PATH_SEPARATOR, methodNames),
+                EntryPoint.blackList.isEmpty() ? ""
+                        : (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE
+                        + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
+                EntryPoint.coverageDetail == ParserOptions.CoverageTransformerDetail.SUMMARIZED ? "" :
+                        (ParserOptions.FLAG_coverage_detail + ConstantsHelper.WHITE_SPACE
+                                + EntryPoint.coverageDetail.name()),
+                ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
+        );
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{
                         getJavaCommand(),
                         (classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES
                                 + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES).replaceAll(" ", "%20"),
                         EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME : EntryPoint.JUNIT4_JACOCO_RUNNER_PER_TEST_QUALIFIED_NAME,
-                        ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
-                        targetSourceClasses.stream().reduce((x, y) -> x + ConstantsHelper.PATH_SEPARATOR + y).get().replaceAll(" ", "%20"),
-                        ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject,
-                        targetTestClasses.stream().reduce((x, y) -> x + ConstantsHelper.PATH_SEPARATOR + y).get().replaceAll(" ", "%20"),
-                        ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun,
-                        String.join(ConstantsHelper.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
-                        methodNames.length == 0 ? "" : ParserOptions.FLAG_testMethodNamesToRun + ConstantsHelper.WHITE_SPACE +
-                                String.join(ConstantsHelper.PATH_SEPARATOR, methodNames),
-                        EntryPoint.blackList.isEmpty() ? ""
-                                : (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE
-                                + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
-                        EntryPoint.coverageDetail == ParserOptions.CoverageTransformerDetail.SUMMARIZED ? "" :
-                                (ParserOptions.FLAG_coverage_detail + ConstantsHelper.WHITE_SPACE
-                                        + EntryPoint.coverageDetail.name()),
-                        ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
+                        options
                 });
         try {
             EntryPoint.runGivenCommandLine(javaCommand);
@@ -547,27 +593,30 @@ public class EntryPoint {
                                                                                     List<String> targetTestClasses,
                                                                                     String[] fullQualifiedNameOfTestClasses,
                                                                                     String[] methodNames) throws TimeoutException {
+        final String options = checkUseOptionsFile(
+                ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
+                targetSourceClasses.stream().reduce((x, y) -> x + ConstantsHelper.PATH_SEPARATOR + y).get().replaceAll(" ", "%20"),
+                ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject,
+                targetTestClasses.stream().reduce((x, y) -> x + ConstantsHelper.PATH_SEPARATOR + y).get().replaceAll(" ", "%20"),
+                ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun,
+                String.join(ConstantsHelper.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
+                methodNames.length == 0 ? "" : ParserOptions.FLAG_testMethodNamesToRun + ConstantsHelper.WHITE_SPACE +
+                        String.join(ConstantsHelper.PATH_SEPARATOR, methodNames),
+                EntryPoint.blackList.isEmpty() ? ""
+                        : (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE
+                        + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
+                EntryPoint.coverageDetail == ParserOptions.CoverageTransformerDetail.SUMMARIZED ? "" :
+                        (ParserOptions.FLAG_coverage_detail + ConstantsHelper.WHITE_SPACE
+                                + EntryPoint.coverageDetail.name()),
+                ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
+        );
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{
                         getJavaCommand(),
                         (classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES
                                 + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_JACOCO_DEPENDENCIES).replaceAll(" ", "%20"),
                         EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_JACOCO_RUNNER_COVERED_RESULT_PER_TEST_QUALIFIED_NAME : EntryPoint.JUNIT4_JACOCO_RUNNER_COVERED_RESULT_PER_TEST_QUALIFIED_NAME,
-                        ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
-                        targetSourceClasses.stream().reduce((x, y) -> x + ConstantsHelper.PATH_SEPARATOR + y).get().replaceAll(" ", "%20"),
-                        ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject,
-                        targetTestClasses.stream().reduce((x, y) -> x + ConstantsHelper.PATH_SEPARATOR + y).get().replaceAll(" ", "%20"),
-                        ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun,
-                        String.join(ConstantsHelper.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
-                        methodNames.length == 0 ? "" : ParserOptions.FLAG_testMethodNamesToRun + ConstantsHelper.WHITE_SPACE +
-                                String.join(ConstantsHelper.PATH_SEPARATOR, methodNames),
-                        EntryPoint.blackList.isEmpty() ? ""
-                                : (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE
-                                + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
-                        EntryPoint.coverageDetail == ParserOptions.CoverageTransformerDetail.SUMMARIZED ? "" :
-                                (ParserOptions.FLAG_coverage_detail + ConstantsHelper.WHITE_SPACE
-                                        + EntryPoint.coverageDetail.name()),
-                        ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
+                        options
                 });
         try {
             EntryPoint.runGivenCommandLine(javaCommand);
@@ -638,6 +687,23 @@ public class EntryPoint {
             throw new RuntimeException(e);
         }
 
+        final String options = checkUseOptionsFile(
+                ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
+                targetSourceClasses.stream().reduce((x, y) -> x + ConstantsHelper.PATH_SEPARATOR + y).get().replaceAll(" ", "%20"),
+                ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject,
+                targetTestClasses.stream().reduce((x, y) -> x + ConstantsHelper.PATH_SEPARATOR + y).get().replaceAll(" ", "%20"),
+                ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun,
+                String.join(ConstantsHelper.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
+                methodNames.length == 0 ? "" : ParserOptions.FLAG_testMethodNamesToRun + ConstantsHelper.WHITE_SPACE +
+                        String.join(ConstantsHelper.PATH_SEPARATOR, methodNames),
+                EntryPoint.blackList.isEmpty() ? ""
+                        : (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE
+                        + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
+                EntryPoint.coverageDetail == ParserOptions.CoverageTransformerDetail.SUMMARIZED ? "" :
+                        (ParserOptions.FLAG_coverage_detail + ConstantsHelper.WHITE_SPACE
+                                + EntryPoint.coverageDetail.name()),
+                ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
+        );
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{
                         getJavaCommand(),
@@ -647,21 +713,7 @@ public class EntryPoint {
                                 (EntryPoint.jacocoAgentIncludes != null ? (",includes=" + EntryPoint.jacocoAgentIncludes) : "") +
                                 (EntryPoint.jacocoAgentIncludes != null ? (",excludes=" + EntryPoint.jacocoAgentExcludes) : ""),
                         EntryPoint.jUnit5Mode ? EntryPoint.JUNIT5_ONLINE_JACOCO_RUNNER_COVERED_RESULT_PER_TEST_QUALIFIED_NAME : EntryPoint.JUNIT4_ONLINE_JACOCO_RUNNER_COVERED_RESULT_PER_TEST_QUALIFIED_NAME,
-                        ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
-                        targetSourceClasses.stream().reduce((x, y) -> x + ConstantsHelper.PATH_SEPARATOR + y).get().replaceAll(" ", "%20"),
-                        ParserOptions.FLAG_pathToCompiledTestClassesOfTheProject,
-                        targetTestClasses.stream().reduce((x, y) -> x + ConstantsHelper.PATH_SEPARATOR + y).get().replaceAll(" ", "%20"),
-                        ParserOptions.FLAG_fullQualifiedNameOfTestClassToRun,
-                        String.join(ConstantsHelper.PATH_SEPARATOR, fullQualifiedNameOfTestClasses),
-                        methodNames.length == 0 ? "" : ParserOptions.FLAG_testMethodNamesToRun + ConstantsHelper.WHITE_SPACE +
-                                String.join(ConstantsHelper.PATH_SEPARATOR, methodNames),
-                        EntryPoint.blackList.isEmpty() ? ""
-                                : (ParserOptions.FLAG_blackList + ConstantsHelper.WHITE_SPACE
-                                + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
-                        EntryPoint.coverageDetail == ParserOptions.CoverageTransformerDetail.SUMMARIZED ? "" :
-                                (ParserOptions.FLAG_coverage_detail + ConstantsHelper.WHITE_SPACE
-                                        + EntryPoint.coverageDetail.name()),
-                        ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
+                        options
                 });
         try {
             EntryPoint.runGivenCommandLine(javaCommand);
@@ -689,6 +741,7 @@ public class EntryPoint {
      * @param targetTests         the full qualified name of the test class for which we want to compute the mutation score.
      * @return a list of {@link eu.stamp_project.testrunner.listener.pit.AbstractPitResult} that contains the mutation analysis. The type depends on the format used.
      */
+    @Deprecated
     public static List<? extends AbstractPitResult> runPit(final String classpath,
                                                            final String pathToRootProject,
                                                            final String filterTargetClasses,
