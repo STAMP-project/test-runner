@@ -287,7 +287,7 @@ public class EntryPoint {
                         + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
                 ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
         );
-        classpath = checkAndAddJUnit4(classpath);
+        classpath = checkAndAddJUnit(classpath);
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{getJavaCommand(),
                         (classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES).replaceAll(" ", "%20"),
@@ -299,7 +299,7 @@ public class EntryPoint {
         return EntryPoint.runTests(javaCommand);
     }
 
-    private static String checkAndAddJUnit4(String classpath) {
+    private static String checkAndAddJUnit(String classpath) {
         if (!classpath.contains("junit-4")) {
             LOGGER.warn("junit-4 is not detected in the provided classpath.");
             LOGGER.warn("junit-4 is mandatory, and will be artificially injected at he end of the provided classpath.");
@@ -411,7 +411,7 @@ public class EntryPoint {
                                 + EntryPoint.coverageDetail.name()),
                 ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
         );
-        classpath = checkAndAddJUnit4(classpath);
+        classpath = checkAndAddJUnit(classpath);
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{getJavaCommand(),
                         (classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES
@@ -522,7 +522,7 @@ public class EntryPoint {
                                 + EntryPoint.coverageDetail.name()),
                 ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
         );
-        classpath = checkAndAddJUnit4(classpath);
+        classpath = checkAndAddJUnit(classpath);
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{
                         getJavaCommand(),
@@ -631,7 +631,7 @@ public class EntryPoint {
                                 + EntryPoint.coverageDetail.name()),
                 ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
         );
-        classpath = checkAndAddJUnit4(classpath);
+        classpath = checkAndAddJUnit(classpath);
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{
                         getJavaCommand(),
@@ -725,7 +725,7 @@ public class EntryPoint {
                                 + EntryPoint.coverageDetail.name()),
                 ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
         );
-        classpath = checkAndAddJUnit4(classpath);
+        classpath = checkAndAddJUnit(classpath);
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{
                         getJavaCommand(),
