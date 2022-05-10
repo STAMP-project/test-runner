@@ -11,6 +11,7 @@ import spoon.Launcher;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -33,23 +34,11 @@ public class EntryPointJUnit3Test {
     public static String JUNIT_3_CP;
 
     {
-        List<String> classPath = Arrays.stream(((URLClassLoader) URLClassLoader.getSystemClassLoader()).getURLs())
-                .map(URL::getPath).collect(Collectors.toList());
-
-        System.out.println(classPath);
-        if (classPath.size() == 1) {
-            // we only have the surefire booter
-            // so we take a value by default
-            MAVEN_HOME = System.getProperty("user.home") + "/.m2/repository/";
-        } else {
-            // we infer it from the classpath
-            MAVEN_HOME = classPath.stream()
-                    .filter(path -> path.contains("/.m2/repository/"))
-                    .findFirst()
-                    .map(s -> s.substring(0, s.indexOf("/.m2/repository/") + "/.m2/repository/".length()))
-                    .get();
-        }
-
+        final String pathLocationJUnit = Test.class.getProtectionDomain()
+                .getCodeSource()
+                .getLocation()
+                .getPath();
+        MAVEN_HOME = pathLocationJUnit.substring(0, pathLocationJUnit.indexOf("/.m2/repository/") + "/.m2/repository/".length());
         JUNIT_3_CP = MAVEN_HOME + "junit/junit/3.8.2/junit-3.8.2.jar";
     }
 
