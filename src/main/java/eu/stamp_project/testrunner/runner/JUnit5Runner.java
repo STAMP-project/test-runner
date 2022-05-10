@@ -26,7 +26,7 @@ public class JUnit5Runner {
      * This method is not meant to be used directly, but rather using {@link EntryPoint}
      * For the expected arguments, see {@link ParserOptions}
      */
-    public static void main(String []args) {
+    public static void main(String[] args) {
         final JUnit5TestResult jUnit5TestResult = new JUnit5TestResult();
         final ParserOptions options = ParserOptions.parse(args);
         JUnit5Runner.run(
@@ -59,26 +59,18 @@ public class JUnit5Runner {
         AtomicInteger numberOfFailedLoadClass = new AtomicInteger();
         final LauncherDiscoveryRequestBuilder requestBuilder = LauncherDiscoveryRequestBuilder.request();
         if (testMethodNames.length == 0) {
-            if (testClassNames.length > 0) {
-                Arrays.asList(testClassNames).forEach(testClassName -> {
-                            try {
-                                final Class<?> clazz = customClassLoader.loadClass(testClassName);
-                                requestBuilder.selectors(selectClass(clazz));
-                            } catch (ClassNotFoundException e) {
-                                if (numberOfFailedLoadClass.incrementAndGet() > nbFailingLoadClass) {
-                                    throw new RuntimeException(e);
-                                }
-                                e.printStackTrace();
+            Arrays.asList(testClassNames).forEach(testClassName -> {
+                        try {
+                            final Class<?> clazz = customClassLoader.loadClass(testClassName);
+                            requestBuilder.selectors(selectClass(clazz));
+                        } catch (ClassNotFoundException e) {
+                            if (numberOfFailedLoadClass.incrementAndGet() > nbFailingLoadClass) {
+                                throw new RuntimeException(e);
                             }
+                            e.printStackTrace();
                         }
-                );
-            } else {
-                try {
-                    requestBuilder.selectors(selectClass(customClassLoader.loadClass(testClassNames[0])));
-                } catch (ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+                    }
+            );
         } else {
             Arrays.asList(testMethodNames).forEach(testMethodName -> {
                         try {

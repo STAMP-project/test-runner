@@ -32,7 +32,11 @@ public class ListenerUtils {
             if (description.isSuite()) {
                 className = description.getDisplayName();
             } else {
-                className = description.getDisplayName().split("\\(")[1].split("\\)")[0];
+                if (description.getDisplayName().contains("(")) {
+                    className = description.getDisplayName().split("\\(")[1].split("\\)")[0];
+                } else {
+                    className = description.getDisplayName();
+                }
             }
         }
         return className;

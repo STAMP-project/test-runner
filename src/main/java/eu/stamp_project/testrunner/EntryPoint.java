@@ -17,6 +17,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.jacoco.agent.rt.RT;
 import org.jacoco.core.runtime.IRuntime;
+import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.objectweb.asm.ClassReader;
 import org.opentest4j.TestAbortedException;
@@ -286,6 +287,7 @@ public class EntryPoint {
                         + String.join(ConstantsHelper.PATH_SEPARATOR, EntryPoint.blackList)),
                 ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
         );
+        classpath = checkAndAddJUnit(classpath);
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{getJavaCommand(),
                         (classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES).replaceAll(" ", "%20"),
@@ -295,6 +297,23 @@ public class EntryPoint {
                 }
         );
         return EntryPoint.runTests(javaCommand);
+    }
+
+    private static String checkAndAddJUnit(String classpath) {
+        if (!classpath.contains("junit-4")) {
+            LOGGER.warn("junit-4 is not detected in the provided classpath.");
+            LOGGER.warn("junit-4 is mandatory, and will be artificially injected at he end of the provided classpath.");
+            final String junit4Path = Test.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+            LOGGER.warn("junit-4 has been found here {}", junit4Path);
+            final String hamcrestPath = org.hamcrest.Description.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+            LOGGER.warn("hamcrest has been found here {}", hamcrestPath);
+            classpath += ConstantsHelper.PATH_SEPARATOR + junit4Path + ConstantsHelper.PATH_SEPARATOR + hamcrestPath;
+        }
+        if (EntryPoint.jUnit5Mode) {
+            final String junit5PlatformLauncherPath = org.junit.platform.launcher.TestExecutionListener.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+            classpath += ConstantsHelper.PATH_SEPARATOR + junit5PlatformLauncherPath;
+        }
+        return classpath;
     }
 
     private static TestResult runTests(String commandLine) throws TimeoutException {
@@ -392,6 +411,7 @@ public class EntryPoint {
                                 + EntryPoint.coverageDetail.name()),
                 ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
         );
+        classpath = checkAndAddJUnit(classpath);
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{getJavaCommand(),
                         (classpath + ConstantsHelper.PATH_SEPARATOR + ABSOLUTE_PATH_TO_RUNNER_CLASSES
@@ -502,6 +522,7 @@ public class EntryPoint {
                                 + EntryPoint.coverageDetail.name()),
                 ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
         );
+        classpath = checkAndAddJUnit(classpath);
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{
                         getJavaCommand(),
@@ -610,6 +631,7 @@ public class EntryPoint {
                                 + EntryPoint.coverageDetail.name()),
                 ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
         );
+        classpath = checkAndAddJUnit(classpath);
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{
                         getJavaCommand(),
@@ -686,7 +708,6 @@ public class EntryPoint {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
         final String options = checkUseOptionsFile(
                 ParserOptions.FLAG_pathToCompiledClassesOfTheProject,
                 targetSourceClasses.stream().reduce((x, y) -> x + ConstantsHelper.PATH_SEPARATOR + y).get().replaceAll(" ", "%20"),
@@ -704,6 +725,7 @@ public class EntryPoint {
                                 + EntryPoint.coverageDetail.name()),
                 ParserOptions.FLAG_nbFailingLoadClass, "" + nbFailingLoadClass
         );
+        classpath = checkAndAddJUnit(classpath);
         final String javaCommand = String.join(ConstantsHelper.WHITE_SPACE,
                 new String[]{
                         getJavaCommand(),
@@ -824,13 +846,17 @@ public class EntryPoint {
             long startTime = System.currentTimeMillis();
             boolean finished = process.waitFor(timeoutInMs, TimeUnit.MILLISECONDS);
             long endTime = System.currentTimeMillis();
-            int exitValue = process.exitValue();
-            if (!finished || exitValue != 0) {
-                throw new RuntimeException("Forked process did not finish correctly.\n" +
-                        "Timeout set was " + timeoutInMs + " ms, " +
-                        "process took " + (endTime - startTime) + " ms before ending.\n" +
-                        "Use the verbose mode to obtain more information regarding the error."
-                );
+            try {
+                int exitValue = process.exitValue();
+                if (!finished || exitValue != 0) {
+                    throw new RuntimeException("Forked process did not finish correctly.\n" +
+                            "Timeout set was " + timeoutInMs + " ms, " +
+                            "process took " + (endTime - startTime) + " ms before ending.\n" +
+                            "Use the verbose mode to obtain more information regarding the error."
+                    );
+                }
+            } catch (IllegalThreadStateException ignored) {
+                ignored.printStackTrace();
             }
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
