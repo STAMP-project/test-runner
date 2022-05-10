@@ -17,7 +17,7 @@ This project provides a framework to run JUnit tests in a new JVM. It allows to 
 * the test runner supports JUnit3, JUnit4, and JUnit5. By default it runs JUnit3 or JUnit4. If you need to execute JUnit5 test methods, use the boolean in [EntryPoint](https://github.com/STAMP-project/testrunner/blob/master/src/main/java/eu/stamp_project/testrunner/EntryPoint.java#L69).
 * Parametrized JUnit 4 test methods.
 
-/!\ WARNING the test runner is not able to run parametrized JUnit5 test methods.
+/!\ WARNING the test runner is not able to run parametrized JUnit5 test methods, see https://github.com/STAMP-project/test-runner/issues/57.
 
 ## API
 
