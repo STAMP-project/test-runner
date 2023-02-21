@@ -44,6 +44,7 @@ class MethodFilter extends Filter {
                     .reduce(Boolean.FALSE, Boolean::logicalOr);
 
     private final Predicate<Description> anyTestMethodNamesMatch = description ->
+            ListenerUtils.getMethodName.apply(description) != null &&
             this.testMethodNames.stream()
                     .anyMatch(testMethodName ->
                             Pattern.compile("(" + ListenerUtils.getClassName.apply(description) + ")?" + testMethodName + "\\[(\\d+)\\]")
