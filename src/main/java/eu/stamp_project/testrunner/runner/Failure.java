@@ -3,7 +3,6 @@ package eu.stamp_project.testrunner.runner;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
-import java.util.Optional;
 
 /**
  * This class contains the result of failing test method.
@@ -21,7 +20,7 @@ public class Failure implements Serializable {
     public final String fullQualifiedNameOfException;
     public final String messageOfFailure;
     public final String stackTrace;
-    public final Optional<Throwable> throwable; // Throwable is not present if Failure is read from surefire report
+    public Throwable throwable; // Throwable is not present if Failure is read from surefire report
 
     public Failure(String testCaseName, String testClassName, Throwable exception) {
         this.testCaseName = testCaseName;
@@ -32,7 +31,7 @@ public class Failure implements Serializable {
         PrintWriter pw = new PrintWriter(sw);
         exception.printStackTrace(pw);
         this.stackTrace = sw.toString(); // stack trace as a string
-        this.throwable = Optional.of(exception);
+        this.throwable = exception;
     }
 
     public Failure(String testCaseName, String testClassName, String fullQualifiedNameOfException, String messageOfFailure, String stackTrace) {
@@ -41,7 +40,6 @@ public class Failure implements Serializable {
         this.messageOfFailure = messageOfFailure;
         this.testClassName = testClassName;
         this.stackTrace = stackTrace;
-        this.throwable = Optional.empty();
     }
 
     @Override
