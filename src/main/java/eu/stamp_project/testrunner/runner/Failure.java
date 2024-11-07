@@ -20,7 +20,7 @@ public class Failure implements Serializable {
     public final String fullQualifiedNameOfException;
     public final String messageOfFailure;
     public final String stackTrace;
-    public Throwable throwable; // Throwable is not present if Failure is read from surefire report
+    public SerializableThrowable throwable; // Throwable is not present if Failure is read from surefire report
 
     public Failure(String testCaseName, String testClassName, Throwable exception) {
         this.testCaseName = testCaseName;
@@ -31,7 +31,7 @@ public class Failure implements Serializable {
         PrintWriter pw = new PrintWriter(sw);
         exception.printStackTrace(pw);
         this.stackTrace = sw.toString(); // stack trace as a string
-        this.throwable = exception;
+        this.throwable = new SerializableThrowable(exception);
     }
 
     public Failure(String testCaseName, String testClassName, String fullQualifiedNameOfException, String messageOfFailure, String stackTrace) {
@@ -68,4 +68,21 @@ public class Failure implements Serializable {
         result = 31 * result + (messageOfFailure != null ? messageOfFailure.hashCode() : 0);
         return result;
     }
+
+
+    public static class SerializableThrowable implements Serializable {
+
+        private static final long serialVersionUID = 2988580623727952827L;
+
+        public final String className;
+        public final String message;
+        public final StackTraceElement[] stackTrace;
+
+        public SerializableThrowable(Throwable throwable) {
+            this.className = throwable.getClass().getName();
+            this.message = throwable.getMessage();
+            this.stackTrace = throwable.getStackTrace();
+        }
+    }
+
 }
